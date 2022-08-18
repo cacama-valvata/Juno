@@ -1,0 +1,40 @@
+name: Build n Test
+
+on:
+  push:
+    branches: [ "**" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+
+  game-server:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v3
+      - uses: docker/setup-qemu-action@v2.0.0
+      - name: build
+        run: echo "hey"
+  
+  env-architect:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v3
+      - name: build
+        run: echo "hey"
+        
+  identity-server:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v3
+      - name: build
+        run: echo "hey"
+        
+  player-client:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v3
+      - uses: docker/setup-qemu-action@v2.0.0
+      - name: build
+        run: echo "hey"
+        
