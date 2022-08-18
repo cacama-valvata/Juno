@@ -1,16 +1,11 @@
-all: pdf html
+all: pdf-docs html-docs
 
-pdf: formatting.md workflow.md
-	mkdir ./pdf
-	pandoc formatting.md -o pdf/formatting.pdf
-	pandoc workflow.md -o pdf/workflow.pdf
-	pandoc design.md -o pdf/design.pdf
+%-docs: formatting.md workflow.md design.md
+	[ ! -d "$*" ] && mkdir $*
 
-html: formatting.md workflow.md
-	mkdir ./html
-	pandoc formatting.md -o html/formatting.html
-	pandoc workflow.md -o html/workflow.html
-	pandoc design.md -o html/design.html
+	pandoc formatting.md -o $*/formatting.$* -V geometry:margin=1in --highlight=tango
+	pandoc workflow.md -o $*/workflow.$* -V geometry:margin=1in --highlight=tango
+	pandoc design.md -o $*/design.$* -V geometry:margin=1in --highlight=tango
 
 clean: 
 	rm -rf ./html ./pdf
