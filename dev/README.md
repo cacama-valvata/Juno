@@ -25,7 +25,7 @@ sudo pacman -Sy pandoc texlive-most
 
 Build the docs with either:
 
-`make html`
-`make pdf`
+`make html-docs`
+`make pdf-docs`
 
 Built documents will be found in their respective folders: `./html/` or `./pdf/`
