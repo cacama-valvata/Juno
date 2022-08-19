@@ -3,12 +3,10 @@ name: Development Guide
 on:
   push:
     branches: [ "**" ]
-    paths:
-      - "dev/"
+    paths: [ "dev/**" ]
   pull_request:
     branches: [ "main" ]
-    paths:
-      - "dev/"
+    paths: [ "dev/**" ]
 
 jobs:
 
@@ -17,4 +15,13 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: build
-        run: echo "hey"
+        uses: docker://pandoc/latex:2.9
+        run: cd dev && make
+        
+      - uses: marvinpinto/action-automatic-releases@latest
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          title: Latest Development Documents
+          prerelease: false
+          automatic_release_tag: dev_guide
+          files: pdf/
