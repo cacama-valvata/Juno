@@ -3,12 +3,11 @@ name: Game Server
 on:
   push:
     branches: [ "**" ]
-    paths:
-      - "src-game_server/"
+    paths: [ "src-game_server/" ]
+    
   pull_request:
     branches: [ "main" ]
-    paths:
-      - "src-game_server/"
+    paths: [ "src-game_server/" ]
 
 jobs:
 

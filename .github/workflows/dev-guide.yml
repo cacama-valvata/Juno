@@ -4,6 +4,7 @@ on:
   push:
     branches: [ "**" ]
     paths: [ "dev/**" ]
+    
   pull_request:
     branches: [ "main" ]
     paths: [ "dev/**" ]

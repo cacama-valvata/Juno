@@ -3,12 +3,11 @@ name: Identity Server
 on:
   push:
     branches: [ "**" ]
-    paths:
-      - "src-identity_server/"
+    paths: [ "src-identity_server/" ]
+    
   pull_request:
     branches: [ "main" ]
-    paths:
-      - "src-identity_server/"
+    paths: [ "src-identity_server/" ]
 
 jobs:
      

@@ -3,12 +3,11 @@ name: Documentation
 on:
   push:
     branches: [ "**" ]
-    paths:
-      - "docs/"
+    paths: [ "docs/**" ]
+    
   pull_request:
     branches: [ "main" ]
-    paths:
-      - "docs/"
+    paths: [ "docs/**" ]
 
 jobs:
 

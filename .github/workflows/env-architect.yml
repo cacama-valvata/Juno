@@ -3,12 +3,11 @@ name: Environment Architect
 on:
   push:
     branches: [ "**" ]
-    paths:
-      - "src-env_architect/"
+    paths: [ "src-env_architect/" ]
+    
   pull_request:
     branches: [ "main" ]
-    paths:
-      - "src-env_architect/"
+    paths: [ "src-env_architect/" ]
 
 jobs:
   

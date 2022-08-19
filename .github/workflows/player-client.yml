@@ -3,12 +3,11 @@ name: Player Client
 on:
   push:
     branches: [ "**" ]
-    paths:
-      - "src-player_client/"
+    paths: [ "src-player_client/" ]
+    
   pull_request:
     branches: [ "main" ]
-    paths:
-      - "src-player_client/"
+    paths: [ "src-player_client/" ]
 
 jobs:
         
