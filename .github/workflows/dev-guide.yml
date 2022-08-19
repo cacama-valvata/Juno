@@ -4,7 +4,7 @@ on:
   push:
     branches: [ "**" ]
     paths: [ "dev/**" ]
-    
+
   pull_request:
     branches: [ "main" ]
     paths: [ "dev/**" ]
@@ -15,8 +15,8 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v3
+      - uses: docker://pandoc/latex:2.9
       - name: build
-        uses: docker://pandoc/latex:2.9
         run: cd dev && make
         
       - uses: marvinpinto/action-automatic-releases@latest
