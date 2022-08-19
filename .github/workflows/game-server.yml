@@ -1,0 +1,20 @@
+name: Game Server
+
+on:
+  push:
+    branches: [ "**" ]
+    paths: [ "src-game_server/" ]
+    
+  pull_request:
+    branches: [ "main" ]
+    paths: [ "src-game_server/" ]
+
+jobs:
+
+  game-server:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v3
+      #- uses: docker/setup-qemu-action@v2.0.0
+      - name: build
+        run: echo "hey"

@@ -1,0 +1,21 @@
+name: Player Client
+
+on:
+  push:
+    branches: [ "**" ]
+    paths: [ "src-player_client/" ]
+    
+  pull_request:
+    branches: [ "main" ]
+    paths: [ "src-player_client/" ]
+
+jobs:
+        
+  player-client:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v3
+      #- uses: docker/setup-qemu-action@v2.0.0
+      - name: build
+        run: echo "hey"
+        

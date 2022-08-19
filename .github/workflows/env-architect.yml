@@ -1,0 +1,19 @@
+name: Environment Architect
+
+on:
+  push:
+    branches: [ "**" ]
+    paths: [ "src-env_architect/" ]
+    
+  pull_request:
+    branches: [ "main" ]
+    paths: [ "src-env_architect/" ]
+
+jobs:
+  
+  env-architect:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v3
+      - name: build
+        run: echo "hey"
