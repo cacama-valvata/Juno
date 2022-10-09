@@ -6,7 +6,7 @@ PANDOC = pandoc
 #PANDOC = docker run --rm -v "$(shell pwd):/data" -u $shell id -u:$(shell id -g) detjensrobert/arch-pandoc
 
 # Pandoc options
-OPTS = -V geometry:margin=1in --highlight=tango
+OPTS = -s -V geometry:margin=1in --highlight=tango
 
 # Which sections of the Vision and Scope document do you want to include?
 #    Helpful for submitting class assignments that only want certain sections
