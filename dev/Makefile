@@ -8,6 +8,12 @@ PANDOC = pandoc
 # Pandoc options
 OPTS = -V geometry:margin=1in --highlight=tango
 
+# Which sections of the Vision and Scope document do you want to include?
+#    Helpful for submitting class assignments that only want certain sections
+#    Comment out either line
+SECTS = $(sort $(wildcard vision-n-scope/*.md))
+#SECTS = vision-n-scope/0-titlepage.md 
+
 
 all: pdf-docs html-docs
 
@@ -17,6 +23,7 @@ all: pdf-docs html-docs
 	$(PANDOC) formatting.md -o $*/formatting.$* $(OPTS)
 	$(PANDOC) workflow.md -o $*/workflow.$* $(OPTS)
 	$(PANDOC) design.md -o $*/design.$* $(OPTS)
+	$(PANDOC) $(SECTS) -o $*/vision-n-scope.pdf --metadata-file vision-n-scope/metadata.yml $(OPTS)
 
 clean: 
 	rm -rf ./html ./pdf
