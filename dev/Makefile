@@ -1,16 +1,30 @@
-all: pdf html
+# Compile developer documents into pdf, html, or both
 
-pdf: formatting.md workflow.md
-	mkdir ./pdf
-	pandoc formatting.md -o pdf/formatting.pdf
-	pandoc workflow.md -o pdf/workflow.pdf
-	pandoc design.md -o pdf/design.pdf
+# Either use natively installed pandoc or utilize container with pandoc
+#    Comment out either line
+PANDOC = pandoc
+#PANDOC = docker run --rm -v "$(shell pwd):/data" -u $shell id -u:$(shell id -g) detjensrobert/arch-pandoc
 
-html: formatting.md workflow.md
-	mkdir ./html
-	pandoc formatting.md -o html/formatting.html
-	pandoc workflow.md -o html/workflow.html
-	pandoc design.md -o html/design.html
+# Pandoc options
+OPTS = -s -V geometry:margin=1in --highlight=tango
+
+# Which sections of the Vision and Scope document do you want to include?
+#    Helpful for submitting class assignments that only want certain sections
+#    Comment out either line
+SECTS = $(sort $(wildcard vision-n-scope/*.md))
+#SECTS = vision-n-scope/0-titlepage.md 
+
+
+all: pdf-docs html-docs
+
+%-docs: formatting.md workflow.md design.md
+	[ ! -d "$*" ] && mkdir $*
+
+	$(PANDOC) formatting.md -o $*/formatting.$* $(OPTS)
+	$(PANDOC) workflow.md -o $*/workflow.$* $(OPTS)
+#	$(PANDOC) design.md -o $*/design.$* $(OPTS)
+	cp design.pdf $*/design.pdf
+	$(PANDOC) $(SECTS) -o $*/vision-n-scope.pdf --metadata-file vision-n-scope/metadata.yml $(OPTS)
 
 clean: 
 	rm -rf ./html ./pdf

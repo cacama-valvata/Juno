@@ -1,0 +1,12 @@
+---
+# do not include title, author
+# hardcoded in title page
+
+numbersections: true
+colorlinks: true
+linkcolor: Bittersweet
+# dont specify toc
+# generated in 0-titlepage.md
+
+fontsize: 12pt
+---
