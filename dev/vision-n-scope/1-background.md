@@ -1,3 +1,5 @@
 # Background
 
-placeholder
+Whether for profit or for fun, the cybersecurity community’s favorite pastime is gamifying hacking; winners of the most prestigious games become world-renowned, such as the [Plaid Parliament of Pwning](https://www.cmu.edu/ini/news/2019/ppp-defcon2019.html). These games generally take one of two forms: Jeopardy-style or Attack & Defense. In Jeopardy-style games, teams attempt to hack into the organizers’ infrastructure. In Attack & Defense games, teams are tasked with attacking other teams’ networks while defending their own. Jeopardy-style games already have numerous existing frameworks for rapid deployment, such as CTFd and Kubernetes. The format inherently lends itself well to deploying at scale: challenges are simple, ephemeral, and isolated from each other.
+
+On the other hand, Attack & Defense games require more sophisticated systems to deploy environments, because each team needs a network of full virtual machines. In addition, the environments are more complicated to create—each network must host a dozen persistent, interdependent services. Because teams are going head to head, the machines must also be exploitable for a wide range of skill levels. Designing networks to fit these constraints can be incredibly time-consuming.
