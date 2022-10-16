@@ -2,7 +2,11 @@ name: Build Development Guide
 
 on:
   push:
-    branches: [ "**", "!main" ]
+    branches-ignore: [ "main" ]
+    paths: [ "dev/**" ]
+
+  pull_request:
+    branches: [ "main" ]
     paths: [ "dev/**" ]
 
 jobs:
