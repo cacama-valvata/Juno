@@ -13,16 +13,25 @@ jobs:
 
   dev-guide:
     runs-on: ubuntu-20.04
+    
     steps:
-      - uses: actions/checkout@v3
-      - uses: docker://pandoc/latex:2.9
-      - name: build
-        run: cd dev && make
-        
-      - uses: marvinpinto/action-automatic-releases@latest
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Build into PDF
+        run: cd dev && make pdf-docs
+
+      - name: Compress into ZIP and TAR.GZ
+        run: |
+          cd dev/pdf
+          zip -r Juno-D-v-All.zip *.pdf
+          tar -czvf Juno-Dev-All.tar.gz *.pdf
+
+      - name: Auto-release
+        uses: marvinpinto/action-automatic-releases@latest
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           title: Latest Development Documents
           prerelease: false
-          automatic_release_tag: dev_guide
-          files: pdf/
+          automatic_release_tag: Juno-Dev-Guide
+          files: dev/pdf/*
