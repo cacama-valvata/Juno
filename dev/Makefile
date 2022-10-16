@@ -3,7 +3,7 @@
 # Either use natively installed pandoc or utilize container with pandoc
 #    Comment out either line
 PANDOC = pandoc
-#PANDOC = docker run --rm -v "$(shell pwd):/data" -u $shell id -u:$(shell id -g) detjensrobert/arch-pandoc
+#PANDOC = docker run --rm -v $(shell pwd):/data detjensrobert/arch-pandoc:full
 
 # Pandoc options
 OPTS = -s -V geometry:margin=1in --highlight=tango
@@ -11,14 +11,15 @@ OPTS = -s -V geometry:margin=1in --highlight=tango
 # Which sections of the Vision and Scope document do you want to include?
 #    Helpful for submitting class assignments that only want certain sections
 #    Comment out either line
-SECTS = $(sort $(wildcard vision-n-scope/*.md))
-#SECTS = vision-n-scope/0-titlepage.md 
+#SECTS = $(sort $(wildcard vision-n-scope/*.md))
+D = vision-n-scope
+SECTS = $(D)/0-titlepage.md $(D)/1-background.md $(D)/2-problem.md
 
 
 all: pdf-docs html-docs
 
 %-docs: formatting.md workflow.md design.md
-	[ ! -d "$*" ] && mkdir $*
+	mkdir -p $*
 
 	$(PANDOC) formatting.md -o $*/formatting.$* $(OPTS)
 	$(PANDOC) workflow.md -o $*/workflow.$* $(OPTS)
