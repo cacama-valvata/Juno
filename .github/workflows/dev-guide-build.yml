@@ -1,0 +1,22 @@
+name: Build Development Guide
+
+on:
+  push:
+    branches-ignore: [ "main" ]
+    paths: [ "dev/**" ]
+
+  pull_request:
+    branches: [ "main" ]
+    paths: [ "dev/**" ]
+
+jobs:
+
+  Build-Dev-Guide:
+    runs-on: ubuntu-20.04
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Build into PDF
+        run: cd dev && make pdf-docs

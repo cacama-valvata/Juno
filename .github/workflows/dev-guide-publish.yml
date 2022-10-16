@@ -1,0 +1,33 @@
+name: Publish Development Guide
+
+on: 
+  push:
+    branches: [ "main" ]
+    paths: [ "dev/**" ]
+
+jobs:
+
+  Publish-Dev-Guide:
+    runs-on: ubuntu-20.04
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Build into PDF
+        run: cd dev && make pdf-docs
+
+      - name: Compress into ZIP and TAR.GZ
+        run: |
+          cd dev/pdf
+          zip -r Juno-Dev-All.zip *.pdf
+          tar -czvf Juno-Dev-All.tar.gz *.pdf
+
+      - name: Auto-release
+        uses: marvinpinto/action-automatic-releases@latest
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          title: Latest Development Documents
+          prerelease: false
+          automatic_release_tag: Juno-Dev-Guide
+          files: dev/pdf/*
