@@ -5,6 +5,21 @@ colorlinks: true
 linkcolor: Bittersweet
 ---
 
+# TL;DR:
+
+1. Submit an issue on Github.
+2. Assign yourself to an issue.
+3. Create a new branch (probably off of main).
+4. Pull on your local repo, switch to new branch.
+5. Write your changes, commit, push, like normal. 
+6. Remember to include new tests, and run your tests locally.
+7. Submit a PR on GitHub, include "Closes #n."
+8. Have checks pass.
+9. Get someone else to review it.
+10. Merge the PR into main, profit.
+
+\pagebreak
+
 # Is there something you think should be worked on?
 
 Submit it as an issue on Github: [https://github.com/cacama-valvata/Juno/issues](https://github.com/cacama-valvata/Juno/issues)
