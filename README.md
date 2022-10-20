@@ -7,8 +7,11 @@ Juno is a self-proposed project for Oregon State University's undergraduate "cap
 # People Involved
 
 Casey Colley - Project Lead
+
 Arian Ghorbani
+
 Carter MacNab
+
 Alex Marx
 
 Yeongjin Jang - Faculty Advisor
