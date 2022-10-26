@@ -13,7 +13,7 @@ OPTS = -s -V geometry:margin=1in --highlight=tango
 #    Comment out either line
 #SECTS = $(sort $(wildcard vision-n-scope/*.md))
 D = vision-n-scope
-SECTS = $(D)/0-titlepage.md $(D)/1-background.md $(D)/2-problem.md
+SECTS = $(D)/0-titlepage.md $(D)/1-background.md $(D)/2-problem.md $(D)/3-solution.md
 
 
 all: pdf-docs html-docs
