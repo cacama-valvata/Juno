@@ -9,7 +9,7 @@
 - The environment is reachable through a network (gated by a Wireguard VPN), which requires setting up virtual networks. This will be measured by pinging the virtual machine via an external machine.
 - The hypervisor is deployable on x86 processors with VT-x support. This will be measured by attempting to deploy a single, lightweight VM after the hypervisor has been installed on x86 processors with VT-x support (which the development team has at least one of). The VM should be successfully deploy and run.
 - The hypervisor can support the most common business and pentesting OS's as VMs. This will be measured by deploying a Windows VM, an Ubuntu VM, and a Kali VM, and checking for generic usability, such as opening a text editor and writing some text. 
-- The program can receive and save player-specific or game-specific settings, and these settings are meaningfully implemented on the deployed environment. This will be tested by choosing an arbitrary vulnerability on both Windows and Linux, having the server deploy an environment with that vulnerability present, and then using Metasploit or a similar tool to test its exploitability on the system. 
+- The program can receive and save player-specific or game-specific settings, and these settings are meaningfully implemented on the deployed environment. This will be tested by choosing an arbitrary vulnerability on both Windows and Linux, having the server deploy an environment with that vulnerability present, and then using AtomicRedTeam or a similar tool to test its exploitability on the system. 
 
 ## Reach Goals
 
