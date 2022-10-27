@@ -34,6 +34,21 @@ An additional risk that will likely be encountered during development will be th
 
 ## Risks
 
-g
+```table
+---
+table-width: 1
+width:
+  - 0.1
+  - 0.2
+  - 0.1
+  - 0.1
+  - 0.1
+  - 0.1
+  - D
+---
+ID,Description,Category,Probability,Performance Indicator,Responsible Party, Action Plan
 
+Field 1,Field 2,Field 3,Field 4,Field 5,Field 6,Field 7
 
+Field 1,Field 2,Field 3,Field 4,Field 5,Field 6, Field 7
+```
