@@ -32,23 +32,38 @@ Scope also comes into play with the second factor mentioned in the time constrai
 
 An additional risk that will likely be encountered during development will be the presence of security vulnerabilities. Due to the fact the stakeholders in this project come from a cybersecurity background and that we anticipate high-level malware on the environment, it will be important to uphold a high standard of security during development. So long as the level is retained, the end product will have a low chance of containing security vulnerabilities.
 
+\pagebreak
+
 ## Risks
 
 ```table
 ---
 table-width: 1
 width:
-  - 0.1
+  - 0.05
   - 0.2
+  - 0.15
+  - 0.05
   - 0.1
-  - 0.1
-  - 0.1
-  - 0.1
+  - 0.15
+  - 0.15
   - D
 ---
-ID,Description,Category,Probability,Performance Indicator,Responsible Party, Action Plan
+ID,Description,Type,Prob.,Impact,Indicator,Responsible,Action Plan
 
-Field 1,Field 2,Field 3,Field 4,Field 5,Field 6,Field 7
+R1,Too granular to complete in time.,Scope,50%,M,Milestones not met.,Project Partner,Avoid
 
-Field 1,Field 2,Field 3,Field 4,Field 5,Field 6, Field 7
+R2,Vulnerability concerns in code.,Technical,25%,H,Code is not passing security tests.,Dev Team,Reduce
+
+R3,Project timeline issue.,Timeline,50%,M,Deliverables not being completed by deadline.,Dev Team,Avoid
+
+R4,Don't have hardware to test hypervisor.,Resources,25%,M,Don't have hardware.,Finance Contact,Transfer
+
+R5,Selected hardware does not have VT-x capabailities.,Resources,25%,H,Unable to test hypervisor.,Finance Contact,Transfer
+
+R6,Components require too many resources to run on laptops.,Scope,40%,L,Components use 90-100% of CPU power or lags significantly.,DevTeam,Retain
+
+R7,Hypervisor takes more than an hour to deploy an environmemt.,Scope,40%,M,Software takes 2+ hours to deploy.,DevTeam,Retain
+
+R8,Nontechnical users are unable to install by themselves.,Scope,50%,M,OSUSEC students struggle to successfully deploy the project on laptops.,DevTeam,Reduce
 ```
