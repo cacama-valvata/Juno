@@ -17,12 +17,12 @@ Juno aims to reduce the barrier to entry into cybersecurity games by automating 
 - The hypervisor should successfully load any given OS
 - The program should successfully cause changes in the designed environment based on user-chosen settings
 - The program should alert the user to successful environment creation once the environment has been created
-- Automatically design vulnerable, interdependent VMs in a business-network context
-- Deploy these networks on-demand on a self-hosted hypervisor
-- Control game access to only the players who requested that game
-- Poll services over the network to score the team and track overall scores
+- The program should utomatically design vulnerable, interdependent VMs in a business-network context
+- The program should deploy these networks on-demand on a self-hosted hypervisor
+- The program should control game access to only the players who requested that game
+- The program should poll services over the network to score the team and track overall scores
 
 ### Non-Functional
 
-- Can deploy a network and get players able to use it within the space of an hour
-- Can correctly save user specifications and load them into a new network in a deterministic/consistent manner
+- The program can deploy a network and get players able to use it within the space of an hour
+- The program can correctly save user specifications and load them into a new network in a deterministic/consistent manner

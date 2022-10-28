@@ -1,3 +1,0 @@
-# Constraints & Risks
-
-placeholder
