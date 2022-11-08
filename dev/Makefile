@@ -26,6 +26,7 @@ all: pdf-docs html-docs
 #	$(PANDOC) design.md -o $*/design.$* $(OPTS)
 	cp design.pdf $*/design.pdf
 	$(PANDOC) $(SECTS) -o $*/vision-n-scope.pdf --metadata-file vision-n-scope/metadata.yml $(OPTS)
+	$(PANDOC) security_design_review.md -o $*/security_design_review.$* $(OPTS)
 
 clean: 
 	rm -rf ./html ./pdf
