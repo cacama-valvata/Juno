@@ -8,5 +8,8 @@ linkcolor: Bittersweet
 # dont specify toc
 # generated in 0-titlepage.md
 
+header-includes:
+  - \usepackage{pdfpages}
+
 fontsize: 12pt
 ---
