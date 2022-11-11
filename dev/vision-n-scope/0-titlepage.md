@@ -21,7 +21,7 @@
   Alex Marx \\
 
   \vfill
-  Draft 4
+  Draft 6
   \end{flushright}
 
 \end{titlepage}
