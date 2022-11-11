@@ -15,14 +15,6 @@ placeholder
 ### Introduction
 
  By the end of Capstone, I'd like to have worked on and completed the player client and scoreboard software necessary for the functionality of our project. I also want to play a role in observing and implementing rigid security rules to ensure our project stays free of potential vulnerability concerns. Developing the player client and focusing on security concerns will allow me to play a role in advising and learning from my fellow teammates during the course of development. 
-### System Architecture
-
-#### Figure 1:
-
-At a high level, Juno will be capable of hosting and deploying attack and defense exercises. The player will be able to connect and be administered a custom environment from which to practice these skills. This environment is made possible through communication between the game, environment, and player info server. 
-
-
-#### Figure 2:
 
 My focus will be on completing would be the player client and scoreboard. While separate, these two portions of Juno are some of the most important as they are the largest medium from which the players interact with the rest of the system. The player client ensures the player is properly connected and ensures that the images and scoreboard information is sent accordingly. 
 
@@ -43,9 +35,6 @@ Write program that sends heartbeats and receives Wireguard configs. Upon receivi
 
 Iteration 2: (3 weeks)
 Write the scoreboard that polls services and accepts flags. Write tests.
-
-Prep (2 weeks):
- Design and write poster.
 
 ## Alex Marx
 
