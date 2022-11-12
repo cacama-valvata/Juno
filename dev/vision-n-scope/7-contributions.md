@@ -22,7 +22,11 @@ By the end of Capstone, I'd like to have worked on and completed the game server
 
 ### System Architecture
 
-placeholder
+Figure 1:
+This is a system where these 5 parts will come together to be able to automatically create and deploy virtual networks of virtual machines for people to practice attacking and defending them. The user can log into the player info server from which they can do a number of things related to competitions such as joining teams or scheduling games. The player info server communicates with the environment architect and the game server to start deploying the required virtual machines with the required settings. The environment architect stores a number of images and vulnerability configurations which it sends as required to the game server so it can deploy the correct virtual machines. The game server creates the virtual machines and sends them to the individual users depending on what they need, whether it be a network of devices or just a specific one.
+
+Figure 2:
+My part specifically is the game server. The parent (main) process running on the server takes in requests for virtual machines that need to be created. It then spawns a child process for each virtual machine needed, which uses KVM and the specified images and configs from the environment architect to create them. It then sends the virtual machines back out to the internet so that the users can access them while communicating with the player info server to manage the VPN configs.
 
 ### User Stories
 
