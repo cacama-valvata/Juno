@@ -11,9 +11,9 @@ OPTS = -s -V geometry:margin=1in --highlight=tango -F pantable
 # Which sections of the Vision and Scope document do you want to include?
 #    Helpful for submitting class assignments that only want certain sections
 #    Comment out either line
-#SECTS = $(sort $(wildcard vision-n-scope/*.md))
 D = vision-n-scope
-SECTS = $(D)/0-titlepage.md $(D)/1-background.md $(D)/2-problem.md $(D)/3-solution.md $(D)/4-evaluation.md $(D)/5-stakeholders.md $(D)/6-constraints.md
+SECTS = $(sort $(wildcard vision-n-scope/*.md))
+#SECTS = $(D)/0-titlepage.md $(D)/1-background.md $(D)/2-problem.md $(D)/3-solution.md $(D)/4-evaluation.md $(D)/5-stakeholders.md $(D)/6-constraints.md $(D)/7-contributions.md 8-iteration.md 9-changelog.md
 
 # Change output file format
 #    Default: pdf
