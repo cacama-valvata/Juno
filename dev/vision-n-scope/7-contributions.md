@@ -92,4 +92,4 @@ placeholder
 
 ## Yeongjin Jang - Faculty Advisor
 
-placeholder
+Dr. Yeongjin Jang is the faculty advisor of the project. His primary contribution to the project is to meet weekly with the Project Lead and offer guidance on technical issues, designs, or project timelines. As a professor, Yeongjin has a stake in this project to use it to teach cybersecurity students in his classes, particularly Cyber Attacks and Defenses. Additionally, as the faculty advisor of OSUSEC, he is also interested in using this project to train teams of OSUSEC members for Attack and Defense games.
