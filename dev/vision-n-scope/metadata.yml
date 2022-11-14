@@ -10,6 +10,10 @@ linkcolor: Bittersweet
 
 header-includes:
   - \usepackage{pdfpages}
+  - \usepackage{fancyhdr}
+  - \pagestyle{fancy}
+  - \fancyhead[L]{\textsl{VISION \& SCOPE DOCUMENT}}
+  - \fancyhead[R]{\textsl{\leftmark}}
 
-fontsize: 12pt
+#fontsize: 12pt
 ---
