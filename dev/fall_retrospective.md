@@ -54,15 +54,27 @@ header-includes:
 \pagebreak
 
 
-# Introduction?
+# Overview
 
-- maybe we don't need this section idk
-- read canvas instructions and decide for yourself
+This fall, the development team proposed Juno - a framework for automatically designing and deploying practice networks for security attack and defense games. The project aims to reduce the barrier to entry into cybersecurity games. By automating environment creation, players can spend more time studying and practicing penetration testing and incident response.
+
+This document serves as an executive summary over the goals and current progress of the Juno development team, as well as expected progress over the next several months.
 
 # Goals
 
-- for entire project
-- for fall term
+By the end of Spring term, the development team plans to have a working system consisting of a KVM-based hypervisor, an environment-creation server, a web-based identity management server, and a player client. Success is measured if these assets can be deployed relatively easily by OSUSEC members, then used to host attack and defense games in a timely manner for team training.
+
+By the end of Fall term, the team planned to identify and write out project requirements, security needs, and potential risks, as well as draw up a technical design and project timeline. Success for this goal is measured by having the following items completed and available:
+
+- Vision and Scope document, outlining:
+  - Project needs
+  - Potential risks during development
+  - Workflow plan for ensuring a high level of security
+- Gantt chart with:
+  - Decomposed tasks per project component
+  - Team members assigned to each task
+  - Estimated start time and time required for completion of each task
+- Technical design drawing
 
 # Progress
 
