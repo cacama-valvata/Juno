@@ -20,7 +20,7 @@ SECTS = $(sort $(wildcard vision-n-scope/*.md))
 OUT = pdf
 
 
-all: out/formatting.$(OUT) out/workflow.$(OUT) out/design.$(OUT) out/capital-request.$(OUT) out/vision-n-scope.$(OUT)
+all: out/formatting.$(OUT) out/workflow.$(OUT) out/design.$(OUT) out/capital-request.$(OUT) out/vision-n-scope.$(OUT) out/fall_retrospective.$(OUT)
 
 out/formatting.%: out/ formatting.md
 	$(PANDOC) formatting.md -o out/formatting.$* $(OPTS)
@@ -37,6 +37,9 @@ out/capital-request.%: out/ capital-request.md
 
 out/vision-n-scope.%: out/ vision-n-scope/*
 	$(PANDOC) $(SECTS) -o out/vision-n-scope.$* --metadata-file vision-n-scope/metadata.yml $(OPTS)
+
+out/fall_retrospective.%: out/ fall_retrospective.md
+	$(PANDOC) fall_retrospective.md -o out/fall_retrospective.$* $(OPTS)
 
 out/:
 	mkdir -p out/
