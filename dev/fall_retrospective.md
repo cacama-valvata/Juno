@@ -92,7 +92,25 @@ Lastly, the project's chief userbase are members of OSUSEC: they should be able 
 
 # Project Timeline
 
-- someone draw a bare bones chart of this based on the gantt chart
-- only winter and spring term
-- summarize the tasks into the component "hypervisor", etc
-- put chart in /images folder and embed here
+```table
+---
+table-width: 1
+markdown: True
+width:
+  - 0.2
+  - 0.2
+  - D
+alignment: CCD
+---
+Iteration,Completion Date,Summary
+
+Planning,December 2nd,"Write Vision and Scope document, lay out project timeline, and draw the project design."
+
+Iteration 0,February 3rd,"Build mockup of system out of pre-built components wrapped in python scripts. The SSH shell part of the player client is built from scratch instead of out of pre-built components."
+
+Iteration 1,March 17th,"Incrementally replace components from Iteration 0 with self-written ones. Hypervisor: parent process that dispatches to QEMU. Identity Server: interfaces with other components. Env Architect: interfaces that receives instructions and sends back disk images. Player Client: write client daemon that instantiates VPN configs received from SSH shell."
+
+Iteration 2,April 28th,"Incrementally replace components from Iteration 0 with self-written ones. Hypervisor: hardware emulation, replace QEMU. Identity Server: website backend and service-polling scoreboard. Env Architect: generates and sends config scripts."
+
+Expo Prep,June 9th,"Design poster and prepare a live demo for expo."
+```
