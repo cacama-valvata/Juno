@@ -78,19 +78,7 @@ By the end of Fall term, the team planned to identify and write out project requ
 
 # Progress
 
-This fall, the development team succeeded in their goals of identifying requirements and risks, creating a project timeline, and drawing a technical design of the project. Our deliverables include:
-
-- Vision and Scope document, outlining:
-  - Project needs
-  - Potential risks during development
-  - Workflow plan for ensuring a high level of security
-- Gantt chart with:
-  - Decomposed tasks per project component
-  - Team members assigned to each task
-  - Estimated start time and time required for completion of each task
-- Technical design drawing
-
-The technical design will need to undergo some revisions in response to the team's Security Design Review, however the initial project design is finished and available for presentation.
+This fall, the development team succeeded in their goals of identifying requirements and risks, creating a project timeline, and drawing a technical design of the project. Our deliverables include the Vision and Scope document, a Gantt chart outlining tasks and estimated dates of completion for each iteration, and a project design. The design will need to undergo some revisions in response to the team's Security Design Review, however the initial project design is finished and available for presentation.
 
 # Risks and Mitigation
 
