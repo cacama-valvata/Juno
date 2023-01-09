@@ -3,4 +3,4 @@
 	url = git@github.com:cacama-valvata/Glass.git
 [submodule "CTFd"]
 	path = CTFd
-	url = https://github.com/CTFd/CTFd
+	url = https://github.com/arighorbani/CTFd
