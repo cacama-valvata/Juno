@@ -1,9 +1,7 @@
 /******************************
- * Program 3: SmallSh
- * Name: Casey Colley
- * Email: colleyc@oregonstate.edu
- * Date: 05/03/21
- * 
+ * Program 3: juno shell client
+ * Name: Casey Colley & Carter
+ *
  * DRIVER FILE
  *****************************/
  
@@ -164,37 +162,19 @@ void wgupdate( struct command* C){
 
   //use exec to scp generated file
 
-  // read generated file
   char wg_config[4096];
-  FILE *fp = fopen("/etc/wireguard/wg0.conf", "r");
-  if (fp == NULL) {
-      perror("fopen");
-  }
-  fread(wg_config, 1, sizeof(wg_config), fp);
-  fclose(fp);
-
-  //recieve config
-  printf("here is your config: %s", wg_config);
-
-
-  
+  //print config to standard out
+   printf("here is my public key %s\n", wg_config);
 
   return;
 }
 
-void wgsend( struct command* C){
+void wgsend(){
 
+  //prompt user to input config manually (for now)
+  
 
-  // Read in the WireGuard configuration from a file
-  char wg_config[4096];
-  FILE *fp = fopen("/etc/wireguard/wg0.conf", "r");
-  if (fp == NULL) {
-      perror("fopen");
-  }
-  fread(wg_config, 1, sizeof(wg_config), fp);
-  fclose(fp);
-
-  //send config
+  //send config to server 
   printf("Wireguard Config: %s", wg_config);
 
   return;
@@ -442,10 +422,14 @@ int main() {
   laststatus->status = -5;
   laststatus->signal = -5;
 
+
+  //magically accept the ssh connection
+
   int q = 0;
   while (q != 1) {
     q = menu(activechilds, laststatus);
   }
+  
   printf("\n");
   fflush(stdout);
 
@@ -458,6 +442,9 @@ int main() {
   }
   free(activechilds);
   free(laststatus);
+  
+  // Close the connection and free resources
+
   return EXIT_SUCCESS;
 }
  

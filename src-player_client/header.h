@@ -1,11 +1,10 @@
 /******************************
- * Program 3: SmallSh
- * Name: Casey Colley
- * Email: colleyc@oregonstate.edu
- * Date: 05/03/21
- * 
+ * Program 3: juno shell client
+ * Name: Casey Colley & Carter
+ *
  * HEADER FILE
  *****************************/
+
  
 #include <stdio.h>
 #include <stdlib.h>
@@ -18,6 +17,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <sys/wait.h>
+#include <libssh/libssh.h>
 
 
 
