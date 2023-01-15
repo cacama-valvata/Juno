@@ -11,3 +11,29 @@ PUB_KEY=$1
 
 # search the file for the key and print the entire line
 grep "$PUBKEY" "$AUTH_KEYS_FILE"
+
+
+# #########################################
+# PROOF OF CONCEPT - TESTING CONTEXTS
+#
+# An openssh server set up locally.
+# sshd_config:
+# ```
+# AuthorizedKeysCommand /bin/bash -c "/home/casey/Repos/Juno/src-player_client/keygrep.sh %k"
+# AuthorizedKeysCommandUser root
+# ```
+# A target ssh user `self_shell` with Bash shell
+# No 'authorized_keys' file for `self_shell`
+#
+# In 'authorized_keys.bak', a command and a public key on one line, like:
+# ```
+# command="export APPUSER='thisisanappusername' && printenv APPUSER" ssh-rsa AAAAB... ...user@hostname
+# ```
+# 
+# Upon login with the appropriate key, you should see:
+# ```
+# $ ssh -i .ssh/self self_shell@localhost
+# thisisanappusername
+# Connection to localhost closed.
+# ```
+# #########################################
