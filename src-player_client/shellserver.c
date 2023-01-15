@@ -2,6 +2,8 @@
 #include <stdio.h>
 #include <string.h>
 
+// somehow detect incoming connection
+
 void heartbeat()
 {
 
@@ -53,7 +55,7 @@ void wgsend()
 
 int main() {
     char user_input[4096];
-    
+
     // very simple menuing 
     while(1)
     {
