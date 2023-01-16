@@ -22,18 +22,18 @@ grep "$PUBKEY" "$AUTH_KEYS_FILE"
 # AuthorizedKeysCommand /bin/bash -c "/home/casey/Repos/Juno/src-player_client/keygrep.sh %k"
 # AuthorizedKeysCommandUser root
 # ```
-# A target ssh user `self_shell` with Bash shell
+# A target ssh user `self_shell` with 'shellserver.out' shell
 # No 'authorized_keys' file for `self_shell`
 #
 # In 'authorized_keys.bak', a command and a public key on one line, like:
 # ```
-# command="export APPUSER='thisisanappusername' && printenv APPUSER" ssh-rsa AAAAB... ...user@hostname
+# command="login appusername" ssh-rsa AAAAB... ...user@hostname
 # ```
 # 
 # Upon login with the appropriate key, you should see:
 # ```
-# $ ssh -i .ssh/self self_shell@localhost
-# thisisanappusername
-# Connection to localhost closed.
+# $ ssh -i .ssh/self self_shell@localhost heartbeat
+# Hello, appusername.
+# here is your heartbeat :D
 # ```
 # #########################################
