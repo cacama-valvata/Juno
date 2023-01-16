@@ -1,15 +1,12 @@
 #include <unistd.h>
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 
-char* login_user = NULL;
+const char * const allowed_chars = "abcdefghijklmnopqrstuvwxyz0123456789_";
 
+char* session_user = NULL;
 
-void login (char* username)
-{
-    if (!login_user)
-        login_user = username;
-}
 
 void heartbeat()
 {
@@ -60,21 +57,13 @@ void wgsend()
 
 void menu (char* user_input)
 {
-    if(strcmp(user_input, "heartbeat\n") == 0 )
+        if(strcmp(user_input, "heartbeat\n") == 0 )
             heartbeat();
         else if(strcmp(user_input, "wgupdate\n")  == 0 )
         {
             printf("\nPlease Enter Your key: ");
             fgets(user_input, sizeof(user_input), stdin);
             wgupdate(user_input);
-        }
-        else if (! strcmp (user_input, "login\n"))
-        {
-            char username [256];
-            printf("Username: ");
-            fgets(username, sizeof(username), stdin);
-            login (username);
-            printf("%s\n", login_user);
         }
         else if(strcmp(user_input, "wgsend\n")  == 0 )
             wgsend();
@@ -84,30 +73,69 @@ void menu (char* user_input)
             printf("UNKNOWN\n");
 }
 
+int login (char* c)
+{
+    char* command = (char*) calloc (4096, sizeof (char));
+    memcpy (command, c, strlen(c));
+    char* arg = strtok (command, " ");
+
+    if (strcmp (arg, "login"))
+        return 1;
+
+    arg = strtok (NULL, " ");
+
+    if (! arg)
+        return 1;
+
+    if (strspn (arg, allowed_chars) < strlen (arg))
+        return 1;
+
+    session_user = (char*) calloc (strlen (arg) + 1, sizeof (char));
+    memcpy (session_user, arg, strlen (arg));
+
+    // free
+
+    return 0;
+}
+
 int main(int argc, char* argv[]) {
     
-    //char* command = NULL;
+    char* command = (char*) calloc (4096, sizeof (char));
 
-    if (argc > 2)
+    // non-interactive
+    if (argc > 2 && !strcmp (argv[1], "-c"))
     {
-        if (! strcmp (argv[1], "-c"))
-        {
-            menu (argv[2]);
-            return 0;
-        }
-    }
-    
-    char user_input[4096];
+        login (argv[2]);
+        printf ("Hello, %s.\n", session_user);
 
-    // very simple menuing 
+        // SSH_ORIGINAL_COMMAND
+    }
+
     while(1)
     {
+        memset (command, '\0', 4096);
         printf("\nPlease enter some text: ");
-        fgets(user_input, sizeof(user_input), stdin);
-
-        menu (user_input);
+        fgets(command, 4095, stdin);
+        printf("%s", command);
+        menu (command);
     }
 
+    // interactive
+    /*else
+    {
+        while(1)
+        {
+            printf("\nPlease enter some text: ");
+            fgets(command, sizeof(command), stdin);
+
+            menu (command);
+        }
+    }*/
+
+    // cleanup
+    free (command);
+    if (session_user)
+        free (session_user);
 
     return 0;
 }
