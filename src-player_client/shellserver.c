@@ -2,7 +2,14 @@
 #include <stdio.h>
 #include <string.h>
 
-// somehow detect incoming connection
+char* login_user = NULL;
+
+
+void login (char* username)
+{
+    if (!login_user)
+        login_user = username;
+}
 
 void heartbeat()
 {
@@ -51,9 +58,45 @@ void wgsend()
     printf("completed file: %s", concatenated_string);
 }
 
+void menu (char* user_input)
+{
+    if(strcmp(user_input, "heartbeat\n") == 0 )
+            heartbeat();
+        else if(strcmp(user_input, "wgupdate\n")  == 0 )
+        {
+            printf("\nPlease Enter Your key: ");
+            fgets(user_input, sizeof(user_input), stdin);
+            wgupdate(user_input);
+        }
+        else if (! strcmp (user_input, "login\n"))
+        {
+            char username [256];
+            printf("Username: ");
+            fgets(username, sizeof(username), stdin);
+            login (username);
+            printf("%s\n", login_user);
+        }
+        else if(strcmp(user_input, "wgsend\n")  == 0 )
+            wgsend();
+        //else if(strcmp(user_input, "stop\n") == 0 )
+        //    break;
+        else
+            printf("UNKNOWN\n");
+}
 
+int main(int argc, char* argv[]) {
+    
+    //char* command = NULL;
 
-int main() {
+    if (argc > 2)
+    {
+        if (! strcmp (argv[1], "-c"))
+        {
+            menu (argv[2]);
+            return 0;
+        }
+    }
+    
     char user_input[4096];
 
     // very simple menuing 
@@ -62,27 +105,9 @@ int main() {
         printf("\nPlease enter some text: ");
         fgets(user_input, sizeof(user_input), stdin);
 
-        if(strcmp(user_input, "heartbeat\n") == 0 )
-            heartbeat();
-        
-        
-        else if(strcmp(user_input, "wgupdate\n")  == 0 )
-        {
-            printf("\nPlease Enter Your key: ");
-            fgets(user_input, sizeof(user_input), stdin);
-            wgupdate(user_input);
-        }
-           
-        else if(strcmp(user_input, "wgsend\n")  == 0 )
-            wgsend();
-
-        else if(strcmp(user_input, "stop\n") == 0 )
-            break;
-
-        else
-            printf("UNKNOWN\n");
+        menu (user_input);
     }
- 
+
 
     return 0;
 }
