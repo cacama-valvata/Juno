@@ -55,22 +55,36 @@ void wgsend()
     printf("completed file: %s", concatenated_string);
 }
 
-void menu (char* user_input)
+void run_command (char* c)
 {
-        if(strcmp(user_input, "heartbeat\n") == 0 )
-            heartbeat();
-        else if(strcmp(user_input, "wgupdate\n")  == 0 )
-        {
-            printf("\nPlease Enter Your key: ");
-            fgets(user_input, sizeof(user_input), stdin);
-            wgupdate(user_input);
-        }
-        else if(strcmp(user_input, "wgsend\n")  == 0 )
-            wgsend();
-        //else if(strcmp(user_input, "stop\n") == 0 )
-        //    break;
-        else
-            printf("UNKNOWN\n");
+    if (! c)
+        return;
+    
+    char* command = (char*) calloc (4096, sizeof (char));
+    memcpy (command, c, strlen (c));
+    char* arg = strtok (command, " ");
+
+    if(strcmp(arg, "heartbeat") == 0 )
+    {
+        heartbeat();
+    }
+    else if(strcmp(arg, "wgupdate")  == 0 )
+    {
+        //printf("\nPlease Enter Your key: ");
+        //fgets(c, sizeof(c), stdin);
+        arg = strtok (NULL, " ");
+        if (! arg)
+            return;
+        wgupdate(arg);
+    }
+    else if(strcmp(arg, "wgsend")  == 0 )
+    {
+        wgsend();
+    }
+    else
+    {
+        printf("Unknown command.\n");
+    }
 }
 
 int login (char* c)
@@ -93,47 +107,30 @@ int login (char* c)
     session_user = (char*) calloc (strlen (arg) + 1, sizeof (char));
     memcpy (session_user, arg, strlen (arg));
 
-    // free
+    free (command);
 
     return 0;
 }
 
 int main(int argc, char* argv[]) {
-    
-    char* command = (char*) calloc (4096, sizeof (char));
 
-    // non-interactive
+    // non-interactive commands
     if (argc > 2 && !strcmp (argv[1], "-c"))
     {
-        login (argv[2]);
+        int r = login (argv[2]);
+        if (r)
+            // free session_user
+            return 1;
         printf ("Hello, %s.\n", session_user);
 
         // SSH_ORIGINAL_COMMAND
+        run_command (getenv ("SSH_ORIGINAL_COMMAND"));
     }
-
-    while(1)
-    {
-        memset (command, '\0', 4096);
-        printf("\nPlease enter some text: ");
-        fgets(command, 4095, stdin);
-        printf("%s", command);
-        menu (command);
-    }
-
     // interactive
-    /*else
-    {
-        while(1)
-        {
-            printf("\nPlease enter some text: ");
-            fgets(command, sizeof(command), stdin);
-
-            menu (command);
-        }
-    }*/
+    else
+        printf ("Interactive sessions are not allowed. Goodbye!\n");
 
     // cleanup
-    free (command);
     if (session_user)
         free (session_user);
 
