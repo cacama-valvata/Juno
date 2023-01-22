@@ -68,8 +68,6 @@ void execdb(char *username, char *password, char* query, char* buf)
         close(pipefd[0]);
         wait(NULL);
     }
-
-
 }
 
 

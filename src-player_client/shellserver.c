@@ -1,6 +1,12 @@
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
 #include <string.h>
+#include <sys/wait.h>
+
+
+#define BUFSIZE 256
+#define INPUTLEN 32
 
 /* 
  * Usernames can only be composed of
@@ -16,11 +22,171 @@ const char * const allowed_chars = "abcdefghijklmnopqrstuvwxyz0123456789_";
  */
 char* session_user = NULL;
 
-
-void heartbeat ()
+void read_credentials(char *username, char *password)
 {
-    // poke arians db to ensure its still alive
-    printf ("here is your heartbeat :D\n");
+    FILE *file;
+    file = fopen("credentials.txt", "r");
+    if (file == NULL) {
+        printf("Error opening file");
+        return;
+    }
+    fgets(username, INPUTLEN, file);
+    fgets(password, INPUTLEN, file);
+    fclose(file);
+}
+
+void execdb(char *username, char *password, char* query, char* buf)
+{
+
+    int pipefd[2];
+    pid_t pid;
+    int bytes_read; 
+
+
+
+    if (pipe(pipefd) == -1)
+    {
+        perror("pipe");
+        return;
+    }
+
+    pid = fork();
+    if (pid == -1)
+    {
+        perror("fork");
+        return;
+    }
+
+    if (pid == 0) 
+    {  
+        // child process
+        close(pipefd[0]);  // close unused read end
+        dup2(pipefd[1], STDOUT_FILENO);  // redirect stdout to write end of pipe
+
+        // construct SQL query to check for unique user with this public key
+
+        execl("/usr/bin/mysql", "mysql", "-u", "user", "-p", "password", "-e", query, NULL);
+    } 
+
+    else 
+    {  
+        // parent process
+        close(pipefd[1]);
+        bytes_read = read(pipefd[0], buf, BUFSIZE);
+        if (bytes_read > 0) 
+        {
+            buf[bytes_read] = '\0';
+            printf("%s", buf);
+        }
+        close(pipefd[0]);
+        wait(NULL);
+    }
+}
+
+void retrieve_conf(char* key, char* username, char* password, char* gameid)
+{
+    char *query;
+    char buf[BUFSIZE];
+
+    query = "SELECT, ready FROM games, where gameid = '";
+    query = strcat(query, gameid);
+    query = strcat(query, "';");
+    execdb(username,password,query, buf);
+
+    //pase buf into simple output
+
+    //IF GAME READY
+    if(strcmp(buf,"1") == 0)
+    {
+        // use exec for WG server
+        printf("here is your new config %s", key);
+    }
+
+        //no game user must wait
+    else
+        printf("game has not finished initializing");
+
+    return;
+}
+
+
+void heartbeat (char* key, char* username, char* password)
+{
+    char *query;
+    char buf[BUFSIZE];
+    char userid[BUFSIZE];
+    char gameid[BUFSIZE];
+    char passarg[(strlen(password) + 2)];
+
+    strcat(passarg,"-p");
+    strcat(passarg,password);
+
+    //grab user id to search for games
+    query = "SELECT, user_id FROM devices, where pubkey = '";
+    query = strcat(query, key);
+    query = strcat(query, "';");
+    execdb(username,password,query, buf);
+
+    //parse buf into simple output
+    strcpy(userid, buf);
+
+    //search for games w/ user id
+    query = "SELECT, game_id FROM game_players, where userid = '";
+    query = strcat(query, buf);
+    query = strcat(query, "';");
+    execdb(username,password,query, buf);
+
+    //parse buf into simple output
+    strcpy(gameid, buf);
+    
+    if(buf == NULL)
+    {
+        printf("NO GAMES");
+        return;
+    }
+
+    //figure out if game is in the present or past
+    query = "SELECT, end_time FROM game,where NOT ENDED & userid = '";
+    query = strcat(query, buf);
+    query = strcat(query, "';");
+    execdb(username,password,query, buf);
+
+    //parse buf into simple output
+
+    // IF GAME IS IN THE PAST > MAKE A NEW CONFIG (SOME EXEC MAGIC)
+    if(buf == NULL)
+    {
+        printf("make a new public key");
+        return;
+    }
+
+    //VERIFY USER KEY
+    query = "SELECT, wg_pubkey FROM game_players, userid = '";
+    query = strcat(query, userid);
+    query = strcat(query, "';");
+    execdb(username,password,query, buf);
+
+    //if not eequal, update (DONT KNOW HOW)
+    if(strcmp(buf,key) != 0)
+    {
+        query = "UPDATE, wg_pubkey FROM game_players, userid = '";
+        query = strcat(query, userid);
+        query = strcat(query, "';");
+        execdb(username,password,query, buf);
+
+        printf("key updated");
+        retrieve_conf(key, username, password, gameid);
+        return;
+    }
+
+    //if key is equal generate that sweet sweet config
+    else
+    {
+        printf("key already added!");
+        retrieve_conf(key, username, password, gameid);
+        return;
+    }
+
     return;
 }
 
@@ -71,6 +237,10 @@ void run_command (char* c)
     if (! c)
         return;
 
+    //grab credentials from auth file for later query
+    char username[INPUTLEN], password[INPUTLEN];
+    read_credentials(username, password); 
+
     // each function should check that were logged in!
     
     // copy the argument for tok'ing
@@ -81,7 +251,13 @@ void run_command (char* c)
 
     if (! strcmp (arg, "heartbeat"))
     {
-        heartbeat ();
+        arg = strtok (NULL, " ");
+        if (! arg)
+        {
+            free (command);
+            return;
+        }
+        heartbeat (arg, username, password);
     }
     else if (! strcmp(arg, "wgupdate"))
     {
@@ -155,6 +331,7 @@ void cleanup ()
     if (session_user)
         free (session_user);
 }
+
 
 int main (int argc, char* argv[]) 
 {
