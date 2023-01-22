@@ -125,7 +125,7 @@ void heartbeat (char* key, char* username, char* password)
     query = "SELECT, user_id FROM devices, where pubkey = '";
     query = strcat(query, key);
     query = strcat(query, "';");
-    execdb(username,password,query, buf);
+    execdb(username,passarg,query, buf);
 
     //parse buf into simple output
     strcpy(userid, buf);
@@ -134,7 +134,7 @@ void heartbeat (char* key, char* username, char* password)
     query = "SELECT, game_id FROM game_players, where userid = '";
     query = strcat(query, buf);
     query = strcat(query, "';");
-    execdb(username,password,query, buf);
+    execdb(username,passarg,query, buf);
 
     //parse buf into simple output
     strcpy(gameid, buf);
@@ -149,7 +149,7 @@ void heartbeat (char* key, char* username, char* password)
     query = "SELECT, end_time FROM game,where NOT ENDED & userid = '";
     query = strcat(query, buf);
     query = strcat(query, "';");
-    execdb(username,password,query, buf);
+    execdb(username,passarg,query, buf);
 
     //parse buf into simple output
 
@@ -164,7 +164,7 @@ void heartbeat (char* key, char* username, char* password)
     query = "SELECT, wg_pubkey FROM game_players, userid = '";
     query = strcat(query, userid);
     query = strcat(query, "';");
-    execdb(username,password,query, buf);
+    execdb(username,passarg,query, buf);
 
     //if not eequal, update (DONT KNOW HOW)
     if(strcmp(buf,key) != 0)
@@ -172,10 +172,10 @@ void heartbeat (char* key, char* username, char* password)
         query = "UPDATE, wg_pubkey FROM game_players, userid = '";
         query = strcat(query, userid);
         query = strcat(query, "';");
-        execdb(username,password,query, buf);
+        execdb(username,passarg,query, buf);
 
         printf("key updated");
-        retrieve_conf(key, username, password, gameid);
+        retrieve_conf(key, username, passarg, gameid);
         return;
     }
 
@@ -183,7 +183,7 @@ void heartbeat (char* key, char* username, char* password)
     else
     {
         printf("key already added!");
-        retrieve_conf(key, username, password, gameid);
+        retrieve_conf(key, username, passarg, gameid);
         return;
     }
 
