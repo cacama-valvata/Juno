@@ -1,12 +1,17 @@
 ## Makefile
+CC = gcc --std=gnu99 -Wall
 
-CC = gcc -std=gnu99 -g -Wall
-exe_file = smallsh
 
-all: $(exe_file)
+all: playerclient shellserver sshauth
 
-$(exe_file): playershell.c header.h wireguard.h wireguard.c	
-	$(CC) playershell.c wireguard.c -o $(exe_file)
+playerclient.out: playerclientNOlibshh.c wireguard.h wireguard.c	
+	$(CC) playerclientNOlibshh.c wireguard.c -o playerclient.out
+
+shellserver.out: shellserver.c
+	$(CC) shellserver.c -o shellserver.out
+
+sshauth.out: smallsh_ssh_auth.c 
+	$(CC) smallsh_ssh_auth.c -o sshauth.out
 
 clean:
-	rm -f *.o $(exe_file)
+	rm -f *.o *.out
