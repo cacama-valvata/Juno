@@ -53,14 +53,29 @@ void execdb(char *username, char *password, char* query, char* buf)
     } 
 
     else 
-    {  
+    {
         // parent process
         close(pipefd[1]);
         bytes_read = read(pipefd[0], buf, BUFSIZE);
-        if (bytes_read > 0) 
-        {
-            buf[bytes_read] = '\0';
-            printf("%s", buf);
+        buf[bytes_read] = '\0';
+
+        char *line = strtok(buf, "\n");
+        while (line != NULL) {
+            if (strncmp(line, "|", 1) == 0) {
+                char *column = strtok(line, "|");
+                int i = 0;
+                while (column != NULL) 
+                {
+                    if (i == 1) 
+                    {
+                        //Do SOMETHING  with the info, for now print
+                        printf("%s\n", column);
+                    }
+                    i++;
+                    column = strtok(NULL, "|");
+                }
+            }
+            line = strtok(NULL, "\n");
         }
         close(pipefd[0]);
         wait(NULL);
