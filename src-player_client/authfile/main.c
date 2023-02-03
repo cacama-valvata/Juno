@@ -27,6 +27,7 @@ int main(int argc, char *argv[])
 
     if(strcmp(buf,"1") == 0)
     {
+        //TO DO: Fix query
         //grab actual username 
         query = "SELECT ALL, username FROM users WHERE pubkey = '";
         query = strcat(query, &pubkey_decoded);

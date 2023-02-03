@@ -73,12 +73,12 @@ int check_key(char *pubkey, char *privkey) {
     FILE *file;
    
     // read file
-    file = fopen("keypair.txt", "r");
+    file = fopen("/etc/wireguard/wg0.conf", "r");
     if (file == NULL) {
         return 0;
     }
 
-    // grab first two lines
+    //TO DO: CHANGE KEY PARSE METHOD
     fgets(pubkey, 32, file);
     fgets(privkey, 32, file);
 

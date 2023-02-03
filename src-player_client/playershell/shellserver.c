@@ -97,7 +97,7 @@ void retrieve_conf(char* key, char* username, char* password, char* gameid)
     //IF GAME READY
     if(strcmp(buf,"1") == 0)
     {
-        // use exec for WG server
+        // TODO: How to generate WG config
         printf("here is your new config %s", key);
     }
 
@@ -127,7 +127,7 @@ void heartbeat (char* key, char* username, char* password)
     char gameid[BUFSIZE];
     char* passarg = append_p(password);
 
-
+    //TO DO: Fix query
     //grab user id to search for games
     query = "SELECT, user_id FROM devices, where pubkey = '";
     query = strcat(query, key);
@@ -137,6 +137,7 @@ void heartbeat (char* key, char* username, char* password)
     //parse buf into simple output
     strcpy(userid, buf);
 
+    //TO DO: Fix query
     //search for games w/ user id
     query = "SELECT, game_id FROM game_players, where userid = '";
     query = strcat(query, buf);
@@ -152,6 +153,8 @@ void heartbeat (char* key, char* username, char* password)
         return;
     }
 
+
+    //TO DO: Fix query
     //figure out if game is in the present or past
     query = "SELECT, end_time FROM game,where NOT ENDED & userid = '";
     query = strcat(query, buf);
@@ -167,6 +170,7 @@ void heartbeat (char* key, char* username, char* password)
         return;
     }
 
+    //TO DO: Fix query
     //VERIFY USER KEY
     query = "SELECT, wg_pubkey FROM game_players, userid = '";
     query = strcat(query, userid);
