@@ -7,21 +7,25 @@
 int main(int argc, char *argv[])
 {
     //char pubkey = 'x';
-    char pubkey_decoded = 'x';
-    char *query;
+    char pubkey_decoded[451] = "x";
+    char query[1000];
     char buf[BUFSIZE];
     char username[INPUTLEN], password[INPUTLEN];
     
     //grab creds for db query
-    read_credentials(username, password);
+    if(read_credentials(username, password) == 1)
+        return 1;
+    
+    //append password format
+    char* passarg = append_p(password);
 
     //grab and decode pubkey
 
-    query = "SELECT COUNT(*), username FROM users WHERE pubkey = '";
-    query = strcat(query, &pubkey_decoded);
-    query = strcat(query, "';");
+    strcat(query,"SELECT COUNT(*), username FROM users WHERE pubkey = '");
+    strcat(query, pubkey_decoded);
+    strcat(query, "';");
 
-    execdb(username, password, query, buf);
+    execdb(username, passarg, query, buf);
 
     //parse buf into simple output
 
@@ -29,16 +33,16 @@ int main(int argc, char *argv[])
     {
         //TO DO: Fix query
         //grab actual username 
-        query = "SELECT ALL, username FROM users WHERE pubkey = '";
-        query = strcat(query, &pubkey_decoded);
-        query = strcat(query, "';");
+        strcat(query,"SELECT ALL, username FROM users WHERE pubkey = '");
+        strcat(query, pubkey_decoded);
+        strcat(query, "';");
 
-        execdb(username, password, query, buf);
+        execdb(username, passarg, query, buf);
 
         //parse buf into simple output
 
         // send command to login and replace program w/ shell
-        execl("/usr/bin/", "login", buf, "ssh-key", &pubkey_decoded,  NULL);
+        execl("/usr/bin/", "login", buf, "ssh-key", pubkey_decoded,  NULL);
     }
         
 

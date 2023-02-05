@@ -8,7 +8,7 @@
 #include <sys/wait.h>
 
 
-void read_credentials(char *username, char *password);
+int read_credentials(char *username, char *password);
 void execdb(char *username, char *password, char* query, char* buf);
 void retrieve_conf(char* key, char* username, char* password, char* gameid);
 char *append_p(const char *str);

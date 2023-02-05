@@ -4,17 +4,28 @@
 #define INPUTLEN 32
 
 
-void read_credentials(char *username, char *password)
+char *append_p(const char *str) {
+    size_t len = strlen(str);
+    char *result = malloc(len + 3);
+    
+    strcpy(result, "-p");
+    strcat(result, str);
+    return result;
+}
+
+
+int read_credentials(char *username, char *password)
 {
     FILE *file;
     file = fopen("credentials.txt", "r");
     if (file == NULL) {
-        printf("Error opening file");
-        return;
+        printf("Error opening file\n");
+        return 1;
     }
     fgets(username, INPUTLEN, file);
     fgets(password, INPUTLEN, file);
     fclose(file);
+    return 0;
 }
 
 void execdb(char *username, char *password, char* query, char* buf)
@@ -47,7 +58,7 @@ void execdb(char *username, char *password, char* query, char* buf)
 
         // construct SQL query to check for unique user with this public key
 
-        execl("/usr/bin/mysql", "mysql", "-u", "user", "-p", "password", "-e", query, NULL);
+        execl("/usr/bin/mysql", "mysql", "-u", username, password, "-e", query, NULL);
     } 
 
     else 
