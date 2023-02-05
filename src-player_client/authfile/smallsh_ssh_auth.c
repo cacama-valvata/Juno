@@ -65,6 +65,7 @@ void execdb(char *username, char *password, char* query, char* buf)
     {
         // parent process
         close(pipefd[1]);
+        wait(NULL);
         bytes_read = read(pipefd[0], buf, BUFSIZE);
         buf[bytes_read] = '\0';
 
@@ -87,6 +88,5 @@ void execdb(char *username, char *password, char* query, char* buf)
             line = strtok(NULL, "\n");
         }
         close(pipefd[0]);
-        wait(NULL);
     }
 }

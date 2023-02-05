@@ -1,12 +1,14 @@
 ## Makefile
 
 CC = gcc -std=gnu99 -g -Wall
-exe_file = playerclient
 
-all: $(exe_file)
 
-$(exe_file): main.c wireguard.h wireguard.c playerclient.h playerclient.c
-	$(CC) main.c wireguard.c playerclient.c -o $(exe_file)
+client: main.c playerclient.c playerclient.h wireguard.c wireguard.h
+	$(CC) main.c playerclient.c wireguard.c -o client
+
+
+testfile: test.c playerclient.c playerclient.h
+	$(CC) test.c playerclient.c -o testfile
 
 clean:
-	rm -f *.o $(exe_file)
+	rm -f *.o client testfile
