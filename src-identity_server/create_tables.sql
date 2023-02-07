@@ -14,7 +14,9 @@ CREATE TABLE users (
 
 CREATE TABLE devices (
 	keyname VARCHAR(255) NOT NULL,
+	ssh_prefix VARCHAR(63) NOT NULL,
 	ssh_pubkey VARCHAR(600) NOT NULL,
+	ssh_suffix VARCHAR(255) NOT NULL,
 	userid INT UNSIGNED NOT NULL,
 	last_seen DATETIME,
 	PRIMARY KEY (ssh_pubkey),
