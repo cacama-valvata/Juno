@@ -64,3 +64,4 @@ Module.symvers
 Mkfile.old
 dkms.conf
 src-player_client/smallsh
+src-player_client/authfile/testdbquery.c
