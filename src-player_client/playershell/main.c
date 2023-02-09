@@ -13,6 +13,7 @@ const char * const allowed_chars = "abcdefghijklmnopqrstuvwxyz0123456789_";
  * Authenticated by SSH server
  */
 char* session_user = NULL;
+void cleanup ();
 
 int login (char* c)
 {

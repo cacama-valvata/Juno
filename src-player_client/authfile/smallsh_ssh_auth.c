@@ -33,9 +33,7 @@ int read_credentials(char *username, char *password)
     username[len - 1] = '\0';
 
     fclose(file);
-
-    //printf("First line(%d): %s\n", strlen(username), username);
-    //printf("Second line(%d): %s\n", strlen(password),password);
+    
     return 0;
 }
 
