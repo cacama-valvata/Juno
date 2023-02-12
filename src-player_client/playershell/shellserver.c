@@ -34,7 +34,6 @@ void execdb(char *username, char *password, char* query, char* buf)
 
     int pipefd[2];
     pid_t pid;
-    int bytes_read; 
 
     if (pipe(pipefd) == -1)
     {
@@ -120,7 +119,7 @@ void retrieve_conf(char* key, char* username, char* password, char* gameid)
 
     memset(query,0,1000);
 
-    strcat(query,"SELECT, ready FROM games, where gameid = '");
+    strcat(query,"Use Juno; SELECT username FROM users WHERE userid = '");
     strcat(query, gameid);
     strcat(query, "';");
     execdb(username,password,query, buf);
@@ -154,17 +153,19 @@ char *append_p(const char *str) {
 
 void heartbeat (char* key, char* username, char* password)
 {
-    char *query;
+    char query[1000];
     char buf[BUFSIZE];
     char userid[BUFSIZE];
     char gameid[BUFSIZE];
     char* passarg = append_p(password);
 
+    memset(query,0,1000);
+
     //TO DO: Fix query
     //grab user id to search for games
-    query = "SELECT, user_id FROM devices, where pubkey = '";
-    query = strcat(query, key);
-    query = strcat(query, "';");
+    strcat(query,"Use Juno; SELECT username FROM users WHERE userid = '");
+    strcat(query, key);
+    strcat(query, "';");
     execdb(username,passarg,query, buf);
 
     //parse buf into simple output
@@ -172,10 +173,11 @@ void heartbeat (char* key, char* username, char* password)
 
     //TO DO: Fix query
     //search for games w/ user id
-    query = "SELECT, game_id FROM game_players, where userid = '";
-    query = strcat(query, buf);
-    query = strcat(query, "';");
+    strcat(query,"Use Juno; SELECT username FROM users WHERE userid = '");
+    strcat(query, buf);
+    strcat(query, "';");
     execdb(username,passarg,query, buf);
+
 
     //parse buf into simple output
     strcpy(gameid, buf);
@@ -189,10 +191,11 @@ void heartbeat (char* key, char* username, char* password)
 
     //TO DO: Fix query
     //figure out if game is in the present or past
-    query = "SELECT, end_time FROM game,where NOT ENDED & userid = '";
-    query = strcat(query, buf);
-    query = strcat(query, "';");
+    strcat(query,"Use Juno; SELECT username FROM users WHERE userid = '");
+    strcat(query, buf);
+    strcat(query, "';");
     execdb(username,passarg,query, buf);
+
 
     //parse buf into simple output
 
@@ -205,20 +208,22 @@ void heartbeat (char* key, char* username, char* password)
 
     //TO DO: Fix query
     //VERIFY USER KEY
-    query = "SELECT, wg_pubkey FROM game_players, userid = '";
-    query = strcat(query, userid);
-    query = strcat(query, "';");
+    strcat(query,"Use Juno; SELECT username FROM users WHERE userid = '");
+    strcat(query, buf);
+    strcat(query, "';");
     execdb(username,passarg,query, buf);
+
 
     //if not eequal, update (DONT KNOW HOW)
     if(strcmp(buf,key) != 0)
     {
-        query = "UPDATE, wg_pubkey FROM game_players, userid = '";
-        query = strcat(query, userid);
-        query = strcat(query, "';");
+        strcat(query,"Use Juno; SELECT username FROM users WHERE userid = '");
+        strcat(query, buf);
+        strcat(query, "';");
         execdb(username,passarg,query, buf);
 
-        printf("key updated");
+
+        printf("key updated\n");
         retrieve_conf(key, username, passarg, gameid);
         return;
     }
@@ -226,7 +231,7 @@ void heartbeat (char* key, char* username, char* password)
     //if key is equal generate that sweet sweet config
     else
     {
-        printf("key already added!");
+        printf("key already added!\n");
         retrieve_conf(key, username, passarg, gameid);
         return;
     }

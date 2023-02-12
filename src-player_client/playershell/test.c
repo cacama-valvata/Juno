@@ -103,6 +103,33 @@ int test_execdb(void)
     return strlen(buf) >= 14 ? 0 : 1;
 }
 
+int test_heartbeat(void)
+{
+
+  char key[30] = "1";
+
+    char username[INPUTLEN], password[INPUTLEN];
+
+
+  if(read_credentials(username, password) == 1)
+      return 1;
+    
+  //append password format
+  char* passarg = append_p(password);
+
+  freopen("/dev/null", "w", stdout);
+
+  heartbeat(key,username,passarg);
+
+  freopen("/dev/tty", "w", stdout);
+
+  snprintf(expecteds, sizeof(expecteds), "Expected: tbd\n");
+  snprintf(actuals, sizeof(actuals), "Actual: tbd\n");
+
+
+  return strlen(key) > 31 ? 0 : 1;
+}
+
 int test_retrieve_conf(void)
 {
     char pubkey_decoded[451] = "1\0";
@@ -140,6 +167,7 @@ int main(void)
   run_test("test_read_credentials",test_read_credentials);
   run_test("test_append_p",test_append_p);
   run_test("test_execdb",test_execdb);
+  run_test("test_heartbeat",test_heartbeat);
   run_test("test_retrieve_conf",test_retrieve_conf);
   return 0;
 }

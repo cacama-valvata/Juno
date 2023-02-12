@@ -41,8 +41,7 @@ void execdb(char *username, char *password, char* query, char* buf)
 {
 
     int pipefd[2];
-    pid_t pid;
-    int bytes_read; 
+    pid_t pid; 
 
     if (pipe(pipefd) == -1)
     {

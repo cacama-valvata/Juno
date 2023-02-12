@@ -11,4 +11,4 @@ testfile: test.c shellserver.c shellserver.h
 	$(CC) test.c shellserver.c -o testfile
 
 clean:
-	rm -f *.o authshell testfile
+	rm -f *.o playshell testfile
