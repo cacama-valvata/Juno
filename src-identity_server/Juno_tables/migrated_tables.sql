@@ -29,12 +29,12 @@ CREATE TABLE `account_userdevice` (
   `ssh_pubkey` varchar(600) NOT NULL,
   `ssh_suffix` varchar(256) NOT NULL,
   `last_seen` datetime(6) DEFAULT NULL,
-  `user_id_id` int NOT NULL,
+  `user_id` int NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `ssh_pubkey` (`ssh_pubkey`),
-  KEY `account_userdevice_user_id_id_20c88a08_fk_auth_user_id` (`user_id_id`),
-  CONSTRAINT `account_userdevice_user_id_id_20c88a08_fk_auth_user_id` FOREIGN KEY (`user_id_id`) REFERENCES `auth_user` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  KEY `account_userdevice_user_id_cec1fd4b_fk_auth_user_id` (`user_id`),
+  CONSTRAINT `account_userdevice_user_id_cec1fd4b_fk_auth_user_id` FOREIGN KEY (`user_id`) REFERENCES `auth_user` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -57,10 +57,10 @@ DROP TABLE IF EXISTS `account_userscore`;
 CREATE TABLE `account_userscore` (
   `id` bigint NOT NULL AUTO_INCREMENT,
   `score` bigint unsigned NOT NULL,
-  `user_id_id` int NOT NULL,
+  `user_id` int NOT NULL,
   PRIMARY KEY (`id`),
-  KEY `account_userscore_user_id_id_c006535e_fk_auth_user_id` (`user_id_id`),
-  CONSTRAINT `account_userscore_user_id_id_c006535e_fk_auth_user_id` FOREIGN KEY (`user_id_id`) REFERENCES `auth_user` (`id`),
+  KEY `account_userscore_user_id_486caf57_fk_auth_user_id` (`user_id`),
+  CONSTRAINT `account_userscore_user_id_486caf57_fk_auth_user_id` FOREIGN KEY (`user_id`) REFERENCES `auth_user` (`id`),
   CONSTRAINT `account_userscore_chk_1` CHECK ((`score` >= 0))
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -175,7 +175,7 @@ CREATE TABLE `auth_user` (
   `date_joined` datetime(6) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `username` (`username`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -266,7 +266,7 @@ CREATE TABLE `django_admin_log` (
   CONSTRAINT `django_admin_log_content_type_id_c4bce8eb_fk_django_co` FOREIGN KEY (`content_type_id`) REFERENCES `django_content_type` (`id`),
   CONSTRAINT `django_admin_log_user_id_c564eba6_fk_auth_user_id` FOREIGN KEY (`user_id`) REFERENCES `auth_user` (`id`),
   CONSTRAINT `django_admin_log_chk_1` CHECK ((`action_flag` >= 0))
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -275,7 +275,6 @@ CREATE TABLE `django_admin_log` (
 
 LOCK TABLES `django_admin_log` WRITE;
 /*!40000 ALTER TABLE `django_admin_log` DISABLE KEYS */;
-INSERT INTO `django_admin_log` VALUES (1,'2023-02-13 18:09:24.728565','2','hybrid-swansea',1,'[{\"added\": {}}]',4,1),(2,'2023-02-13 18:09:37.745539','3','lemon8',1,'[{\"added\": {}}]',4,1),(3,'2023-02-13 18:10:12.866463','4','ltj-bukem',1,'[{\"added\": {}}]',4,1),(4,'2023-02-13 18:12:13.269554','1','hybrids-key',1,'[{\"added\": {}}]',8,1),(5,'2023-02-13 18:12:45.367231','2','lemon8s-key',1,'[{\"added\": {}}]',8,1),(6,'2023-02-13 18:13:27.586964','3','bukems-key',1,'[{\"added\": {}}]',8,1);
 /*!40000 ALTER TABLE `django_admin_log` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -318,7 +317,7 @@ CREATE TABLE `django_migrations` (
   `name` varchar(255) NOT NULL,
   `applied` datetime(6) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -327,7 +326,7 @@ CREATE TABLE `django_migrations` (
 
 LOCK TABLES `django_migrations` WRITE;
 /*!40000 ALTER TABLE `django_migrations` DISABLE KEYS */;
-INSERT INTO `django_migrations` VALUES (1,'contenttypes','0001_initial','2023-02-13 04:59:11.198064'),(2,'auth','0001_initial','2023-02-13 04:59:58.401875'),(3,'account','0001_initial','2023-02-13 05:00:19.184420'),(4,'admin','0001_initial','2023-02-13 05:00:32.279213'),(5,'admin','0002_logentry_remove_auto_add','2023-02-13 05:00:32.452145'),(6,'admin','0003_logentry_add_action_flag_choices','2023-02-13 05:00:32.659355'),(7,'contenttypes','0002_remove_content_type_name','2023-02-13 05:00:38.401876'),(8,'auth','0002_alter_permission_name_max_length','2023-02-13 05:00:45.324927'),(9,'auth','0003_alter_user_email_max_length','2023-02-13 05:00:46.168711'),(10,'auth','0004_alter_user_username_opts','2023-02-13 05:00:46.599255'),(11,'auth','0005_alter_user_last_login_null','2023-02-13 05:00:50.234892'),(12,'auth','0006_require_contenttypes_0002','2023-02-13 05:00:50.412402'),(13,'auth','0007_alter_validators_add_error_messages','2023-02-13 05:00:50.544807'),(14,'auth','0008_alter_user_username_max_length','2023-02-13 05:00:57.649088'),(15,'auth','0009_alter_user_last_name_max_length','2023-02-13 05:01:06.196538'),(16,'auth','0010_alter_group_name_max_length','2023-02-13 05:01:06.597937'),(17,'auth','0011_update_proxy_permissions','2023-02-13 05:01:06.762167'),(18,'auth','0012_alter_user_first_name_max_length','2023-02-13 05:01:11.712151'),(19,'games','0001_initial','2023-02-13 05:02:14.982847'),(20,'sessions','0001_initial','2023-02-13 05:02:19.423621'),(21,'account','0002_alter_userdevice_last_seen','2023-02-13 18:38:10.375625'),(22,'games','0002_alter_gameplayer_team_id_alter_gameplayer_user_id_and_more','2023-02-13 18:38:19.290959');
+INSERT INTO `django_migrations` VALUES (1,'contenttypes','0001_initial','2023-02-13 19:23:46.582070'),(2,'auth','0001_initial','2023-02-13 19:24:34.599448'),(3,'account','0001_initial','2023-02-13 19:24:48.497594'),(4,'admin','0001_initial','2023-02-13 19:25:00.379903'),(5,'admin','0002_logentry_remove_auto_add','2023-02-13 19:25:00.608016'),(6,'admin','0003_logentry_add_action_flag_choices','2023-02-13 19:25:01.648122'),(7,'contenttypes','0002_remove_content_type_name','2023-02-13 19:25:07.198048'),(8,'auth','0002_alter_permission_name_max_length','2023-02-13 19:25:11.254251'),(9,'auth','0003_alter_user_email_max_length','2023-02-13 19:25:12.559220'),(10,'auth','0004_alter_user_username_opts','2023-02-13 19:25:12.800477'),(11,'auth','0005_alter_user_last_login_null','2023-02-13 19:25:17.241601'),(12,'auth','0006_require_contenttypes_0002','2023-02-13 19:25:17.450742'),(13,'auth','0007_alter_validators_add_error_messages','2023-02-13 19:25:17.579988'),(14,'auth','0008_alter_user_username_max_length','2023-02-13 19:25:22.787936'),(15,'auth','0009_alter_user_last_name_max_length','2023-02-13 19:25:29.241865'),(16,'auth','0010_alter_group_name_max_length','2023-02-13 19:25:29.836752'),(17,'auth','0011_update_proxy_permissions','2023-02-13 19:25:29.990774'),(18,'auth','0012_alter_user_first_name_max_length','2023-02-13 19:25:35.784471'),(19,'games','0001_initial','2023-02-13 19:26:41.301228'),(20,'sessions','0001_initial','2023-02-13 19:26:45.899852');
 /*!40000 ALTER TABLE `django_migrations` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -353,7 +352,6 @@ CREATE TABLE `django_session` (
 
 LOCK TABLES `django_session` WRITE;
 /*!40000 ALTER TABLE `django_session` DISABLE KEYS */;
-INSERT INTO `django_session` VALUES ('m9z97arowee6js59co5tqmgnyg9wkg9q','.eJxVjEEOwiAURO_C2hAKfKAu3fcM5AMfqRpISrsy3t026UKTWc17M2_mcVuL3zotfk7sygZ2-e0CxifVA6QH1nvjsdV1mQM_FH7SzqeW6HU73b-Dgr3sa4tRjspGkqi1Axf0Hk05AiabtFEBTR5IGIkgHIAmGB0klaNAAUGxzxfmoTfR:1pRdFh:PpeW4VcE4etr9dJLeUeY0vAA62X1lqUJd1ED5zDXFfE','2023-02-27 18:08:33.506536');
 /*!40000 ALTER TABLE `django_session` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -392,16 +390,16 @@ DROP TABLE IF EXISTS `games_gameplayer`;
 CREATE TABLE `games_gameplayer` (
   `id` bigint NOT NULL AUTO_INCREMENT,
   `wg_pubkey` varchar(255) DEFAULT NULL,
-  `game_id_id` bigint NOT NULL,
-  `team_id_id` bigint NOT NULL,
-  `user_id_id` int NOT NULL,
+  `game_id` bigint NOT NULL,
+  `team_id` bigint NOT NULL,
+  `user_id` int NOT NULL,
   PRIMARY KEY (`id`),
-  KEY `games_gameplayer_game_id_id_01ffb288_fk_games_game_id` (`game_id_id`),
-  KEY `games_gameplayer_team_id_id_e3a2f2a5_fk_games_teamref_id` (`team_id_id`),
-  KEY `games_gameplayer_user_id_id_bd4d581e_fk_auth_user_id` (`user_id_id`),
-  CONSTRAINT `games_gameplayer_game_id_id_01ffb288_fk_games_game_id` FOREIGN KEY (`game_id_id`) REFERENCES `games_game` (`id`),
-  CONSTRAINT `games_gameplayer_team_id_id_e3a2f2a5_fk_games_teamref_id` FOREIGN KEY (`team_id_id`) REFERENCES `games_teamref` (`id`),
-  CONSTRAINT `games_gameplayer_user_id_id_bd4d581e_fk_auth_user_id` FOREIGN KEY (`user_id_id`) REFERENCES `auth_user` (`id`)
+  KEY `games_gameplayer_game_id_c4b9fc87_fk_games_game_id` (`game_id`),
+  KEY `games_gameplayer_team_id_8f247c9b_fk_games_teamref_id` (`team_id`),
+  KEY `games_gameplayer_user_id_762a2fa9_fk_auth_user_id` (`user_id`),
+  CONSTRAINT `games_gameplayer_game_id_c4b9fc87_fk_games_game_id` FOREIGN KEY (`game_id`) REFERENCES `games_game` (`id`),
+  CONSTRAINT `games_gameplayer_team_id_8f247c9b_fk_games_teamref_id` FOREIGN KEY (`team_id`) REFERENCES `games_teamref` (`id`),
+  CONSTRAINT `games_gameplayer_user_id_762a2fa9_fk_auth_user_id` FOREIGN KEY (`user_id`) REFERENCES `auth_user` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -424,13 +422,13 @@ DROP TABLE IF EXISTS `games_gamescore`;
 CREATE TABLE `games_gamescore` (
   `id` bigint NOT NULL AUTO_INCREMENT,
   `score` bigint unsigned NOT NULL,
-  `game_id_id` bigint NOT NULL,
-  `team_id_id` bigint NOT NULL,
+  `game_id` bigint NOT NULL,
+  `team_id` bigint NOT NULL,
   PRIMARY KEY (`id`),
-  KEY `games_gamescore_game_id_id_731cc5cf_fk_games_game_id` (`game_id_id`),
-  KEY `games_gamescore_team_id_id_2df4825b_fk_games_teamref_id` (`team_id_id`),
-  CONSTRAINT `games_gamescore_game_id_id_731cc5cf_fk_games_game_id` FOREIGN KEY (`game_id_id`) REFERENCES `games_game` (`id`),
-  CONSTRAINT `games_gamescore_team_id_id_2df4825b_fk_games_teamref_id` FOREIGN KEY (`team_id_id`) REFERENCES `games_teamref` (`id`),
+  KEY `games_gamescore_game_id_788b41ca_fk_games_game_id` (`game_id`),
+  KEY `games_gamescore_team_id_c51c1bcd_fk_games_teamref_id` (`team_id`),
+  CONSTRAINT `games_gamescore_game_id_788b41ca_fk_games_game_id` FOREIGN KEY (`game_id`) REFERENCES `games_game` (`id`),
+  CONSTRAINT `games_gamescore_team_id_c51c1bcd_fk_games_teamref_id` FOREIGN KEY (`team_id`) REFERENCES `games_teamref` (`id`),
   CONSTRAINT `games_gamescore_chk_1` CHECK ((`score` >= 0))
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -455,16 +453,16 @@ CREATE TABLE `games_gamescoring` (
   `id` bigint NOT NULL AUTO_INCREMENT,
   `result` varchar(255) DEFAULT NULL,
   `polled` datetime(6) NOT NULL,
-  `game_id_id` bigint NOT NULL,
-  `service_id_id` bigint NOT NULL,
-  `team_id_id` bigint NOT NULL,
+  `game_id` bigint NOT NULL,
+  `service_id` bigint NOT NULL,
+  `team_id` bigint NOT NULL,
   PRIMARY KEY (`id`),
-  KEY `games_gamescoring_game_id_id_d68fdf7d_fk_games_game_id` (`game_id_id`),
-  KEY `games_gamescoring_service_id_id_b5493757_fk_games_gameservice_id` (`service_id_id`),
-  KEY `games_gamescoring_team_id_id_31da7392_fk_games_teamref_id` (`team_id_id`),
-  CONSTRAINT `games_gamescoring_game_id_id_d68fdf7d_fk_games_game_id` FOREIGN KEY (`game_id_id`) REFERENCES `games_game` (`id`),
-  CONSTRAINT `games_gamescoring_service_id_id_b5493757_fk_games_gameservice_id` FOREIGN KEY (`service_id_id`) REFERENCES `games_gameservice` (`id`),
-  CONSTRAINT `games_gamescoring_team_id_id_31da7392_fk_games_teamref_id` FOREIGN KEY (`team_id_id`) REFERENCES `games_teamref` (`id`)
+  KEY `games_gamescoring_game_id_dca9f1e1_fk_games_game_id` (`game_id`),
+  KEY `games_gamescoring_service_id_0554acfc_fk_games_gameservice_id` (`service_id`),
+  KEY `games_gamescoring_team_id_3daf391c_fk_games_teamref_id` (`team_id`),
+  CONSTRAINT `games_gamescoring_game_id_dca9f1e1_fk_games_game_id` FOREIGN KEY (`game_id`) REFERENCES `games_game` (`id`),
+  CONSTRAINT `games_gamescoring_service_id_0554acfc_fk_games_gameservice_id` FOREIGN KEY (`service_id`) REFERENCES `games_gameservice` (`id`),
+  CONSTRAINT `games_gamescoring_team_id_3daf391c_fk_games_teamref_id` FOREIGN KEY (`team_id`) REFERENCES `games_teamref` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -488,11 +486,11 @@ CREATE TABLE `games_gameservice` (
   `id` bigint NOT NULL AUTO_INCREMENT,
   `name` varchar(255) NOT NULL,
   `type` varchar(255) DEFAULT NULL,
-  `game_id_id` bigint NOT NULL,
+  `game_id` bigint NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `name` (`name`),
-  KEY `games_gameservice_game_id_id_db349d91_fk_games_game_id` (`game_id_id`),
-  CONSTRAINT `games_gameservice_game_id_id_db349d91_fk_games_game_id` FOREIGN KEY (`game_id_id`) REFERENCES `games_game` (`id`)
+  KEY `games_gameservice_game_id_8ed003bc_fk_games_game_id` (`game_id`),
+  CONSTRAINT `games_gameservice_game_id_8ed003bc_fk_games_game_id` FOREIGN KEY (`game_id`) REFERENCES `games_game` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -543,4 +541,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-02-13 11:05:16
+-- Dump completed on 2023-02-13 12:27:31
