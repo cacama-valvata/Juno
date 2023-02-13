@@ -7,6 +7,7 @@
 # project specific folders
 dev/out/
 src-identity_server/JunoIAM/mysql.creds
+src-identity_server/JunoIAM/django.secret
 __pycache__/
 
 # docs folder binaries here
