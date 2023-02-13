@@ -15,24 +15,24 @@ class Game (models.Model):
     ready = models.BooleanField (null=False)
 
 class GamePlayer (models.Model):
-    game_id = models.ForeignKey (Game, on_delete=models.CASCADE)
-    user_id = models.ForeignKey (User, on_delete=models.CASCADE)
-    team_id = models.ForeignKey (TeamRef, on_delete=models.CASCADE)
-    wg_pubkey = models.CharField (max_length=255)
+    game = models.ForeignKey (Game, on_delete=models.CASCADE)
+    user = models.ForeignKey (User, on_delete=models.DO_NOTHING)
+    team = models.ForeignKey (TeamRef, on_delete=models.DO_NOTHING)
+    wg_pubkey = models.CharField (max_length=255, null=True)
 
 class GameScore (models.Model):
-    game_id = models.ForeignKey (Game, on_delete=models.CASCADE)
-    team_id = models.ForeignKey (TeamRef, on_delete=models.CASCADE)
+    game = models.ForeignKey (Game, on_delete=models.CASCADE)
+    team = models.ForeignKey (TeamRef, on_delete=models.DO_NOTHING)
     score = models.PositiveBigIntegerField (default=0)
 
 class GameService (models.Model):
-    game_id = models.ForeignKey (Game, on_delete=models.CASCADE)
+    game = models.ForeignKey (Game, on_delete=models.CASCADE)
     name = models.CharField (max_length=255, null=False, unique=True)
-    type = models.CharField (max_length=255)
+    type = models.CharField (max_length=255, null=True)
 
 class GameScoring (models.Model):
-    game_id = models.ForeignKey (Game, on_delete=models.CASCADE)
-    service_id = models.ForeignKey (GameService, on_delete=models.CASCADE)
-    team_id = models.ForeignKey (TeamRef, on_delete=models.CASCADE)
-    result = models.CharField (max_length=255) # Team's flag or nothing if not present
+    game = models.ForeignKey (Game, on_delete=models.CASCADE)
+    service = models.ForeignKey (GameService, models.DO_NOTHING)
+    team = models.ForeignKey (TeamRef, on_delete=models.DO_NOTHING)
+    result = models.CharField (max_length=255, null=True) # Team's flag or nothing if not present
     polled = models.DateTimeField (null=False)
