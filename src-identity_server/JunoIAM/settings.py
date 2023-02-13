@@ -25,6 +25,15 @@ SECRET_KEY = 'django-insecure-9owlh8w)4-(zr8bm+^c##i=b0)7=!2d!i_+_^vccq(96-^+y4h
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+# Overriding Password Hashing Functions
+PASSWORD_HASHERS = [
+    'django.contrib.auth.hashers.Argon2PasswordHasher',
+    'django.contrib.auth.hashers.BCryptSHA256PasswordHasher',
+    'django.contrib.auth.hashers.PBKDF2PasswordHasher',
+    'django.contrib.auth.hashers.PBKDF2SHA1PasswordHasher',
+    'django.contrib.auth.hashers.ScryptPasswordHasher',
+]
+
 ALLOWED_HOSTS = []
 
 
@@ -37,6 +46,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'account',
+    'games',
+    'leaderboard',
 ]
 
 MIDDLEWARE = [

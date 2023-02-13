@@ -16,11 +16,13 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import include, path
 
+from leaderboard import views
+
 urlpatterns = [
-    path ('', include ('leaderboard.urls')),
+    path ('', views.index),
     path ('admin/', admin.site.urls),
     path ('profile/', include ('account.urls')),
     path ('profile/', include ("django.contrib.auth.urls")),
-    path ('games/', include('games.urls')),
+    path ('games/', include ('games.urls')),
     path ('leaderboard/', include('leaderboard.urls')),
 ]
