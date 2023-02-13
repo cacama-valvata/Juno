@@ -6,6 +6,8 @@
 
 # project specific folders
 dev/out/
+src-identity_server/JunoIAM/mysql.creds
+__pycache__/
 
 # docs folder binaries here
 
