@@ -67,7 +67,7 @@ int test_append_p(void)
 
 int test_execdb(void)
 {
-    char pubkey_decoded[451] = "1\0";
+    char pubkey_decoded[1000] = "AAAAB3NzaC1yc2EAAAADAQABAAABgQDV6pvDAafe6Emu305YWzxuEWgWq6ypPpMftmHVtu5al9+VzLSFFph2J5hqUL06M8W7+5b1a+UXxdns7hUIHYEh2WPxJkPf4xPXyEG3bXeoTXyt4YZ3i+PagmvcYLg4pwUJl2y5A1/ipamdZTqoPNtycIDt62+pPEjBUL7QnE3YPIP6Fzh76SQcPHS46t7MDzSahBkAvaTMErCfYfyFgIrWgcWbVY+pM+JPyfNpAQs/XkYxXtctzieasPqkOlLc/Y2XKeB6SiXZiiOuu8zHTNfuAd1OO1yZ0Bp0+Bph/ZlsLmrPVsEzgw0yzOn+Mz9zMng1flQHQqxA2kLzI8lk8/HbIf9byKzIJebRdsOBJEnY+/xyEO8wxx5bgs3MshtDe9lNyKraaEgS/+c87Q4p1v6tUZdXSRPTSjyeczYxRVAMFU0NVo+WZvnG0KIHx5wMUX46tBiQFlW+gdhs1EC1wdkcC8K9zxZuK9685duhRbZp0DMgWsSC6wJi8mAUhYAT8Es=";
     char query[1000];
     char buf[BUFSIZE];
     char username[INPUTLEN], password[INPUTLEN];
@@ -81,9 +81,9 @@ int test_execdb(void)
 
     memset(query,0,1000);
 
-    strcat(query,"Use Juno; SELECT username FROM users WHERE userid = '");
+    strcat(query,"Use Juno; SELECT count(*) as num_users FROM (SELECT userid from devices where ssh_pubkey = '");
     strcat(query, pubkey_decoded);
-    strcat(query, "';\0");
+    strcat(query, "') as useridlist;\0");
 
     //printf("\nInput: %s\n", query);
     //fflush(stdout);
@@ -100,7 +100,7 @@ int test_execdb(void)
     snprintf(actuals, sizeof(actuals), "Actual: %s\n", buf);
 
 
-    return strlen(buf) >= 14 ? 0 : 1;
+    return strlen(buf) >= 2 ? 0 : 1;
 }
 
 int main(void) 

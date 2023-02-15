@@ -67,6 +67,11 @@ int main (int argc, char* argv[])
      * run the login command before anything else
      */
 
+    
+    for (int i = 0; i < argc; i++) {
+        printf("Argument %d: %s\n", i, argv[i]);
+    }
+
     // non-interactive commands
     if (argc > 2 && ! strcmp (argv[1], "-c"))
     {

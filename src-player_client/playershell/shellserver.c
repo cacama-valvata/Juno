@@ -63,6 +63,7 @@ void execdb(char *username, char *password, char* query, char* buf)
     else 
     {
         close(pipefd[1]);  // close unused write end
+        wait(pid);
         char *token; 
         while (read(pipefd[0], buf, BUFSIZE) > 0)
         {
