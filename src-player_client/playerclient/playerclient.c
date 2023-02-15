@@ -1,12 +1,48 @@
 #include "playerclient.h"
+
 #define BUF_SIZE 256
+#define INPUTLEN 1000
+
+int get_words(char ***inp) 
+{
+    char input[INPUTLEN];
+    int num_words = 0;
+    
+    // Prompt user to enter a sentence
+    printf("Enter a command: ");
+    fgets(input, INPUTLEN, stdin);
+    
+    // Remove newline character if present
+    if (input[strlen(input) - 1] == '\n')
+    {
+        input[strlen(input) - 1] = '\0';
+    }
+    
+    // Split sentence into words
+    char *token = strtok(input, " ");
+    while (token != NULL) 
+    {
+        // Reallocate memory for words array
+        num_words++;
+        *inp = (char **)realloc(*inp, num_words * sizeof(char *));
+        
+        // Allocate memory for new word and copy it 
+        int len = strlen(token) + 1;
+        (*inp)[num_words-1] = (char *)malloc(len * sizeof(char));
+        strcpy((*inp)[num_words-1], token);
+        
+        // Get next token
+        token = strtok(NULL, " ");
+    }
+    
+    return num_words;
+}
 
 //init the connection and allow user to mess around in shell
-void connectclient(int argc, char *argv[])
+void connectclient(char* user, char* host, char* command, char* pubkey, char* buf)
 {
     int pipefd[2];
     pid_t pid;
-    char buf[BUF_SIZE];
 
     if (pipe(pipefd) == -1)
     {
@@ -25,8 +61,7 @@ void connectclient(int argc, char *argv[])
     {  // child process
         close(pipefd[0]);  // close unused read end
         dup2(pipefd[1], STDOUT_FILENO);  // redirect stdout to write end of pipe
-        char *args[] = {"ssh", argv[1], "@", argv[2], argv[3], NULL};
-        execvp("ssh", args);
+        execl("/usr/bin/ssh", "ssh", "i", pubkey, user, "@", host, command, (char *) NULL);
         return;
     } 
 

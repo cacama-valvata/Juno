@@ -1,45 +1,65 @@
 #include "playerclient.h"
 
+#define BUFSIZE 256
 // Casey I know this is NOT secure just getting the logic ready :)
 int main(int argc, char* argv[])
  {
     char user_input[4096];
     char pubkey[32], privkey[32];
-    
-
-
-    if (argc < 4) 
-    {
-        printf("Usage: %s [user] [hostname] [shell]\n", argv[0]);
-        return 1;
-    }
+    char buf[BUFSIZE];
 
     // check for existing config, if not regen
     if(check_key(pubkey,privkey) == 0)
         wgkeygen(pubkey,privkey);
 
-
-    
     // very simple menuing 
     while(1)
     {
-        printf("\nPlease enter some text: ");
-        fgets(user_input, sizeof(user_input), stdin);
+        char **words = NULL;
+        int num_words = get_words(&words);
 
-        if(strcmp(user_input, "connect\n") == 0 )
-            connectclient(argc,argv);
+        if(strcmp(words[0], "connect") == 0 )
+        {
+            //void connectclient(char* user, char* host, char* command, char* pubkey, char* buf)
+            if(num_words < 4)
+                printf("Error! Usage:\n");
+
+            else
+                connectclient(words[1],words[2],words[3],pubkey,buf);
+        }
+            
         
-        else if(strcmp(user_input, "wgkeygen\n")  == 0 )
+        else if(strcmp(words[0], "wgkeygen")  == 0 )
+        {
             wgkeygen(pubkey, privkey);
+        }
+            
 
-        else if(strcmp(user_input, "proccfg\n") == 0 )
+        else if(strcmp(words[0], "proccfg") == 0 )
+        {
             process_config("file.txt", "<your private key here>", privkey);
+        }
+            
     
-        else if(strcmp(user_input, "stop\n") == 0 )
+        else if(strcmp(words[0], "stop") == 0 )
+        {
+            for (int i = 0; i < num_words; i++)
+            {
+                free(words[i]);
+            }
+            free(words);
             break;
+        }
         
         else
             printf("UNKNOWN\n");
+
+
+        for (int i = 0; i < num_words; i++)
+        {
+            free(words[i]);
+        }
+        free(words);
     }
  
 

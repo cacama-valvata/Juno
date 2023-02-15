@@ -325,6 +325,10 @@ void run_command (char* c)
     {
         wgsend ();
     }
+    else if (! strcmp(arg, "ping")) 
+    {
+        printf("shell responds with PONG!");
+    }
     else
     {
         printf ("Unknown command.\n");
