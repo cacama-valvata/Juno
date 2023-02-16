@@ -50,7 +50,7 @@ int main(int argc, char *argv[])
     if(strcmp(buf,"1") == 0)
     {
         // send command to login and replace program w/ shell
-        execl("/bin/echo","echo","world", (char *) NULL);
+        printf("command=\"login %s\"",pubkey_decoded);
     }
 
 
