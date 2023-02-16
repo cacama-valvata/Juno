@@ -40,7 +40,7 @@ void execdb(char *username, char *password, char* query, char* buf)
     int pipefd[2];
     pid_t pid; 
 
-    printf("RECIEVED: %s\n", query);
+    //printf("RECIEVED: %s\n", query);
 
     if (pipe(pipefd) == -1)
     {
