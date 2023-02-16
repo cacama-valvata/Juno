@@ -24,7 +24,7 @@ VALUES ( 'bukems key', 'ssh-rsa', 'AAAAB3NzaC1yc2EAAAADAQABAAABgQC6ZO16nNJyD6c19
 INSERT INTO users (username) VALUES ('lemon8');
 
 INSERT INTO devices (keyname, ssh_prefix, ssh_pubkey, ssh_suffix, userid)
-VALUES ( 'lemons key', 'ssh-rsa', 'AAAAB3NzaC1yc2EAAAADAQABAAABgQC1fKpZZPujnSYHQS+tDIOtjcXjzD9TgzPBkLE3KrXcEi/3XejarmzFSspiD3X+tbWoL+HL6GlYGMwsi+V4gGglHfsJjfY/VdKKIDmzBWOxuR4AJsOlSDBsBAgYY4XlChk9qFS7QeECYPTV+pSKzA12AP3hC34ueC/ZF/pkKI7V9poqVVku8TbOvbAD1Un91gUtfSRAMSTap4TA7xdXs/6wCzSrl3ttdZ+agiHMouRihFWBppxW1Rl1BKVuQOn8kxsdjNNFr78loT4bX5vxYdgQk2YrQ9m1eenTD+GdP2/GjulQmdJNpzabDDA48MtTH9UOdK5V+M4DBcvEPkKh/68dN4TdtoAHCGszg9R+C+eZdgkpaeGErFNpeI4mMvYaPJNHo0ogz0VzDW1XithvjmADAcrOqLHV90BJVeJeNU4YiUoQ0JIkVGsQwCABJ386kfrCIHSRLR0op3nvur3/u3m1v7dclxUJXKfGsJVd0ZOv77Vw9a8Q5Z94jwXXPwKzZ/0=', 'lemon8@junotest', (SELECT userid FROM users WHERE username = 'lemon8') );
+VALUES ( 'lemons key', 'ssh-rsa', 'AAAAB3NzaC1yc2EAAAADAQABAAABgQCT5h3mgwZQkogttDoixTYtk5KHumbCs3BXAp2c27VYZhjPOSdDR5GYWGm0U+w6TnHein74XSEIPozypSP7yfOJK8Cr1tsuR1ptJfOX6c0bg1eNbiiNVwP6d5Zz6suiDK6KI03x4DJkTE/doaA9g/2LuiZIYNoXk9diPMwxB+lJdVLPFBaxcTJg9Pu/nT1sq72rhBEbR6wAClnqqRjQI7U/vr+0EGqwXHo+ocXhBunThgzCgLR5QzOIPJqNO7HBoOyrfu/wco+SrYnckT2hiQDvTLMQ95jmRLKMa+I7VQavG6yku09F3C23cEa4KpGXZ+9Z9HUYuVZK3isS3S7oLMLCpVIm9qpnhqcjp6frgt3SXGTsFexvFB7rJyoBH7Nuio25ow16pfcPSbdqGI7dy2+Anf15+/p6GY3/QkaAwIfJl+eEpbPk587M7FNpYNNvBW1BMgtySW+Vc74zg7FoF19vZEuP3BJqgrNtr3CTakdLwx0X6d7iwh698xypsKKG6jE=', 'carter@DESKTOP-ARPPV1D', (SELECT userid FROM users WHERE username = 'lemon8') );
 
 
 select * from 
