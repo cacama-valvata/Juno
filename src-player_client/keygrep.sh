@@ -5,7 +5,7 @@
 
 # define the path to the authorized_keys file
 # !!! addition of $2 %u is not for production design, only for ease of testing
-AUTH_KEYS_FILE="/home/$2/.ssh/authorized_keys.bak"
+AUTH_KEYS_FILE="/home/ubuntu/authorized_keys.bak"
 
 # define the public key to search for
 PUB_KEY=$1
