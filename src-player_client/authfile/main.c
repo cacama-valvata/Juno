@@ -13,6 +13,7 @@ int main(int argc, char *argv[])
     char buf[BUFSIZE];
     char username[INPUTLEN], password[INPUTLEN];
 
+    memset(query,0,BUFSIZE);
     memset(buf,0,BUFSIZE);
     memset(pubkey_decoded,0,1000);
 
@@ -50,7 +51,7 @@ int main(int argc, char *argv[])
     if(strcmp(buf,"1") == 0)
     {
         // send command to login and replace program w/ shell
-        printf("command=\"login %s\"",pubkey_decoded);
+        printf("command=\"login appusername\" ssh-rsa %s user@hostname",pubkey_decoded);
     }
 
 
