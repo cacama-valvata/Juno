@@ -12,7 +12,7 @@ int main(int argc, char *argv[])
     char query[1000];
     char buf[BUFSIZE];
     char username[INPUTLEN], password[INPUTLEN];
-    FILE *log_file;
+    //FILE *log_file;
 
     memset(query,0,BUFSIZE);
     memset(buf,0,BUFSIZE);
@@ -37,31 +37,31 @@ int main(int argc, char *argv[])
 
     execdb(username, passarg, query, buf);
 
-    printf("Result: %s\n", buf);
+    fprintf(stderr, "%s\n", buf);
 
     //parse buf into simple output
 
-    log_file = fopen("logfile.txt", "a");
+    // log_file = fopen("logfile.txt", "a");
 
-    fprintf(log_file,"Buf output: %s\n",buf);
+    //fprintf(log_file,"Buf output: %s\n",buf);
 
     if(strcmp(buf,"1") == 0)
     {
         // send command to login and replace program w/ shell
-        fprintf(log_file, "command=\"login appusername\" ssh-rsa %s user@hostname\n",pubkey_decoded);
+        //fprintf(stderr, "command=\"login appusername\" ssh-rsa %s user@hostname\n",pubkey_decoded);
         printf("command=\"login appusername\" ssh-rsa %s user@hostname",pubkey_decoded);
     }
 
 
     else if(strcmp(buf,"0") == 0)
     {
-       fprintf(log_file,"Error: You are not authorized!\n");
+       fprintf(stderr,"Error: You are not authorized!\n");
     }
         
         
 
     else if(strcmp(buf,"0") != 0)
-        fprintf(log_file, "Error: should not be > 1\n");
+        fprintf(stderr, "Error: should not be > 1\n");
 
 
     fclose(log_file);
