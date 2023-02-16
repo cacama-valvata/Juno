@@ -64,7 +64,7 @@ int main(int argc, char *argv[])
         fprintf(stderr, "Error: should not be > 1\n");
 
 
-    fclose(log_file);
+    //fclose(log_file);
 
     return 0;
 }
