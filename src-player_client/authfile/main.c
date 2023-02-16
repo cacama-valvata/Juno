@@ -49,7 +49,7 @@ int main(int argc, char *argv[])
     {
         // send command to login and replace program w/ shell
         //fprintf(stderr, "command=\"login appusername\" ssh-rsa %s user@hostname\n",pubkey_decoded);
-        printf("command=\"login appusername\" ssh-rsa %s user@hostname",pubkey_decoded);
+        printf("command=\"login appusername\" ssh-rsa %s user@hostname\n",pubkey_decoded);
     }
 
 
