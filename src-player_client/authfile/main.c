@@ -35,12 +35,7 @@ int main(int argc, char *argv[])
     strcat(query, pubkey_decoded);
     strcat(query, "') as useridlist;");
 
-    
-    freopen("/dev/null", "w", stdout);
-
     execdb(username, passarg, query, buf);
-
-    freopen("/dev/tty", "w", stdout);
 
     //printf("Result: %s\n", buf);
 
