@@ -29,9 +29,6 @@ int read_credentials(char *username, char *password)
     username[strcspn(username, "\n")] = 0;
     password[strcspn(password, "\n")] = 0;
 
-    int len = strlen(username);
-    username[len - 1] = '\0';
-
     fclose(file);
     
     return 0;
