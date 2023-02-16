@@ -37,7 +37,7 @@ int main(int argc, char *argv[])
 
     execdb(username, passarg, query, buf);
 
-    fprintf(stderr, "%s\n", buf);
+    //fprintf(stderr, "%s\n", buf);
 
     //parse buf into simple output
 
