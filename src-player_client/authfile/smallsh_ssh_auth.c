@@ -62,9 +62,11 @@ void execdb(char *username, char *password, char* query, char* buf)
         dup2(pipefd[1], STDOUT_FILENO);  // redirect stdout to write end of pipe
 
         // construct SQL query to check for unique user with this public key
-        //freopen("/dev/null", "w", stderr);
+        freopen("/dev/null", "w", stderr);
 
         execl("/usr/bin/mysql", "mysql", "-u", username, password, "-e", query, (char *) NULL);
+
+        freopen("/dev/tty", "w", stderr);
     } 
 
     else 
