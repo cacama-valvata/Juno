@@ -19,7 +19,7 @@ int main(int argc, char *argv[])
 
     if (auth_keys)
     {
-        printf ("%s", auth_keys);
+        printf ("%s\n", auth_keys);
         free (auth_keys);
     }
 

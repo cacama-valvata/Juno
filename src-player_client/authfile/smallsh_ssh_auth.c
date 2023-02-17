@@ -15,7 +15,7 @@ int read_credentials (char* username, char* password, char* host, char* credfile
 
     username[strcspn(username, "\n")] = 0;
     password[strcspn(password, "\n")] = 0;
-    host[strcspn(password, "\n")] = 0;
+    host[strcspn(host, "\n")] = 0;
 
     fclose(file);
     
@@ -35,8 +35,8 @@ MYSQL_RES* query_pubkey (char* pubkey)
     char* password = calloc (INPUTLEN, sizeof (char));
     char* host = calloc (INPUTLEN, sizeof (char));
 
-    int read_err = read_credentials (username, password, host, "credentials.txt");
-    if (! read_err)
+    int read_err = read_credentials (username, password, host, "/opt/Juno/credentials.txt");
+    if (read_err)
     {
         fprintf (stderr, "Error reading credentials from file.\n");
         mysql_close (con);
@@ -61,7 +61,7 @@ MYSQL_RES* query_pubkey (char* pubkey)
     strcat (query, pubkey);
     strcat (query, "\";");
 
-    if (! mysql_query (con, query))
+    if (mysql_query (con, query))
     {
         free (query);
         fprintf (stderr, "Error executing query in database.\n");
