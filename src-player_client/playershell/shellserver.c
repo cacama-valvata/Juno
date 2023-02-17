@@ -6,126 +6,97 @@
 
 
 
-int read_credentials(char *username, char *password)
+int read_credentials (char* username, char* password, char* host, char* credfile)
 {
-    //memset(username,0,INPUTLEN);
-    FILE *file;
-    file = fopen("credentials.txt", "r");
+    FILE *file = fopen (credfile, "r");
     if (file == NULL) {
-        printf("Error opening file\n");
         return 1;
     }
+
     fgets(username, INPUTLEN, file);
     fgets(password, INPUTLEN, file);
+    fgets(host, INPUTLEN, file);
 
     username[strcspn(username, "\n")] = 0;
     password[strcspn(password, "\n")] = 0;
-
-    int len = strlen(username);
-    username[len - 1] = '\0';
+    host[strcspn(host, "\n")] = 0;
 
     fclose(file);
     
     return 0;
 }
 
-void execdb(char *username, char *password, char* query, char* buf)
+MYSQL_RES* query_pubkey (char* query)
 {
-
-    int pipefd[2];
-    pid_t pid;
-
-    if (pipe(pipefd) == -1)
+    MYSQL* con = mysql_init (NULL);
+    if (! con)
     {
-        perror("pipe");
-        return;
+        fprintf (stderr, "Error initializing MySQL connection.\n");
+        exit (255);
     }
 
-    pid = fork();
-    if (pid == -1)
+    char* username = calloc (INPUTLEN, sizeof (char));
+    char* password = calloc (INPUTLEN, sizeof (char));
+    char* host = calloc (INPUTLEN, sizeof (char));
+
+    int read_err = read_credentials (username, password, host, "/opt/Juno/credentials.txt");
+    if (read_err)
     {
-        perror("fork");
-        return;
+        fprintf (stderr, "Error reading credentials from file.\n");
+        mysql_close (con);
+        exit (255);
     }
 
-    if (pid == 0) 
-    {  
-        // child process
-        close(pipefd[0]);  // close unused read end
-        dup2(pipefd[1], STDOUT_FILENO);  // redirect stdout to write end of pipe
+    MYSQL* err = mysql_real_connect (con, host, username, password, "Juno", 0, NULL, 0);
 
-        // construct SQL query to check for unique user with this public key
-        freopen("/dev/null", "w", stderr);
+    free (username);
+    free (password);
+    free (host);
 
-        execl("/usr/bin/sudo", "sudo", "/usr/bin/mysql", "mysql", "-u", username, password, "-e", query, (char *) NULL);
-    } 
-
-    else 
+    if (! err)
     {
-        close(pipefd[1]);  // close unused write end
-        wait(NULL);
-        char *token; 
-        while (read(pipefd[0], buf, BUFSIZE) > 0)
-        {
-
-            printf("%s", buf); 
-            //do stuff with the read memory
-            token = strtok(buf, "\n");
-            while(1) 
-            {
-                //printf( " %s\n", token );
-                strcpy(buf,token);
-
-                token = strtok(NULL, "\n");
-                if(token == NULL)
-                    break;
-            }
-
-        }
-        /*
-        // parent process
-        close(pipefd[1]);
-        wait(NULL);
-        bytes_read = read(pipefd[0], buf, BUFSIZE);
-        buf[bytes_read] = '\0';
-
-        char *line = strtok(buf, "\n");
-        while (line != NULL) {
-            if (strncmp(line, "|", 1) == 0) {
-                char *column = strtok(line, "|");
-                int i = 0;
-                while (column != NULL) 
-                {
-                    if (i == 1) 
-                    {
-                        //Do SOMETHING  with the info, for now print
-                        printf("%s\n", column);
-                    }
-                    i++;
-                    column = strtok(NULL, "|");
-                }
-            }
-            line = strtok(NULL, "\n");
-        }
-        close(pipefd[0]);
-
-        */
+        fprintf (stderr, "Error opening connection to MySQL server.\n");
+        mysql_close (con);
+        exit (255);
     }
+
+    if (mysql_query (con, query))
+    {
+        free (query);
+        fprintf (stderr, "Error executing query in database.\n");
+        mysql_close (con);
+        exit (255);
+    }
+
+    free (query);
+
+    MYSQL_RES* res_users = mysql_store_result (con);
+    if (! res_users)
+    {
+        fprintf (stderr, "Error retrieving result set.\n");
+        mysql_close (con);
+        exit (255);
+    }
+
+    mysql_close (con);
+    return res_users;
 }
 
-void retrieve_conf(char* key, char* username, char* password, char* gameid)
+void retrieve_conf(char* key, char* gameid)
 {
     char query[1000];
     char buf[BUFSIZE];
+    MYSQL_RES* res_users;
 
     memset(query,0,1000);
 
+    //query to check if game is ready
     strcat(query,"Use Juno; SELECT username FROM users WHERE userid = '");
     strcat(query, gameid);
     strcat(query, "';");
-    execdb(username,password,query, buf);
+    res_users = query_pubkey(query);
 
-    //pase buf into simple output
+    //parse res_users
 
     //IF GAME READY
     if(strcmp(buf,"1") == 0)
@@ -141,24 +112,14 @@ void retrieve_conf(char* key, char* username, char* password, char* gameid)
     return;
 }
 
-char *append_p(const char *str) {
-    size_t len = strlen(str);
-    char *result = malloc(len + 3);
-    
-    strcpy(result, "-p");
-    strcat(result, str);
-    return result;
-}
 
-
-
-void heartbeat (char* key, char* username, char* password)
+void heartbeat (char* key)
 {
     char query[1000];
     char buf[BUFSIZE];
     char userid[BUFSIZE];
     char gameid[BUFSIZE];
-    char* passarg = append_p(password);
+
 
     memset(query,0,1000);
 
@@ -167,22 +128,25 @@ void heartbeat (char* key, char* username, char* password)
     strcat(query,"Use Juno; SELECT username FROM users WHERE userid = '");
     strcat(query, key);
     strcat(query, "';");
-    execdb(username,passarg,query, buf);
+    res_users = query_pubkey(query);
 
-    //parse buf into simple output
-    strcpy(userid, buf);
+    //parse res_users store in BUF
 
     //TO DO: Fix query
     //search for games w/ user id
     strcat(query,"Use Juno; SELECT username FROM users WHERE userid = '");
     strcat(query, buf);
     strcat(query, "';");
-    execdb(username,passarg,query, buf);
+    res_users = query_pubkey(query);
+
+    //parse res_users
 
 
-    //parse buf into simple output
+    //parse res_users store in BUF
+    //save for later
     strcpy(gameid, buf);
     
+    // If res_users empty
     if(buf == NULL)
     {
         printf("NO GAMES");
@@ -195,7 +159,9 @@ void heartbeat (char* key, char* username, char* password)
     strcat(query,"Use Juno; SELECT username FROM users WHERE userid = '");
     strcat(query, buf);
     strcat(query, "';");
-    execdb(username,passarg,query, buf);
+    res_users = query_pubkey(query);
+
+    //parse res_users store in BUF
 
 
     //parse buf into simple output
@@ -208,24 +174,28 @@ void heartbeat (char* key, char* username, char* password)
     }
 
     //TO DO: Fix query
-    //VERIFY USER KEY
+    //VERIFY USER KEY MATCHES ON FILE
     strcat(query,"Use Juno; SELECT username FROM users WHERE userid = '");
     strcat(query, buf);
     strcat(query, "';");
-    execdb(username,passarg,query, buf);
+    res_users = query_pubkey(query);
+
+    //parse res_users store in BUF
 
 
-    //if not eequal, update (DONT KNOW HOW)
+    // IF not equal to key in wg config, update the key
     if(strcmp(buf,key) != 0)
     {
         strcat(query,"Use Juno; SELECT username FROM users WHERE userid = '");
         strcat(query, buf);
         strcat(query, "';");
-        execdb(username,passarg,query, buf);
+        res_users = query_pubkey(query);
+
+         //parse res_users store in BUF
 
 
         printf("key updated\n");
-        retrieve_conf(key, username, passarg, gameid);
+        retrieve_conf(key, gameid);
         return;
     }
 
@@ -233,13 +203,11 @@ void heartbeat (char* key, char* username, char* password)
     else
     {
         printf("key already added!\n");
-        retrieve_conf(key, username, passarg, gameid);
+        retrieve_conf(key, gameid);
         return;
     }
 
     return;
-
-    free(passarg);
 }
 
 
