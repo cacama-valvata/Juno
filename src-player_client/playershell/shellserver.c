@@ -258,8 +258,6 @@ void run_command (char* c)
         return;
 
     //grab credentials from auth file for later query
-    char username[INPUTLEN], password[INPUTLEN];
-    read_credentials(username, password); 
 
     // each function should check that were logged in!
     
@@ -277,7 +275,7 @@ void run_command (char* c)
             free (command);
             return;
         }
-        heartbeat (arg, username, password);
+        heartbeat ("x");
     }
     else if (! strcmp(arg, "wgupdate"))
     {
