@@ -1,6 +1,6 @@
 
 {"vuln":[
-    "the-one-without-eternal-blue",
-    "the-one-with-eternal-blue",
+    "eternal-blue",
+    "remoteSSH",
     "random"
 ]}
