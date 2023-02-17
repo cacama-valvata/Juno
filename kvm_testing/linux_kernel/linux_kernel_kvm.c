@@ -1,3 +1,4 @@
+#define _GNU_SOURCE
 #include <asm/bootparam.h>
 #include <stdio.h>
 #include <fcntl.h>
@@ -13,7 +14,6 @@
 #include <errno.h>
 #include <unistd.h>
 
-#define MEM_SIZE 1<<30
 
 struct vm {
 	int kvm_fd;
@@ -38,7 +38,7 @@ static int vm_init_regs(struct vm *v) {
 	struct kvm_regs regs;
 
 	//get sregs
-	if((ioctl(v->vcpu_fd, KVM_GET_SREGS, &sregs)) < 0) {
+	if(ioctl(v->vcpu_fd, KVM_GET_SREGS, &(sregs)) < 0) {
 		return vm_error(v, "failed to get s registers");
 	}
 
@@ -71,12 +71,12 @@ static int vm_init_regs(struct vm *v) {
 	sregs.cr0 |= 1; /* enable protected mode */
 
 	//set the sregs
-	if((ioctl(v->vcpu_fd, KVM_SET_SREGS, &sregs)) < 0) {
+	if(ioctl(v->vcpu_fd, KVM_SET_SREGS, &sregs) < 0) {
 		return vm_error(v, "failed to set special registers");
 	}
 
 	//get regs
-	if((ioctl(v->vcpu_fd, KVM_GET_REGS, &regs)) < 0) {
+	if(ioctl(v->vcpu_fd, KVM_GET_REGS, &(regs)) < 0) {
 		return vm_error(v, "failed to get registers");
 	}
 
@@ -85,7 +85,7 @@ static int vm_init_regs(struct vm *v) {
 	regs.rsi = 0x10000;
 
 	//set regs
-	if((ioctl(v->vcpu_fd, KVM_SET_REGS, &regs)) < 0) {
+	if(ioctl(v->vcpu_fd, KVM_SET_REGS, &(regs)) < 0) {
 		return vm_error(v, "failed to set registers");
 	}
 	return 0;
@@ -100,9 +100,9 @@ static int vm_init_cpu_id(struct vm *v) {
 	} kvm_cpuid;
 
 	kvm_cpuid.nent = sizeof(kvm_cpuid.entries) / sizeof(kvm_cpuid.entries[0]);
-	ioctl(v->vcpu_fd, KVM_GET_SUPPORTED_CPUID, &kvm_cpuid);
+	ioctl(v->kvm_fd, KVM_GET_SUPPORTED_CPUID, &kvm_cpuid);
 
-	for (int i = 0; i < kvm_cpuid.nent; i++) {
+	for (unsigned int i = 0; i < kvm_cpuid.nent; i++) {
 		struct kvm_cpuid_entry2 *entry = &kvm_cpuid.entries[i];
 		if(entry->function == KVM_CPUID_SIGNATURE) {
 			entry->eax = KVM_CPUID_FEATURES;
@@ -121,8 +121,8 @@ int vm_init(struct vm *v) {
 	if ((v->kvm_fd = open("/dev/kvm", O_RDWR)) < 0) {
 		return vm_error(v, "failed to open /def/kvm");
 	}
-	int version = ioctl(v->kvm_fd, KVM_GET_API_VERSION, 0);
-	printf("KVM version: %d\n", version);
+	//int version = ioctl(v->kvm_fd, KVM_GET_API_VERSION, 0);
+	//printf("KVM version: %d\n", version);
 
 	// creating vm
 	if((v->vm_fd = ioctl(v->kvm_fd, KVM_CREATE_VM, 0)) < 0) {
@@ -130,18 +130,18 @@ int vm_init(struct vm *v) {
 	}
 
 	//setting TSS Addr
-	if((ioctl(v->vm_fd, KVM_SET_TSS_ADDR, 0xffffd000)) < 0) {
+	if(ioctl(v->vm_fd, KVM_SET_TSS_ADDR, 0xffffd000) < 0) {
 		return vm_error(v, "failed to set tss addr");
 	}
 
 	//setting identity map addr
-	uint64_t map_addr = 0xffffc000;
-	if((ioctl(v->vm_fd, KVM_SET_IDENTITY_MAP_ADDR, &map_addr)) < 0) {
+	__u64 map_addr = 0xffffc000;
+	if(ioctl(v->vm_fd, KVM_SET_IDENTITY_MAP_ADDR, &map_addr) < 0) {
 		return vm_error(v, "failed to set identity map addr");
 	}
 
 	//creating irqchip
-	if((ioctl(v->vm_fd, KVM_CREATE_IRQCHIP, 0)) < 0) {
+	if(ioctl(v->vm_fd, KVM_CREATE_IRQCHIP, 0) < 0) {
 		return vm_error(v, "failed to create irq chip");
 	}
 
@@ -149,25 +149,26 @@ int vm_init(struct vm *v) {
 	struct kvm_pit_config pit = {
 		.flags = 0,
 	};
-	if((ioctl(v->vm_fd, KVM_CREATE_PIT2, &pit)) < 0) {
+	if(ioctl(v->vm_fd, KVM_CREATE_PIT2, &pit) < 0) {
 		return vm_error(v, "failed to create i8254 interval timer");
 	}
 
 	// creating vm memory
-	v->mem = mmap(NULL, MEM_SIZE, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
+	v->mem = mmap(NULL, 1 << 30, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
 	if (v->mem == NULL) {
 		return vm_error(v, "failed to mmap vm memory");
 	}
 
-	struct kvm_userspace_memory_region region;
-	memset(&region, 0, sizeof(region));
-	region.slot = 0;
-	region.flags = 0;
-	region.guest_phys_addr = 0;
-	region.memory_size = MEM_SIZE;
-	region.userspace_addr = (__u64)v->mem;
+	struct kvm_userspace_memory_region region = {
+		.slot = 0,
+		.flags = 0,
+		.guest_phys_addr = 0,
+		.memory_size = 1 << 30,
+		.userspace_addr = (__u64)v->mem,
+	};
+	//memset(&region, 0, sizeof(region));
 
-	if((ioctl(v->vm_fd, KVM_SET_USER_MEMORY_REGION, &region)) < 0) {
+	if(ioctl(v->vm_fd, KVM_SET_USER_MEMORY_REGION, &region) < 0) {
 		return vm_error(v, "failed to set user memory region");
 	}
 
@@ -210,6 +211,7 @@ int vm_load(struct vm *v, const char *image_path) {
 	boot->hdr.vid_mode = 0xFFFF; //VGA
 	boot->hdr.type_of_loader = 0xFF;
 	boot->hdr.ramdisk_image = 0x0;
+	boot->hdr.ramdisk_size = 0x0;
 	boot->hdr.loadflags |= CAN_USE_HEAP | 0x01 | KEEP_SEGMENTS;
 	boot->hdr.heap_end_ptr = 0xFE00;
 	boot->hdr.ext_loader_ver = 0x0;
@@ -226,8 +228,9 @@ int vm_run(struct vm *v) {
 	int run_size = ioctl(v->kvm_fd, KVM_GET_VCPU_MMAP_SIZE, 0);
 	struct kvm_run *run = mmap(0, run_size, PROT_READ | PROT_WRITE, MAP_SHARED, v->vcpu_fd, 0);
 	for (;;) {
-		printf("Here\n");
-		if((ioctl(v->vcpu_fd, KVM_RUN, 0)) < 0) {
+		//printf("Here\n");
+		int ret = ioctl(v->vcpu_fd, KVM_RUN, 0);
+		if (ret < 0) {
 			return vm_error(v, "kvm_run failed");
 		}
 		
@@ -257,7 +260,7 @@ void vm_exit(struct vm *v) {
 	close(v->kvm_fd);
 	close(v->vm_fd);
 	close(v->vcpu_fd);
-	munmap(v->mem, MEM_SIZE);
+	munmap(v->mem, 1 << 30);
 }
 
 int main(int argc, char *argv[]) {
@@ -265,7 +268,11 @@ int main(int argc, char *argv[]) {
 	int r;
 	struct vm v;
 
-	vm_init(&v);
+	r = vm_init(&v);
+	if (r < 0) {
+		fprintf(stderr, "failed to initialize guest vm: %d, errno=%d\n", r, errno);
+		return 1;
+	}
 
 	r = vm_load(&v, argv[1]);
 	if (r < 0) {
