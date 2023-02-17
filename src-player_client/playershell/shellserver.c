@@ -116,9 +116,10 @@ void retrieve_conf(char* key, char* gameid)
 void heartbeat (char* key)
 {
     char query[1000];
-    char buf[BUFSIZE];
+    //char buf[BUFSIZE];
     char userid[BUFSIZE];
     char gameid[BUFSIZE];
+    MYSQL_RES* res_users;
 
 
     memset(query,0,1000);
