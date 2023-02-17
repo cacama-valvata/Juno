@@ -3,12 +3,12 @@
 CC = gcc -std=gnu99 -g -Wall
 
 
-authshell: main.c smallsh_ssh_auth.c smallssh_ssh_auth.h
-	$(CC) main.c smallsh_ssh_auth.c -lmysqlclient -o authshell
+authlookup: main.c authlookup.c authlookup.h
+	$(CC) main.c authlookup.c -lmysqlclient -o authlookup
 
 
-testfile: test.c smallsh_ssh_auth.c smallssh_ssh_auth.h
-	$(CC) test.c smallsh_ssh_auth.c -o testfile
+testfile: test.c authlookup.c authlookup.h
+	$(CC) test.c authlookup.c -lmysqlclient -o testfile
 
 clean:
-	rm -f *.o authshell testfile
+	rm -f *.o authlookup testfile
