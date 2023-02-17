@@ -1,4 +1,4 @@
-#include "smallssh_ssh_auth.h"
+#include "authlookup.h"
 
 #define INPUTLEN 1024
 

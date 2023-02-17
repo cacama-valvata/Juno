@@ -1,4 +1,4 @@
-#include "smallssh_ssh_auth.h"
+#include "authlookup.h"
 
 
 int main(int argc, char *argv[])
