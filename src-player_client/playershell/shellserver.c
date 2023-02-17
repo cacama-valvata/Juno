@@ -96,6 +96,9 @@ void retrieve_conf(char* key, char* gameid)
     strcat(query, "';");
     res_users = query_pubkey(query);
 
+    if(!res_users)
+        printf(":(\n");
+
     //parse res_users
 
     //IF GAME READY
@@ -116,7 +119,7 @@ void retrieve_conf(char* key, char* gameid)
 void heartbeat (char* key)
 {
     char query[1000];
-    //char buf[BUFSIZE];
+    char buf[BUFSIZE];
     char userid[BUFSIZE];
     char gameid[BUFSIZE];
     MYSQL_RES* res_users;
@@ -131,6 +134,9 @@ void heartbeat (char* key)
     strcat(query, "';");
     res_users = query_pubkey(query);
 
+    if(!res_users)
+        printf(":(\n");
+
     //parse res_users store in BUF
 
     //TO DO: Fix query
@@ -141,6 +147,8 @@ void heartbeat (char* key)
     res_users = query_pubkey(query);
 
     //parse res_users
+    if(!res_users)
+        printf(":(\n");
 
 
     //parse res_users store in BUF
@@ -162,6 +170,8 @@ void heartbeat (char* key)
     strcat(query, "';");
     res_users = query_pubkey(query);
 
+    if(!res_users)
+        printf(":(\n");
     //parse res_users store in BUF
 
 
@@ -181,6 +191,9 @@ void heartbeat (char* key)
     strcat(query, "';");
     res_users = query_pubkey(query);
 
+    if(!res_users)
+        printf(":(\n");
+
     //parse res_users store in BUF
 
 
@@ -192,6 +205,8 @@ void heartbeat (char* key)
         strcat(query, "';");
         res_users = query_pubkey(query);
 
+        if(!res_users)
+            printf(":(\n");
          //parse res_users store in BUF
 
 
