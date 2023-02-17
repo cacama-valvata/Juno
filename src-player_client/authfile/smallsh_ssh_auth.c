@@ -1,123 +1,114 @@
 #include "smallssh_ssh_auth.h"
 
-#define BUFSIZE 256
-#define INPUTLEN 100
+#define INPUTLEN 1024
 
-
-char *append_p(const char *str) {
-    size_t len = strlen(str);
-    char *result = malloc(len + 3);
-    
-    strcpy(result, "-p");
-    strcat(result, str);
-    return result;
-}
-
-
-int read_credentials(char *username, char *password)
+int read_credentials (char* username, char* password, char* host, char* credfile)
 {
-    //memset(username,0,INPUTLEN);
-    FILE *file;
-    file = fopen("credentials.txt", "r");
+    FILE *file = fopen (credfile, "r");
     if (file == NULL) {
-        printf("Error opening file\n");
         return 1;
     }
+
     fgets(username, INPUTLEN, file);
     fgets(password, INPUTLEN, file);
+    fgets(host, INPUTLEN, file);
 
     username[strcspn(username, "\n")] = 0;
     password[strcspn(password, "\n")] = 0;
+    host[strcspn(password, "\n")] = 0;
 
     fclose(file);
     
     return 0;
 }
 
-void execdb(char *username, char *password, char* query, char* buf)
+MYSQL_RES* query_pubkey (char* pubkey)
 {
-
-    int pipefd[2];
-    pid_t pid; 
-
-    //printf("RECIEVED: %s\n", query);
-
-    if (pipe(pipefd) == -1)
+    MYSQL* con = mysql_init (NULL);
+    if (! con)
     {
-        perror("pipe");
-        return;
+        fprintf (stderr, "Error initializing MySQL connection.\n");
+        exit (255);
     }
 
-    pid = fork();
-    if (pid == -1)
+    char* username = calloc (INPUTLEN, sizeof (char));
+    char* password = calloc (INPUTLEN, sizeof (char));
+    char* host = calloc (INPUTLEN, sizeof (char));
+
+    int read_err = read_credentials (username, password, host, "credentials.txt");
+    if (! read_err)
     {
-        perror("fork");
-        return;
+        fprintf (stderr, "Error reading credentials from file.\n");
+        mysql_close (con);
+        exit (255);
     }
 
-    if (pid == 0) 
-    {  
-        // child process
-        close(pipefd[0]);  // close unused read end
-        dup2(pipefd[1], STDOUT_FILENO);  // redirect stdout to write end of pipe
+    MYSQL* err = mysql_real_connect (con, host, username, password, "Juno", 0, NULL, 0);
 
-        // construct SQL query to check for unique user with this public key
-        freopen("/dev/null", "w", stderr);
+    free (username);
+    free (password);
+    free (host);
 
-        execl("/usr/bin/mysql", "mysql", "-u", username, password, "-e", query, (char *) NULL);
-
-        freopen("/dev/tty", "w", stderr);
-    } 
-
-    else 
+    if (! err)
     {
-        close(pipefd[1]);  // close unused write end
-        wait(NULL);
-        char *token; 
-        while (read(pipefd[0], buf, BUFSIZE) > 0)
-        {
-
-            //printf("%s", buf); 
-            //do stuff with the read memory
-            token = strtok(buf, "\n");
-            while(1) 
-            {
-                //printf( " %s\n", token );
-                strcpy(buf,token);
-
-                token = strtok(NULL, "\n");
-                if(token == NULL)
-                    break;
-            }
-
-        }
-        /*
-        // parent process
-        close(pipefd[1]);
-        wait(NULL);
-        bytes_read = read(pipefd[0], buf, BUFSIZE);
-        buf[bytes_read] = '\0';
-
-        char *line = strtok(buf, "\n");
-        while (line != NULL) {
-            if (strncmp(line, "|", 1) == 0) {
-                char *column = strtok(line, "|");
-                int i = 0;
-                while (column != NULL) 
-                {
-                    if (i == 1) 
-                    {
-                        //Do SOMETHING  with the info, for now print
-                        printf("%s\n", column);
-                    }
-                    i++;
-                    column = strtok(NULL, "|");
-                }
-            }
-            line = strtok(NULL, "\n");
-        }
-        close(pipefd[0]);
-
-        */
+        fprintf (stderr, "Error opening connection to MySQL server.\n");
+        mysql_close (con);
+        exit (255);
     }
+
+    char* query = (char*) calloc (1024, sizeof (char));
+    strcpy (query, "SELECT ssh_prefix, ssh_pubkey, ssh_suffix, userid FROM devices where ssh_pubkey = \"");
+    strcat (query, pubkey);
+    strcat (query, "\";");
+
+    if (! mysql_query (con, query))
+    {
+        free (query);
+        fprintf (stderr, "Error executing query in database.\n");
+        mysql_close (con);
+        exit (255);
+    }
+
+    free (query);
+
+    MYSQL_RES* res_users = mysql_store_result (con);
+    if (! res_users)
+    {
+        fprintf (stderr, "Error retrieving result set.\n");
+        mysql_close (con);
+        exit (255);
+    }
+
+    mysql_close (con);
+    return res_users;
+}
+
+char* compare_users (MYSQL_RES* res_users)
+{
+    int num_users = mysql_num_rows (res_users);
+
+    // catches both 0 keys and >1 keys
+    if (num_users != 1)
+    {
+        fprintf (stderr, "%d keys that match. Authorization failed.\n", num_users);
+        return NULL;
+    }
+
+    MYSQL_ROW user_info = mysql_fetch_row (res_users);
+    // 0: ssh_prefix, 1: ssh_pubkey, 2: ssh_suffix, 3: userid
+
+    // safe to assume that this pubkey is indeed the one we're checking?
+    char* auth_keys = (char*) calloc (1024, sizeof (char));
+    // command="" portion of auth_keys output
+    strcpy (auth_keys, "command=\"login ");
+    strcat (auth_keys, user_info[3]);
+    strcat (auth_keys, "\" ");
+    // the key itself, rebuilt
+    strcat (auth_keys, user_info[0]);
+    strcat (auth_keys, " ");
+    strcat (auth_keys, user_info[1]);
+    strcat (auth_keys, " ");
+    strcat (auth_keys, user_info[2]);
+
+    return auth_keys;
 }
