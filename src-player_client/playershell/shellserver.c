@@ -154,6 +154,7 @@ void heartbeat (char* key)
     //parse res_users store in BUF
     //save for later
     strcpy(gameid, buf);
+    strcpy(userid, buf);
     
     // If res_users empty
     if(buf == NULL)
