@@ -10,11 +10,12 @@
 
 
 int read_credentials (char* username, char* password, char* host, char* credfile);
-MYSQL_RES* query_pubkey (char* query);
+MYSQL_RES* query_db (char* query);
+char* parse_results (MYSQL_RES* res_users);
 void retrieve_conf(char* key, char* gameid);
 char *append_p(const char *str);
-void heartbeat (char* key);
-void run_command (char* c);
+void heartbeat (char* key, char* userid);
+void run_command (char* c, char* userid);
 
 
 #endif /* SHELLSERVER_H */

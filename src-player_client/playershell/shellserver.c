@@ -26,7 +26,7 @@ int read_credentials (char* username, char* password, char* host, char* credfile
     return 0;
 }
 
-MYSQL_RES* query_pubkey (char* query)
+MYSQL_RES* query_db (char* query)
 {
     MYSQL* con = mysql_init (NULL);
     if (! con)
@@ -82,29 +82,50 @@ MYSQL_RES* query_pubkey (char* query)
     return res_users;
 }
 
+char* parse_results (MYSQL_RES* res_users)
+{
+    int num_users = mysql_num_rows (res_users);
+
+    // catches both 0 keys and >1 keys
+    if (num_users != 1)
+    {
+        fprintf (stderr, "%d keys that match. Authorization failed.\n", num_users);
+        return NULL;
+    }
+
+    MYSQL_ROW user_info = mysql_fetch_row (res_users);
+    // 0: result row
+
+    // safe to assume that this pubkey is indeed the one we're checking?
+    char* auth_keys = (char*) calloc (1024, sizeof (char));
+    // command="" portion of auth_keys output
+    strcpy (auth_keys, user_info[0]);
+
+    return auth_keys;
+}
+
+
 void retrieve_conf(char* key, char* gameid)
 {
-    char query[1000];
-    char buf[BUFSIZE];
-    MYSQL_RES* res_users;
-
-    memset(query,0,1000);
+    char* query = (char*) calloc (1024, sizeof (char));
+    MYSQL_RES* res_query;
+    char* res;
+  
 
     //query to check if game is ready
-    strcat(query,"Use Juno; SELECT username FROM users WHERE userid = '");
+    strcat(query,"Use Juno; SELECT ready FROM games WHERE gameid = '");
     strcat(query, gameid);
     strcat(query, "';");
-    res_users = query_pubkey(query);
+    res_query = query_db(query);
+    res = parse_results(res_query);
 
-    if(!res_users)
-        printf(":(\n");
+    if(!res)
+        fprintf(stderr,"Error in database, please retry\n");
 
-    //parse res_users
 
     //IF GAME READY
-    if(strcmp(buf,"1") == 0)
+    if(strcmp(res,"1") == 0)
     {
-        // TODO: How to generate WG config
         printf("here is your new config %s", key);
     }
 
@@ -116,112 +137,85 @@ void retrieve_conf(char* key, char* gameid)
 }
 
 
-void heartbeat (char* key)
+void heartbeat (char* key, char* userid)
 {
-    char query[1000];
-    char buf[BUFSIZE];
-    char userid[BUFSIZE];
+    char* query = (char*) calloc (1024, sizeof (char));
     char gameid[BUFSIZE];
-    MYSQL_RES* res_users;
-
-
-    memset(query,0,1000);
-
-    //TO DO: Fix query
-    //grab user id to search for games
-    strcat(query,"Use Juno; SELECT username FROM users WHERE userid = '");
-    strcat(query, key);
-    strcat(query, "';");
-    res_users = query_pubkey(query);
-
-    if(!res_users)
-        printf(":(\n");
+    MYSQL_RES* res_query;
+    char* res;
 
     //parse res_users store in BUF
 
-    //TO DO: Fix query
     //search for games w/ user id
-    strcat(query,"Use Juno; SELECT username FROM users WHERE userid = '");
-    strcat(query, buf);
+    strcat(query,"SELECT gameid FROM game_players WHERE userid = '");
+    strcat(query, userid);
     strcat(query, "';");
-    res_users = query_pubkey(query);
 
-    //parse res_users
-    if(!res_users)
-        printf(":(\n");
+    res_query = query_db(query);
+    int num_games = mysql_num_rows (res_query);
 
-
-    //parse res_users store in BUF
-    //save for later
-    strcpy(gameid, buf);
-    strcpy(userid, buf);
-    
-    // If res_users empty
-    if(buf == NULL)
+    if(num_games == 0)
     {
-        printf("NO GAMES");
+        fprintf(stderr,"No games\n");
         return;
     }
+   
 
+    MYSQL_ROW gamelist = mysql_fetch_row (res_query);
+    //search for and grab the most recent game
 
-    //TO DO: Fix query
-    //figure out if game is in the present or past
-    strcat(query,"Use Juno; SELECT username FROM users WHERE userid = '");
-    strcat(query, buf);
-    strcat(query, "';");
-    res_users = query_pubkey(query);
-
-    if(!res_users)
-        printf(":(\n");
-    //parse res_users store in BUF
-
-
-    //parse buf into simple output
-
-    // IF GAME IS IN THE PAST > MAKE A NEW CONFIG (SOME EXEC MAGIC)
-    if(buf == NULL)
+    int comp = 0;
+    for(int i = 0; i < num_games;i++)
     {
-        printf("make a new public key");
-        return;
-    }
-
-    //TO DO: Fix query
-    //VERIFY USER KEY MATCHES ON FILE
-    strcat(query,"Use Juno; SELECT username FROM users WHERE userid = '");
-    strcat(query, buf);
-    strcat(query, "';");
-    res_users = query_pubkey(query);
-
-    if(!res_users)
-        printf(":(\n");
-
-    //parse res_users store in BUF
-
-
-    // IF not equal to key in wg config, update the key
-    if(strcmp(buf,key) != 0)
-    {
-        strcat(query,"Use Juno; SELECT username FROM users WHERE userid = '");
-        strcat(query, buf);
+        strcat(query,"SELECT ready FROM games WHERE gameid = '");
+        strcat(query, gamelist[i]);
         strcat(query, "';");
-        res_users = query_pubkey(query);
+        res_query = query_db(query);
+        res = parse_results(res_query);
 
-        if(!res_users)
-            printf(":(\n");
-         //parse res_users store in BUF
+        if(strcmp(res,"1") == 0)
+        {
+            strcpy(gameid,gamelist[i]);
+            comp = 1;
+           
+            break;
+        }
+
+        if(res)
+            free(res);
+
+    }
+    
+    if(comp == 1)
+    {
+         printf("No games\n");
+         return;
+    }
 
 
+    //key is previously used for a  past game
+    strcat(query,"SELECT wg_pubkey FROM games WHERE gameid = '");
+    strcat(query, gameid);
+    strcat(query, "';");
+    res_query = query_db(query);
+    res = parse_results(res_query);
+
+    if(!res)
+    {
+        fprintf(stderr,"Error in database, please retry\n");
+        return;
+    }
+    
+    if(strcmp(res,key) == 0)
+    {
+        printf("key already added\n");
+        retrieve_conf(key, gameid);
+    }
+
+    else if(strcmp(res,key) != 0)
+    {
         printf("key updated\n");
         retrieve_conf(key, gameid);
-        return;
-    }
-
-    //if key is equal generate that sweet sweet config
-    else
-    {
-        printf("key already added!\n");
-        retrieve_conf(key, gameid);
-        return;
     }
 
     return;
@@ -264,7 +258,7 @@ void wgsend()
     printf ("completed file: %s", concatenated_string);
 }
 
-void run_command (char* c)
+void run_command (char* c, char* userid)
 {
     /*
      * If getenv returns NULL for SSH_ORIGINAL_COMMAND,
@@ -292,7 +286,7 @@ void run_command (char* c)
             free (command);
             return;
         }
-        heartbeat ("x");
+        heartbeat ("x", userid);
     }
     else if (! strcmp(arg, "wgupdate"))
     {

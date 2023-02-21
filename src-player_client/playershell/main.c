@@ -93,7 +93,7 @@ int main (int argc, char* argv[])
          * Client would run: ssh host [command] 
          * This will grab and run the original command sent
          */
-        run_command (getenv ("SSH_ORIGINAL_COMMAND"));
+        run_command (getenv ("SSH_ORIGINAL_COMMAND"), session_user);
     }
     // interactive
     else
