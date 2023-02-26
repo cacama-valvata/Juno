@@ -4,6 +4,40 @@
 #define BUFSIZE 256
 #define INPUTLEN 32
 
+char* sanitize_string(char* input_string) {
+  char* sanitized_string = (char*) malloc(1000 * sizeof(char));
+  int i, j;
+  for (i = 0, j = 0; i < strlen(input_string); i++) {
+    switch (input_string[i]) {
+      case ';':
+        sanitized_string[j++] = '\\';
+        sanitized_string[j++] = ';';
+        break;
+      case '-':
+        sanitized_string[j++] = '\\';
+        sanitized_string[j++] = '-';
+        break;
+      case '*':
+        sanitized_string[j++] = '\\';
+        sanitized_string[j++] = '*';
+        break;
+      case '"':
+        sanitized_string[j++] = '\\';
+        sanitized_string[j++] = '"';
+        break;
+      case '\\':
+        sanitized_string[j++] = '\\';
+        sanitized_string[j++] = '\\';
+        break;
+      default:
+        sanitized_string[j++] = input_string[i];
+        break;
+    }
+  }
+  sanitized_string[j] = '\0';
+  return sanitized_string;
+}
+
 
 
 int read_credentials (char* username, char* password, char* host, char* credfile)
@@ -164,6 +198,7 @@ void heartbeat (char* key, char* userid)
     MYSQL_ROW gamelist = mysql_fetch_row (res_query);
     //search for and grab the most recent game
 
+    //iterate through all games (maybe check time stamp, returns ready game)
     int comp = 0;
     for(int i = 0; i < num_games;i++)
     {
@@ -250,7 +285,10 @@ void run_command (char* c, char* userid)
             free (command);
             return;
         }
-        heartbeat ("x", userid);
+
+        char* input_string = arg;
+        char* sanitized_string = sanitize_string(input_string);
+        heartbeat (sanitized_string, userid);
     }
     else if (! strcmp(arg, "ping")) 
     {

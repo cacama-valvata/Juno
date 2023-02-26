@@ -1,34 +1,5 @@
 #include "authlookup.h"
 
-char* sanitize_string(char* input_string) {
-  char* sanitized_string = (char*) malloc(MAX_STRING_LENGTH * sizeof(char));
-  int i, j;
-  for (i = 0, j = 0; i < strlen(input_string); i++) {
-    switch (input_string[i]) {
-      case ';':
-        sanitized_string[j++] = '\\';
-        sanitized_string[j++] = ';';
-        break;
-      case '-':
-        sanitized_string[j++] = '\\';
-        sanitized_string[j++] = '-';
-        break;
-      case '*':
-        sanitized_string[j++] = '\\';
-        sanitized_string[j++] = '*';
-        break;
-      case '\\':
-        sanitized_string[j++] = '\\';
-        sanitized_string[j++] = '\\';
-        break;
-      default:
-        sanitized_string[j++] = input_string[i];
-        break;
-    }
-  }
-  sanitized_string[j] = '\0';
-  return sanitized_string;
-}
 
 
 int main(int argc, char *argv[])
@@ -41,6 +12,8 @@ int main(int argc, char *argv[])
 
     char* input_string = argv[1];
     char* sanitized_string = sanitize_string(input_string);
+
+    //printf("KEY: %s", sanitized_string);
 
     char* pubkey = calloc (strlen (sanitized_string) + 1, sizeof (char));
     strcpy (pubkey, sanitized_string);

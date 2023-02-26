@@ -2,6 +2,42 @@
 
 #define INPUTLEN 1024
 
+
+char* sanitize_string(char* input_string) {
+  char* sanitized_string = (char*) malloc(1000 * sizeof(char));
+  int i, j;
+  for (i = 0, j = 0; i < strlen(input_string); i++) {
+    switch (input_string[i]) {
+      case ';':
+        sanitized_string[j++] = '\\';
+        sanitized_string[j++] = ';';
+        break;
+      case '-':
+        sanitized_string[j++] = '\\';
+        sanitized_string[j++] = '-';
+        break;
+      case '*':
+        sanitized_string[j++] = '\\';
+        sanitized_string[j++] = '*';
+        break;
+      case '"':
+        sanitized_string[j++] = '\\';
+        sanitized_string[j++] = '"';
+        break;
+      case '\\':
+        sanitized_string[j++] = '\\';
+        sanitized_string[j++] = '\\';
+        break;
+      default:
+        sanitized_string[j++] = input_string[i];
+        break;
+    }
+  }
+  sanitized_string[j] = '\0';
+  return sanitized_string;
+}
+
+
 int read_credentials (char* username, char* password, char* host, char* credfile)
 {
     FILE *file = fopen (credfile, "r");

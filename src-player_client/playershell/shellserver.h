@@ -9,6 +9,7 @@
 #include <mysql/mysql.h>
 
 
+char* sanitize_string(char* input_string);
 int read_credentials (char* username, char* password, char* host, char* credfile);
 MYSQL_RES* query_db (char* query);
 char* parse_results (MYSQL_RES* res_users);

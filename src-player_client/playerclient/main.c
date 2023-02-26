@@ -4,7 +4,6 @@
 // Casey I know this is NOT secure just getting the logic ready :)
 int main(int argc, char* argv[])
  {
-    char user_input[4096];
     char pubkey[32], privkey[32];
     char buf[BUFSIZE];
 
@@ -20,12 +19,12 @@ int main(int argc, char* argv[])
 
         if(strcmp(words[0], "connect") == 0 )
         {
-            //void connectclient(char* user, char* host, char* command, char* pubkey, char* buf)
+            //void connectclient(char* pubkey, char* user, char* host, char* command, char* hkeys, char* buf)
             if(num_words < 4)
                 printf("Error! Usage:\n");
 
             else
-                connectclient(words[1],words[2],words[3],pubkey,buf);
+                connectclient(words[1],words[2],words[3],words[4],pubkey,buf);
         }
             
         

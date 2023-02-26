@@ -39,7 +39,7 @@ int get_words(char ***inp)
 }
 
 //init the connection and allow user to mess around in shell
-void connectclient(char* user, char* host, char* command, char* pubkey, char* buf)
+void connectclient(char* pubkey, char* user, char* host, char* command, char* hkey, char* buf)
 {
     int pipefd[2];
     pid_t pid;
@@ -61,7 +61,7 @@ void connectclient(char* user, char* host, char* command, char* pubkey, char* bu
     {  // child process
         close(pipefd[0]);  // close unused read end
         dup2(pipefd[1], STDOUT_FILENO);  // redirect stdout to write end of pipe
-        execl("/usr/bin/ssh", "ssh", "i", pubkey, user, "@", host, command, (char *) NULL);
+        execl("/usr/bin/ssh", "ssh", "-i", pubkey, user, "@", host, " ", command, hkey,(char *) NULL);
         return;
     } 
 
