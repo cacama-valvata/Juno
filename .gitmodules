@@ -1,3 +1,6 @@
 [submodule "scoreboard"]
 	path = scoreboard
 	url = git@github.com:cacama-valvata/Glass.git
+[submodule "src-player_client/wireguard_lib"]
+	path = src-player_client/wireguard_lib
+	url = https://git.zx2c4.com/wireguard-tools
