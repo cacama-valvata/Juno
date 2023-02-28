@@ -73,7 +73,7 @@ MYSQL_RES* query_db (char* query)
     char* password = calloc (INPUTLEN, sizeof (char));
     char* host = calloc (INPUTLEN, sizeof (char));
 
-    int read_err = read_credentials (username, password, host, "/opt/Juno/credentials.txt");
+    int read_err = read_credentials (username, password, host, "/opt/Juno/mysql.creds");
     if (read_err)
     {
         fprintf (stderr, "Error reading credentials from file.\n");
