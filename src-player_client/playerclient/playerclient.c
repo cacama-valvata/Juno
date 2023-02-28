@@ -3,6 +3,43 @@
 #define BUF_SIZE 256
 #define INPUTLEN 1000
 
+char *ssh_exec(char *hostname, char *username, char *private_key_path, char *command, char* hkey) 
+{
+    char *ssh_command = malloc(strlen(hostname) + strlen(username) + strlen(private_key_path) + strlen(command) + strlen(hkey) + 64);
+    sprintf(ssh_command, "ssh -i %s %s@%s '%s %s'", private_key_path, username, hostname, command, hkey);
+    printf("%s\n",ssh_command);
+
+    char buffer[1024];
+    char *result = NULL;
+    size_t result_size = 0;
+
+    FILE *fp = popen(ssh_command, "r");
+    if (fp == NULL) 
+    {
+        perror("Failed to execute command");
+        exit(1);
+    }
+
+    while (fgets(buffer, 1024, fp) != NULL)
+    {
+        size_t buffer_size = strlen(buffer);
+        result = realloc(result, result_size + buffer_size +1);
+        if(result == NULL)
+        {
+            perror("Failed to allocate memory");
+            exit(1);
+        }
+        strcpy(result + result_size, buffer);
+        result_size += buffer_size;
+    }
+
+    pclose(fp);
+    free(ssh_command);
+
+    return result;
+}
+
+
 int get_words(char ***inp) 
 {
     char input[INPUTLEN];
@@ -36,48 +73,6 @@ int get_words(char ***inp)
     }
     
     return num_words;
-}
-
-//init the connection and allow user to mess around in shell
-void connectclient(char* pubkey, char* user, char* host, char* command, char* hkey, char* buf)
-{
-    int pipefd[2];
-    pid_t pid;
-
-    if (pipe(pipefd) == -1)
-    {
-        perror("pipe");
-        return;
-    }
-
-    pid = fork();
-    if (pid == -1)
-    {
-        perror("fork");
-        return;
-    }
-
-    if (pid == 0) 
-    {  // child process
-        close(pipefd[0]);  // close unused read end
-        dup2(pipefd[1], STDOUT_FILENO);  // redirect stdout to write end of pipe
-        execl("/usr/bin/ssh", "ssh", "-i", pubkey, user, "@", host, " ", command, hkey,(char *) NULL);
-        return;
-    } 
-
-    else 
-    {  // parent process
-        close(pipefd[1]);  // close unused write end
-        while (read(pipefd[0], buf, BUF_SIZE) > 0)
-        {
-            printf("%s", buf); 
-            //do stuff with the read memory
-            memset(buf, 0, BUF_SIZE);
-           
-        }
-    }
-
-    return;
 }
 
 void wgkeygen(char *pubkeyz, char *privkeyz){

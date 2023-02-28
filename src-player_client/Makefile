@@ -20,8 +20,8 @@ build/authlookup: authlookup/main.c authlookup/authlookup.c authlookup/authlooku
 build/playerclient: playerclient/main.c playerclient/playerclient.c playerclient/playerclient.h build/
 	$(CC) playerclient/main.c playerclient/playerclient.c $(WG)/wireguard.c -I$(WG) -o build/playerclient
 
-build/junoshell: playershell/main.c playershell/shellserver.c playershell/shellserver.h mysql-dev build/
-	$(CC) playershell/main.c playershell/shellserver.c -lmysqlclient -o build/junoshell
+build/junoshell: junoshell/main.c junoshell/junoshell.c junoshell/junoshell.h mysql-dev build/
+	$(CC) junoshell/main.c junoshell/junoshell.c -lmysqlclient -o build/junoshell
 
 build/:
 	mkdir -p build
@@ -35,8 +35,8 @@ tests/test_authlookup: authlookup/test.c authlookup/authlookup.c authlookup/auth
 tests/test_player_client: playerclient/test.c playerclient/playerclient.c playerclient/playerclient.h tests/
 	$(CC) playerclient/test.c playerclient/playerclient.c $(WG)/wireguard.c -I$(WG) -o tests/test_playerclient
 
-tests/test_junoshell: playershell/test.c playershell/shellserver.c playershell/shellserver.h mysql-dev tests/
-	$(CC) playershell/test.c playershell/shellserver.c -lmysqlclient -o tests/test_junoshell
+tests/test_junoshell: junoshell/test.c junoshell/junoshell.c junoshell/junoshell.h mysql-dev tests/
+	$(CC) junoshell/test.c junoshell/junoshell.c -lmysqlclient -o tests/test_junoshell
 
 tests/:	
 	mkdir -p tests
