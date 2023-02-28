@@ -1,4 +1,4 @@
-#include "shellserver.h"
+#include "junoshell.h"
 
 /* 
  * Usernames can only be composed of
