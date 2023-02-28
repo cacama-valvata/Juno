@@ -1,4 +1,4 @@
-#include "shellserver.h"
+#include "junoshell.h"
 
 
 #define BUFSIZE 256
