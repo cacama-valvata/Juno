@@ -4,10 +4,89 @@
 
 {% block content %}
 
-    <p>DEVICES!!</p>
+<div class="container-fluid">
 
     {% if user.is_authenticated %}
-        <p>Look at these devices lmao</p>
+
+        <!-- subheader -->
+        <div class="row mb-4 my-3">
+            <h2 class="col">Devices</h3>
+                <div class="col text-end">
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                            Add Device
+                        </button>
+                </div>
+        </div>
+
+        <!-- add-a-device modal -->
+        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Add a Device</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                
+                    <form action="/profile/devices/add/" method="post" id="add-device">
+                        {% csrf_token %}
+                        {{ form.as_p }}
+                    </form>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button submit" class="btn btn-primary" data-bs-dismiss="modal" form="add-device">Add Device</button>
+                </div>
+            </div>
+            </div>
+        </div>
+        <!--
+            <a class="btn dropdown-toggle" data-bs-toggle="collapse-{{ device.ssh_pubkey }}" href="#" role="button" aria-expanded="false" aria-controls="collapseExample"></a>
+        -->
+
+
+
+        <div class="container px-0 my-5">
+            <!-- labels for table -->
+            <div class="d-flex flex-row px-2 py-0">
+                <div class="col"><h5>Name</h5></div>
+                <div class="col"><h5>Host</h5></div>
+                <div class="col"></div>
+                <div class="col text-center"><h5>Last Seen</h5></div>
+            </div>
+
+            {% for device in devices %} 
+            <div class="my-2 border">
+                <div class="d-flex flex-row align-items-center px-2 py-1">
+                    <div class="col">
+                        <a class="btn dropdown-toggle" data-bs-toggle="collapse" data-bs-target="#collapse-{{ forloop.counter0 }}" href="#" role="button" aria-expanded="false" aria-controls="collapseExample"></a>
+                        {{ device.keyname }}
+                    </div>
+                    <div class="col">
+                        {{ device.ssh_suffix }}
+                    </div>
+                    <div class="col"></div>
+                    <div class="col text-center">
+                        {{ device.last_seen }}
+                    </div>
+                </div>
+                <!-- drop down with the ssh pubkey -->
+                <div class="row collapse px-3" id="collapse-{{ forloop.counter0 }}">
+                    <div class="card card-body text-justify border-0 mx-0 my-0">
+                        <code style="word-break:break-all;">
+                            <span class="text-muted">{{ device.ssh_prefix }} </span>
+                            <span class="text-dark">{{ device.ssh_pubkey }} </span>
+                            <span class="text-muted">{{ device.ssh_suffix }}</span>
+                        </code>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+</div>
+
     {% else %}
         <p>You are not logged in</p>
         <a href="{% url 'login' %}">Log In</a>
