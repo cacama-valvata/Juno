@@ -16,7 +16,7 @@ char* parse_results (MYSQL_RES* res_users);
 void retrieve_conf(char* key, char* gameid);
 char *append_p(const char *str);
 void heartbeat (char* key, char* userid);
-void run_command (char* c, char* userid);
+void run_command (char* c, char* userid, char* deviceid);
 
 
 #endif /* SHELLSERVER_H */

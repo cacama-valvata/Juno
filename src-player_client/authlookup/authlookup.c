@@ -93,7 +93,7 @@ MYSQL_RES* query_pubkey (char* pubkey)
     }
 
     char* query = (char*) calloc (1024, sizeof (char));
-    strcpy (query, "SELECT ssh_prefix, ssh_pubkey, ssh_suffix, userid FROM devices where ssh_pubkey = \"");
+    strcpy (query, "SELECT ssh_prefix, ssh_pubkey, ssh_suffix, userid, id FROM account_userdevice where ssh_pubkey = \"");
     strcat (query, pubkey);
     strcat (query, "\";");
 
@@ -138,13 +138,19 @@ char* compare_users (MYSQL_RES* res_users)
     // command="" portion of auth_keys output
     strcpy (auth_keys, "command=\"login ");
     strcat (auth_keys, user_info[3]);
+    // the device ID
+    strcat (auth_keys, " ");
+    strcat (auth_keys, user_info[4]);
     strcat (auth_keys, "\" ");
+    
     // the key itself, rebuilt
     strcat (auth_keys, user_info[0]);
     strcat (auth_keys, " ");
     strcat (auth_keys, user_info[1]);
     strcat (auth_keys, " ");
     strcat (auth_keys, user_info[2]);
+
+
 
     return auth_keys;
 }

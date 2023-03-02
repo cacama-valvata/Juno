@@ -147,7 +147,7 @@ void retrieve_conf(char* key, char* gameid)
   
 
     //query to check if game is ready
-    strcat(query,"Use Juno; SELECT ready FROM games WHERE gameid = '");
+    strcat(query,"Use Juno; SELECT ready FROM games_game WHERE id = '");
     strcat(query, gameid);
     strcat(query, "';");
     res_query = query_db(query);
@@ -171,17 +171,28 @@ void retrieve_conf(char* key, char* gameid)
 }
 
 
-void heartbeat (char* key, char* userid)
+void heartbeat (char* key, char* userid, char* deviceid)
 {
     char* query = (char*) calloc (1024, sizeof (char));
     char gameid[BUFSIZE];
     MYSQL_RES* res_query;
     char* res;
 
-    //parse res_users store in BUF
+    strcat(query,"SELECT device_id FROM games_gameplayer WHERE user_id = '");
+    strcat(query, userid);
+    strcat(query, "';");
+    res_query = query_db(query);
+    res = parse_results(res_query);
+
+    if(strcmp(res,deviceid) != 0)
+    {
+        printf("Error! Authing from wrong device")
+    }
+
+  
 
     //search for games w/ user id
-    strcat(query,"SELECT gameid FROM game_players WHERE userid = '");
+    strcat(query,"SELECT game_id FROM games_gameplayer WHERE user_id = '");
     strcat(query, userid);
     strcat(query, "';");
 
@@ -202,7 +213,7 @@ void heartbeat (char* key, char* userid)
     int comp = 0;
     for(int i = 0; i < num_games;i++)
     {
-        strcat(query,"SELECT ready FROM games WHERE gameid = '");
+        strcat(query,"SELECT ready FROM games_game WHERE id = '");
         strcat(query, gamelist[i]);
         strcat(query, "';");
         res_query = query_db(query);
@@ -221,15 +232,15 @@ void heartbeat (char* key, char* userid)
 
     }
     
-    if(comp == 1)
+    if(comp == 0)
     {
-         printf("No games\n");
+         printf("No present games\n");
          return;
     }
 
 
     //key is previously used for a  past game
-    strcat(query,"SELECT wg_pubkey FROM games WHERE gameid = '");
+    strcat(query,"SELECT wg_pubkey FROM games_gameplayer WHERE gameid = '");
     strcat(query, gameid);
     strcat(query, "';");
     res_query = query_db(query);
@@ -257,7 +268,7 @@ void heartbeat (char* key, char* userid)
 }
 
 
-void run_command (char* c, char* userid)
+void run_command (char* c, char* userid, char* deviceid)
 {
     /*
      * If getenv returns NULL for SSH_ORIGINAL_COMMAND,
@@ -288,7 +299,7 @@ void run_command (char* c, char* userid)
 
         char* input_string = arg;
         char* sanitized_string = sanitize_string(input_string);
-        heartbeat (sanitized_string, userid);
+        heartbeat (sanitized_string, userid, deviceid);
     }
     else if (! strcmp(arg, "ping")) 
     {

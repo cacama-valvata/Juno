@@ -13,6 +13,7 @@ const char * const allowed_chars = "abcdefghijklmnopqrstuvwxyz0123456789_";
  * Authenticated by SSH server
  */
 char* session_user = NULL;
+char* device_id = NULL;
 void cleanup ();
 
 int login (char* c)
@@ -51,6 +52,29 @@ int login (char* c)
     // copy username into session_user
     session_user = (char*) calloc (strlen (arg) + 1, sizeof (char));
     memcpy (session_user, arg, strlen (arg));
+
+    
+    // grab the argument
+    arg = strtok (NULL, " ");
+
+    // if there is no arg (no deviceID to set), then fail
+    if (! arg)
+    {
+        free (command);
+        return 1;
+    }
+
+    // check that the requested deviceID is made up of only allowed characters
+    if (strspn (arg, allowed_chars) < strlen (arg))
+    {
+        free (command);
+        return 1;
+    }
+
+    // copy deviceID into session_user
+    device_id = (char*) calloc (strlen (arg) + 1, sizeof (char));
+    memcpy (device_id, arg, strlen (arg));
+
 
     // cleanup
     free (command);
@@ -93,7 +117,7 @@ int main (int argc, char* argv[])
          * Client would run: ssh host [command] 
          * This will grab and run the original command sent
          */
-        run_command (getenv ("SSH_ORIGINAL_COMMAND"), session_user);
+        run_command (getenv ("SSH_ORIGINAL_COMMAND"), session_user, device_id);
     }
     // interactive
     else
@@ -110,4 +134,6 @@ void cleanup ()
 {
     if (session_user)
         free (session_user);
+    if (device_id)
+        free (device_id);
 }
