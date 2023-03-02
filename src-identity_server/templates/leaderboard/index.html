@@ -4,6 +4,37 @@
 
 {% block content %}
 
-    <p>LEADERBOARD!!</p>
+<div class="container-fluid">
+
+    <!-- subheader -->
+    <div class="row mb-4 my-3">
+        <h2 class="col">Leaderboard</h2>
+    </div>
+
+    <div class="container px-0 my-5">
+        <!-- labels for table -->
+        <div class="d-flex flex-row px-2 py-0 mb-2 text-center border-bottom">
+            <div class="col"><h5>Username</h5></div>
+            <div class="col"></div>
+            <div class="col"><h5>Score</h5></div>
+        </div>
+
+        {% for score in top_scores %} 
+            <div class="my-0 {% if forloop.counter0|divisibleby:2 %}{% else %} bg-light {% endif %}">
+                <div class="d-flex flex-row align-items-center px-2 py-2 text-center">
+                    <div class="col">
+                        {{ score.user__username }}
+                    </div>
+                    <div class="col"></div>
+                    <div class="col">
+                        {{ score.score }}
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+        <p class="mt-2 text-muted">Showing {{ top_scores|length }} results</p>
+    </div>
+
+</div>
 
 {% endblock %}

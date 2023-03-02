@@ -10,12 +10,12 @@
 
         <!-- subheader -->
         <div class="row mb-4 my-3">
-            <h2 class="col">Devices</h3>
-                <div class="col text-end">
-                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                            Add Device
-                        </button>
-                </div>
+            <h2 class="col">Devices</h2>
+            <div class="col text-end">
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                        Add Device
+                    </button>
+            </div>
         </div>
 
         <!-- add-a-device modal -->
@@ -68,7 +68,7 @@
                     </div>
                     <div class="col"></div>
                     <div class="col text-center">
-                        {{ device.last_seen }}
+                        {{ device.last_seen|default_if_none:"Never" }}
                     </div>
                 </div>
                 <!-- drop down with the ssh pubkey -->

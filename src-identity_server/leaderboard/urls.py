@@ -1,8 +1,8 @@
 from django.urls import path
 from django.views.generic.base import TemplateView
 
-from . import views
+from .views import Leaderboard
 
 urlpatterns = [
-    path ('', TemplateView.as_view(template_name='leaderboard/index.html'), name='index')
+    path ('', Leaderboard, name='index')
 ]
