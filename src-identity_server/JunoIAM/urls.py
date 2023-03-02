@@ -15,14 +15,14 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import include, path
-
-from leaderboard import views
+from django.views.generic.base import TemplateView
 
 urlpatterns = [
-    path ('', views.index),
+    path ('', include ('leaderboard.urls')),
     path ('admin/', admin.site.urls),
     path ('profile/', include ('account.urls')),
     path ('profile/', include ("django.contrib.auth.urls")),
     path ('games/', include ('games.urls')),
     path ('leaderboard/', include('leaderboard.urls')),
+    path ('about/', TemplateView.as_view(template_name='about.html')),
 ]
