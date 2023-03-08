@@ -1,8 +1,9 @@
-{"vuln":
-	{
-    "1":"eternal-blue",
-    "2":"remoteSSH",
-    "3":"random"
-    },
- "image": "windows"
+{
+  "vuln":
+  [
+    "eternal-blue",
+    "remoteSSH",
+    "random"
+  ],
+  "image": "windows"
 }
