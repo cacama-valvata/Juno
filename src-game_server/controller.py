@@ -2,7 +2,9 @@ import os
 import multiprocessing as mp
 import socket
 
-HOST = "127.0.0.1"
+# private ip of server
+HOST = "10.0.0.190"
+# whatever port
 PORT = 65432
 
 # gets user input
@@ -16,6 +18,7 @@ def which_input(command, linux_img_count):
         case 'game':
             # need to verify if command[1] is an int
 
+            # create a vm passing in game id, number of vms, and the image count we are on
             return linux_vm(command[1], int(command[2]), linux_img_count)
             '''
             match command[1]:
@@ -41,6 +44,8 @@ def which_input(command, linux_img_count):
 # function called by creating new process, create vm with qemu
 def start_linux_vm(img_name, game_val):
     #os.system('qemu-system-i386 -hda ' + img_name + ' -cdrom FD13LIVE.iso -m 16M -boot order=dc')
+
+    # qemu call to create vm, uses img_name as hard disk, and grabs iso file from ssh using game id as path to iso
     os.system('qemu-system-i386 -hda ' + img_name + ' --drive media=cdrom,file=ssh://ubuntu@10.0.0.79/home/ubuntu/game/' + game_val + '/FD13LIVE.iso -m 16M -boot order=dc')
     #print('qemu-system-i386 -hda ' + img_name + ' -cdrom FD13LIVE.iso -m 16M -boot order=dc')
 
@@ -65,7 +70,7 @@ def linux_vm(game_val, num_vm, linux_img_count):
     # for each vm create process to spawn it
     for i in range(num_vm):
         print('creating linux vm ' + str(i + 1))
-        # creates process with start_linux_vm func, passes in disk name
+        # creates process with start_linux_vm func, passes in disk name and the id of the game
         p = mp.Process(target=start_linux_vm, args=(filename_arr[i], game_val))
         # appends process id to arr
         procs.append(p)
@@ -84,16 +89,22 @@ def main():
     linux_img_count = 1
     # will be a list of lists of process ids
     procs = []
+    # create socket with tcp protocol
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        # bind host addr and port to socket
         s.bind((HOST, PORT))
         # infinite loop for input
         while(1):
+            # listen for input from socket
             s.listen()
+            # when input accept connection
             conn, addr = s.accept()
             with conn:
                 print(f"Connected by {addr}")
+                # receive 1024 bytes of data from connection, decode it and split on newline
                 data = conn.recv(1024).decode().split('\n')
             for c in data:
+                # handles case when input is "asdf\n"
                 if c == '':
                     continue
                 # splits input by space
