@@ -17,6 +17,7 @@ class UserDevice (models.Model):
     ssh_pubkey = models.CharField (max_length=600, null=False, unique=True)
     ssh_suffix = models.CharField (max_length=256, null=False)
     last_seen = models.DateTimeField (null=True)
+    default = models.BooleanField (default=False)
 
     def __str__ (self):
         return self.keyname

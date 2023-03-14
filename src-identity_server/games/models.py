@@ -1,6 +1,7 @@
 from django.db import models
 
 from django.contrib.auth.models import User
+from account.models import UserDevice
 
 # 'Teams' Referential Table
 class TeamRef (models.Model):
@@ -18,7 +19,9 @@ class GamePlayer (models.Model):
     game = models.ForeignKey (Game, on_delete=models.CASCADE)
     user = models.ForeignKey (User, on_delete=models.DO_NOTHING)
     team = models.ForeignKey (TeamRef, on_delete=models.DO_NOTHING)
+    device = models.ForeignKey (UserDevice, on_delete=models.DO_NOTHING)
     wg_pubkey = models.CharField (max_length=255, null=True)
+    wg_config = models.CharField (max_length=255, null=True)
 
 class GameScore (models.Model):
     game = models.ForeignKey (Game, on_delete=models.CASCADE)
