@@ -38,3 +38,24 @@ def AddDevice (request):
     new_device.save()
 
     return HttpResponseRedirect("/profile/devices/")
+
+
+def ProfilePage (request):
+    your_score = UserScore.objects.filter (user=request.user).first()
+    your_place = 1 + UserScore.objects.filter (score__gt=your_score.score).count()
+    your_devices = UserDevice.objects.filter (user=request.user)
+
+    place_suffix = ""
+    if your_place % 10 == 1:
+        place_suffix = "st"
+    elif your_place % 10 == 2:
+        place_suffix = "nd"
+    elif your_place % 10 == 3:
+        place_suffix = "rd"
+    else:
+        place_suffix = "th"
+
+    return render (request, "profile/home.html", {"your_score": your_score.score, "your_place": your_place, "place_suffix": place_suffix, "your_devices": your_devices})
+
+def Settings (request):
+    return render (request, "profile/settings.html")
