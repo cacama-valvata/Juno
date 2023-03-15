@@ -13,7 +13,7 @@ PASS='root'
 mysql -u $USER -h $HOST -p$PASS -e "create database Juno;"
 
 # Instantiate tables and fake user data
-mysql -u $USER -h $HOST -p$PASS -e "use Juno; source migrated_tables.sql;"
+mysql -u $USER -h $HOST -p$PASS -e "use Juno; source stuff.sql;"
 
 # Show tables (verification)
 mysql -u $USER -h $HOST -p$PASS -e "use Juno; show tables; select * from auth_user; select * from account_userdevice;"

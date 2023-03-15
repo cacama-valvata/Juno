@@ -7,7 +7,7 @@ char *ssh_exec(char *hostname, char *username, char *private_key_path, char *com
 {
     char *ssh_command = malloc(strlen(hostname) + strlen(username) + strlen(private_key_path) + strlen(command) + strlen(hkey) + 64);
     sprintf(ssh_command, "ssh -i %s %s@%s '%s %s'", private_key_path, username, hostname, command, hkey);
-    printf("%s\n",ssh_command);
+    //printf("%s\n",ssh_command);
 
     char buffer[1024];
     char *result = NULL;

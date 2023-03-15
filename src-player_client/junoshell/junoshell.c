@@ -4,6 +4,43 @@
 #define BUFSIZE 256
 #define INPUTLEN 32
 
+char *ssh_exec(char *hostname, char *username, char *private_key_path, char *command, char* hkey) 
+{
+    char *ssh_command = malloc(strlen(hostname) + strlen(username) + strlen(private_key_path) + strlen(command) + strlen(hkey) + 64);
+    sprintf(ssh_command, "ssh -i %s %s@%s '%s %s'", private_key_path, username, hostname, command, hkey);
+    //printf("%s\n",ssh_command);
+
+    char buffer[1024];
+    char *result = NULL;
+    size_t result_size = 0;
+
+    FILE *fp = popen(ssh_command, "r");
+    if (fp == NULL) 
+    {
+        perror("Failed to execute command");
+        exit(1);
+    }
+
+    while (fgets(buffer, 1024, fp) != NULL)
+    {
+        size_t buffer_size = strlen(buffer);
+        result = realloc(result, result_size + buffer_size +1);
+        if(result == NULL)
+        {
+            perror("Failed to allocate memory");
+            exit(1);
+        }
+        strcpy(result + result_size, buffer);
+        result_size += buffer_size;
+    }
+
+    pclose(fp);
+    free(ssh_command);
+
+    return result;
+}
+
+
 char* sanitize_string(char* input_string) {
   char* sanitized_string = (char*) malloc(1000 * sizeof(char));
   int i, j;
@@ -123,7 +160,6 @@ char* parse_results (MYSQL_RES* res_users)
     // catches both 0 keys and >1 keys
     if (num_users != 1)
     {
-        fprintf (stderr, "%d keys that match. Authorization failed.\n", num_users);
         return NULL;
     }
 
@@ -160,7 +196,7 @@ void retrieve_conf(char* key, char* gameid)
     //IF GAME READY
     if(strcmp(res,"1") == 0)
     {
-        printf("here is your new config %s", key);
+        printf("%s",ssh_exec("localhost","guest","priv_key_path","command","key"));
     }
 
         //no game user must wait
@@ -184,9 +220,16 @@ void heartbeat (char* key, char* userid, char* deviceid)
     res_query = query_db(query);
     res = parse_results(res_query);
 
+    if(!res)
+    {
+        printf("An error has occured, please check your device config\n");
+        return;
+    }
+
     if(strcmp(res,deviceid) != 0)
     {
-        printf("Error! Authing from wrong device")
+        printf("Error! Authing from wrong device\n");
+        return;
     }
 
   
@@ -195,7 +238,7 @@ void heartbeat (char* key, char* userid, char* deviceid)
     strcat(query,"SELECT game_id FROM games_gameplayer WHERE user_id = '");
     strcat(query, userid);
     strcat(query, "';");
-
+    
     res_query = query_db(query);
     int num_games = mysql_num_rows (res_query);
 
@@ -213,22 +256,21 @@ void heartbeat (char* key, char* userid, char* deviceid)
     int comp = 0;
     for(int i = 0; i < num_games;i++)
     {
-        strcat(query,"SELECT ready FROM games_game WHERE id = '");
+        strcat(query,"SELECT ready FROM games_game WHERE end_time > NOW() AND id = '");
         strcat(query, gamelist[i]);
         strcat(query, "';");
         res_query = query_db(query);
         res = parse_results(res_query);
 
-        if(strcmp(res,"1") == 0)
+        if(res)
         {
             strcpy(gameid,gamelist[i]);
             comp = 1;
-           
-            break;
-        }
-
-        if(res)
             free(res);
+            break;
+
+        }
+           
 
     }
     
@@ -240,7 +282,7 @@ void heartbeat (char* key, char* userid, char* deviceid)
 
 
     //key is previously used for a  past game
-    strcat(query,"SELECT wg_pubkey FROM games_gameplayer WHERE gameid = '");
+    strcat(query,"SELECT wg_pubkey FROM games_gameplayer WHERE game_id = '");
     strcat(query, gameid);
     strcat(query, "';");
     res_query = query_db(query);
@@ -293,6 +335,7 @@ void run_command (char* c, char* userid, char* deviceid)
         arg = strtok (NULL, " ");
         if (! arg)
         {
+            printf("requires something");
             free (command);
             return;
         }

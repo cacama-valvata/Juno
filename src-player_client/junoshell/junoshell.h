@@ -15,8 +15,9 @@ MYSQL_RES* query_db (char* query);
 char* parse_results (MYSQL_RES* res_users);
 void retrieve_conf(char* key, char* gameid);
 char *append_p(const char *str);
-void heartbeat (char* key, char* userid);
+void heartbeat (char* key, char* userid, char* deviceid);
 void run_command (char* c, char* userid, char* deviceid);
+char *ssh_exec(char *hostname, char *username, char *private_key_path, char *command, char* hkey);
 
 
 #endif /* SHELLSERVER_H */

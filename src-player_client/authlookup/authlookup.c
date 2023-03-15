@@ -93,7 +93,7 @@ MYSQL_RES* query_pubkey (char* pubkey)
     }
 
     char* query = (char*) calloc (1024, sizeof (char));
-    strcpy (query, "SELECT ssh_prefix, ssh_pubkey, ssh_suffix, userid, id FROM account_userdevice where ssh_pubkey = \"");
+    strcpy (query, "SELECT ssh_prefix, ssh_pubkey, ssh_suffix, user_id, id FROM account_userdevice where ssh_pubkey = \"");
     strcat (query, pubkey);
     strcat (query, "\";");
 
