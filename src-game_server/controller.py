@@ -84,6 +84,50 @@ def windows_vm(num_vm):
     for i in range(num_vm):
         print('creating windows vm ' + str(i + 1))
 
+# cleans up all finished procs, if all procs are finished returns false, otherwise returns true
+def clean_procs(procs):
+    # arr of finished process indexes
+    fin_procs = []
+    # arr of cleared process row indexes
+    fin_rows = []
+    # for each row
+    for i in range(len(procs)):
+        # for each process in row
+        for j in range(len(procs[i])):
+            # if process is still alive do nothing
+            if (procs[i][j].is_alive()):
+                continue
+            # otherwise append index to fin_procs
+            else:
+                print('process ' + str(procs[i][j]) + ' shut down')
+                fin_procs.append(j)
+        # for each index in fin_procs
+        for j in fin_procs:
+            # kill process
+            procs[i][j].join()
+        # for each index in fin_procs
+        for j in reversed(fin_procs):
+            # remove index from proc list
+            del procs[i][j]
+        # if row is empty
+        if (len(procs[i]) == 0):
+            # append index to fin_rows
+            fin_rows.append(i)
+        # clear fin_procs
+        fin_procs.clear()
+    # for each index in fin_rows
+    for i in reversed(fin_rows):
+        # remove row from proc list
+        del procs[i]
+    
+    # if all procs are killed return false
+    if (procs == []):
+        return False
+    # otherwise return true
+    else:
+        return True
+
+
 def main():
     # inits unique image counter
     linux_img_count = 1
@@ -119,18 +163,6 @@ def main():
                     procs.append(p)
                 # for each process id check if process has ended, if so join, otherwise continue
                 # removes stopped processes from list
-                for i in range(len(procs)):
-                    for j in range(len(procs[i])):
-                        if (procs[i][j].is_alive()):
-                            continue
-                        else:
-                            print('process ' + str(procs[i][j]) + ' shut down')
-                            procs[i][j].join()
-                            del procs[i][j]
-                            break
-                    if (len(procs[i]) == 0):
-                        del procs[i]
-                        break
 
 
 if __name__ == '__main__':
