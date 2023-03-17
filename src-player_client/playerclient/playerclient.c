@@ -120,6 +120,36 @@ int check_key(char *pubkey, char *privkey) {
     return((strlen(pubkey) > 30) && (strlen(privkey) > 30));
 }
 
+char *replace_substring(const char *str, const char *sub, const char *replace) {
+    char *result, *p;
+    int len, count = 0;
+
+    // Get the length of the substring to be replaced
+    len = strlen(sub);
+
+    // Count the number of occurrences of the substring in the string
+    for (p = strstr(str, sub); p != NULL; p = strstr(p + len, sub)) {
+        count++;
+    }
+
+    // Allocate memory for the result string
+    result = (char *) malloc(strlen(str) + count * (strlen(replace) - len) + 1);
+
+    // Copy the string up to the first occurrence of the substring
+    p = strstr(str, sub);
+    strncpy(result, str, p - str);
+    result[p - str] = '\0';
+
+    // Copy the replacement string for each occurrence of the substring
+    while (p != NULL) {
+        strcat(result, replace);
+        strcat(result, p + len);
+        p = strstr(p + len, sub);
+    }
+
+    return result;
+}
+
 void process_config(const char* file_name, const char* search_str, const char* replace_str) {
     FILE* fp = fopen(file_name, "r+");
     if (fp == NULL) {

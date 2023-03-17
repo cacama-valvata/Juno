@@ -42,16 +42,20 @@ int main(int argc, char* argv[])
                     cfg = strchr(output,'.');
                     *cfg = '\0';
 
-                    fprintf(fp,"%s\n",cfg+2);
+                    char* result = replace_substring(cfg+2, "<your private key here>" , privkey);
+
+                    fprintf(fp,"%s\n",result);
                     fclose(fp);
                     printf("Config written to file\n");
+                    free(result); 
                     
-                    process_config("config.txt", "<your private key here>", privkey);
+                    //process_config("config.txt", "<your private key here>", privkey);
                 }
 
                 else
                     printf("%s\n",output);
-                    
+
+           
                 free(output);
             }
                 
