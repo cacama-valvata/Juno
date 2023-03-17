@@ -3,17 +3,16 @@
 #define BUFSIZE 256
 int main(int argc, char* argv[])
 {
-    char pubkey[32], privkey[32];
-    memset(pubkey, 0, 32);
-    memset(privkey, 0, 32);
+    char pubkey[45], privkey[45];
+    memset(pubkey, 0, 45);
+    memset(privkey, 0, 45);
     //char buf[BUFSIZE];
 
     // check for existing config, if not regen
     if(check_key(pubkey,privkey) == 0)
         wgkeygen(pubkey,privkey);
 
-    printf("PUBLIC KEY: %s\n",pubkey);
-    printf("PRIVATE KEY: %s\n",privkey);
+    printf("HERE IS YOUR PUBLIC KEY: %s\n",pubkey);
 
     // very simple menuing 
     while(1)
