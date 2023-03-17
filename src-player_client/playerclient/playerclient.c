@@ -127,14 +127,16 @@ void process_config(const char* file_name, const char* search_str, const char* r
         return;
     }
 
-    // Get the length of the search string
+    // Get the length of the search string and replace string
     int search_len = strlen(search_str);
+    int replace_len = strlen(replace_str);
 
     // Allocate memory for the buffer
     char* buffer = (char*) malloc(search_len);
 
     // Read the file one character at a time
     int c;
+    long pos = 0;
     while ((c = fgetc(fp)) != EOF) {
         // Check if the current character is the same as the first character of the search string
         if (c == search_str[0]) {
@@ -147,14 +149,18 @@ void process_config(const char* file_name, const char* search_str, const char* r
                 fseek(fp, -search_len, SEEK_CUR);
 
                 // Write the replace string
-                fwrite(replace_str, 1, strlen(replace_str), fp);
+                fwrite(replace_str, 1, replace_len, fp);
 
-                // Move the file pointer to the end of the replace string
-                fseek(fp, strlen(replace_str) - search_len, SEEK_CUR);
+                // Adjust the current position in the file
+                pos += replace_len - search_len;
+                fseek(fp, pos, SEEK_CUR);
             } else {
                 // Move the file pointer back to the beginning of the buffer
                 fseek(fp, -search_len, SEEK_CUR);
+                pos++;
             }
+        } else {
+            pos++;
         }
     }
 
@@ -162,7 +168,6 @@ void process_config(const char* file_name, const char* search_str, const char* r
     fclose(fp);
     free(buffer);
 
+    // attempt to bring up wiregaurd daemon 
 }
-
-
 
