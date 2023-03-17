@@ -1,9 +1,13 @@
 from django.urls import path
-from django.views.generic.base import TemplateView
 
-from . import views
+from .views import *
+from django.views.generic.base import TemplateView
+from django.contrib.auth.decorators import login_required
+
 
 urlpatterns = [
-    path ('', TemplateView.as_view(template_name='games/index.html'), name='gamesindex'),
-    path ('<int:game_id>/', TemplateView.as_view(template_name='games/game.html'))
+    path ('', GamesIndex, name='games-index'),
+    path ('<int:game_id>/', GameInfo, name='game-info'),
+    path ('add/', login_required(AddGame), name='game-add'),
+    path ('join/', login_required(JoinGame), name='game-join'),
 ]

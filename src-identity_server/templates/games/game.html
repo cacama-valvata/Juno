@@ -1,10 +1,68 @@
 {% extends 'base.html' %}
 
-{% block title %}Game Info{% endblock %}
+{% block title %}Game {{ game.id }}{% endblock %}
+
+{% block css %}
+    {% load static %}
+    <link href="{% static 'fontawesomefree/css/all.min.css' %}" rel="stylesheet" type="text/css">
+{% endblock %}
 
 {% block content %}
 
-    <p>GAME INFO</p>
-    <p>When a game has not started yet.</p>
+<div class="container-fluid">
+
+    <!-- subheader -->
+    <div class="d-flex flex-row mb-4 my-3">
+        <h2 class="col">Game {{ game.id }}</h2>
+        <a class="text-end btn dropdown-toggle" data-bs-toggle="collapse" data-bs-target="#collapse-info" href="#" role="button" aria-expanded="false" aria-controls="collapseExample"></a>
+    </div>
+
+    <div class="row collapse" id="collapse-info">
+        <div class="card card-body text-justify border-0 mx-0 mt-0 mb-4 bg-light">
+            <p><span class="fw-bold">Time:</span> {{ game.start_time }} - {{ game.end_time }}</p>
+            <p><span class="fw-bold"> Players:</span> {% for player in players %}{{ player.user__username }}{% if not forloop.last %}, {% endif %}{% endfor %}</p>
+        </div>
+    </div>
+
+
+
+    <!-- the scoreboard -->
+
+    <!-- top labels: time polled -->
+    <div class="row py-2">
+        <!-- placeholder for service labels -->
+        <div class="col"></div>
+        {% for t in timelabels %}
+        <div class="col text-center fw-bold {% if not forloop.first %}text-muted{% endif %}">{{ t }}</div>
+        {% endfor %}
+        {% for c in extra_cols %}
+        <div class="col text-center">-</div>
+        {% endfor %}
+    </div>
+
+    <!-- actual rows -->
+    {% for service in scores_per_service %}
+    <div class="row align-items-center border-top py-2 my-0">
+        <!-- side label: the service name -->
+        <div class="col text-end fw-bold border-end py-3">{{ service.first.service__name }}</div>
+        {% for score in service %}
+        <div class="col text-center {% if not forloop.first %}text-muted{% endif %}">
+            {% if score.result %}
+                <h1><i class="fa-solid fa-circle-up {% if not forloop.first %}text-muted{% else %}text-success{% endif %}"></i></h1>
+            {% else %} 
+                <h1><i class="fa-regular fa-circle-down {% if not forloop.first %}text-muted{% else %}text-danger{% endif %}"></i></h1>
+            {% endif %}
+        </div>
+        {% endfor %}
+        {% for c in extra_cols %}
+        <div class="col text-center">-</div>
+        {% endfor %}
+    </div>
+    {% endfor %}
+    <div class="row border-top"></div>
+
+
+
+</div>
 
 {% endblock %}
