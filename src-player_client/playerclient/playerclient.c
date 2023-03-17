@@ -75,29 +75,27 @@ int get_words(char ***inp)
     return num_words;
 }
 
-void wgkeygen(char *pubkeyz, char *privkeyz){
+void wgkeygen(char *pubkeyz, char *privkeyz) {
+    // Generate a WireGuard public key
+    wg_key privkey;
+    wg_key pubkey;
+    wg_generate_private_key(privkey);
+    wg_generate_public_key(pubkey, privkey);
 
+    // Convert the keys to base64-encoded strings
+    char private_key_trans[45];
+    wg_key_to_base64(private_key_trans, privkey);
 
-  // generate public key (if not already existing)
+    char public_key_trans[45];
+    wg_key_to_base64(public_key_trans, pubkey);
 
-  // Generate a WireGuard public key
-  wg_key privkey;
-  wg_key pubkey;
-  wg_generate_private_key(privkey);
-  wg_key_b64_string private_key_trans;
-  wg_key_to_base64(private_key_trans, privkey);
-
-  wg_generate_public_key(pubkey,privkey);
-  wg_key_b64_string public_key_trans;
-  wg_key_to_base64(public_key_trans, pubkey);
-
-  memcpy(pubkeyz,public_key_trans,32);
-  memcpy(privkeyz,private_key_trans,32);
+    // Copy the keys to the output buffers
+    memcpy(pubkeyz, public_key_trans, 45);
+    memcpy(privkeyz, private_key_trans, 45);
   
-  printf("PUBKEY COMP\n 1: %s \n 2: %s\n",pubkeyz,public_key_trans);
-  printf("PRIVKEY COMP\n 1: %s \n 2: %s\n",privkey,private_key_trans);
-  return;
-
+    // Print the keys for debugging
+    printf("Public key:\n%s\n", public_key_trans);
+    printf("Private key:\n%s\n", private_key_trans);
 }
 
 
