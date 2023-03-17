@@ -1,11 +1,15 @@
 import os
 import multiprocessing as mp
 import socket
+import sys
+import selectors
+import types
 
 # private ip of server
 HOST = "10.0.0.190"
 # whatever port
 PORT = 65432
+sel = selectors.DefaultSelector()
 
 # gets user input
 def get_input():
@@ -13,33 +17,21 @@ def get_input():
     return usr_in
 
 # parses the command entered and jumps to diff function depending on input
-def which_input(command, linux_img_count):
+def which_input(command):
+    img_count = 1
+    print(command)
     match command[0]:
         case 'game':
             # need to verify if command[1] is an int
-
+            print("We got here")
             # create a vm passing in game id, number of vms, and the image count we are on
-            return linux_vm(command[1], int(command[2]), linux_img_count)
-            '''
-            match command[1]:
-                case 'linux':
-                    # starts creating linux vms
-                    return linux_vm(int(command[2]), linux_img_count)
-            
-                case 'windows':
-                    # starts creating windows vms
-                    return windows_vm(int(command[2]), linux_img_count)
-
-                case _:
-                    print("Error: Invalid command")
-                    return 0, linux_img_count
-            '''
-        case 'exit':
-            return 1, linux_img_count
-
+            procs = linux_vm(command[1], int(command[2]), img_count)
         case _:
             print('Error: Invalid command')
-            return 0, linux_img_count
+
+    while (clean_procs(procs)):
+        continue
+
 
 # function called by creating new process, create vm with qemu
 def start_linux_vm(img_name, game_val):
@@ -50,13 +42,13 @@ def start_linux_vm(img_name, game_val):
     #print('qemu-system-i386 -hda ' + img_name + ' -cdrom FD13LIVE.iso -m 16M -boot order=dc')
 
 # creates disks and process for vms
-def linux_vm(game_val, num_vm, linux_img_count):
+def linux_vm(game_val, num_vm, img_count):
     filename_arr = []
-    count = linux_img_count
+    count = img_count
     # for each vm create a unique (for this run of program) disk 
     for i in range(num_vm):
         # name of disk file
-        image_name = 'linuximg' + str(count)
+        image_name = 'game' + str(game_val) + 'linuximg' + str(count)
         # counter for unique name
         count += 1
         print('creating disk for vm ' + image_name)
@@ -77,7 +69,7 @@ def linux_vm(game_val, num_vm, linux_img_count):
         # starts process
         p.start()
 
-    return procs, count
+    return procs
 
 # to be implemented later
 def windows_vm(num_vm):
@@ -88,38 +80,20 @@ def windows_vm(num_vm):
 def clean_procs(procs):
     # arr of finished process indexes
     fin_procs = []
-    # arr of cleared process row indexes
-    fin_rows = []
-    # for each row
+    # for each process
     for i in range(len(procs)):
-        # for each process in row
-        for j in range(len(procs[i])):
-            # if process is still alive do nothing
-            if (procs[i][j].is_alive()):
-                continue
-            # otherwise append index to fin_procs
-            else:
-                print('process ' + str(procs[i][j]) + ' shut down')
-                fin_procs.append(j)
-        # for each index in fin_procs
-        for j in fin_procs:
-            # kill process
-            procs[i][j].join()
-        # for each index in fin_procs
-        for j in reversed(fin_procs):
-            # remove index from proc list
-            del procs[i][j]
-        # if row is empty
-        if (len(procs[i]) == 0):
-            # append index to fin_rows
-            fin_rows.append(i)
-        # clear fin_procs
-        fin_procs.clear()
-    # for each index in fin_rows
-    for i in reversed(fin_rows):
-        # remove row from proc list
+        # if process is still alive do nothing
+        if (procs[i].is_alive()):
+            continue
+        # otherwise append index to fin_procs
+        else:
+            print('process ' + str(procs[i]) + ' shut down')
+            fin_procs.append(i)
+    # for each index in fin_procs
+    for i in reversed(fin_procs):
+        # kill process
+        procs[i].join()
         del procs[i]
-    
     # if all procs are killed return false
     if (procs == []):
         return False
@@ -127,6 +101,31 @@ def clean_procs(procs):
     else:
         return True
 
+def accept_wrapper(sock):
+    conn, addr = sock.accept()
+    print(f"Accepted connection from {addr}")
+    conn.setblocking(False)
+    data = types.SimpleNamespace(addr=addr)
+    events = selectors.EVENT_READ | selectors.EVENT_WRITE
+    sel.register(conn, events, data=data)
+
+def service_connection(key, mask):
+    sock = key.fileobj
+    data = key.data
+    if mask & selectors.EVENT_READ:
+        recv_data = sock.recv(1024).decode()#.split('\n')
+        if recv_data:
+            #print(recv_data.split(' '))
+            #return 0
+            command = recv_data.split(' ')
+            p = mp.Process(target=which_input, args=(command,))
+            print(p)
+            p.start()
+            return p
+        else:
+            print(f"Closing connection to {data.addr}")
+            sel.unregister(sock)
+            sock.close()
 
 def main():
     # inits unique image counter
@@ -134,36 +133,29 @@ def main():
     # will be a list of lists of process ids
     procs = []
     # create socket with tcp protocol
-    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-        # bind host addr and port to socket
-        s.bind((HOST, PORT))
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    # bind host addr and port to socket
+    s.bind((HOST, PORT))
+    # listen for input from socket
+    s.listen()
+    print(f"Listening on {(HOST, PORT)}")
+    s.setblocking(False)
+    sel.register(s, selectors.EVENT_READ, data=None)
+    try:
         # infinite loop for input
-        while(1):
-            # listen for input from socket
-            s.listen()
-            # when input accept connection
-            conn, addr = s.accept()
-            with conn:
-                print(f"Connected by {addr}")
-                # receive 1024 bytes of data from connection, decode it and split on newline
-                data = conn.recv(1024).decode().split('\n')
-            for c in data:
-                # handles case when input is "asdf\n"
-                if c == '':
-                    continue
-                # splits input by space
-                command = c.split(' ')
-                # gets list of process ids and new unique image counter
-                p, linux_img_count = which_input(command, linux_img_count)
-                # if user entered exit end program
-                if (p == 1):
-                    break
-                # if user entered a valid command append process to list
-                if (p != 0):
-                    procs.append(p)
-                # for each process id check if process has ended, if so join, otherwise continue
-                # removes stopped processes from list
+        while True:
+            events = sel.select(timeout=None)
+            for key, mask in events:
+                if key.data is None:
+                    accept_wrapper(key.fileobj)
+                else:
+                    procs.append(service_connection(key, mask))
+            #clean_procs(procs)
 
+    except KeyboardInterrupt:
+        print("Caught keyboard interrupt, exiting")
+    finally:
+        sel.close()
 
 if __name__ == '__main__':
     main()
