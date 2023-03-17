@@ -15,6 +15,7 @@ int main(int argc, char* argv[])
     while(1)
     {
         char **words = NULL;
+        char* cfg;
         int num_words = get_words(&words);
 
         if(strcmp(words[0], "connect") == 0 )
@@ -29,7 +30,7 @@ int main(int argc, char* argv[])
                 char *output = ssh_exec(words[1],words[2],words[3],words[4],pubkey);
              
                 //HERE indicates that output contains VALID WG config
-                if(strstr(output,"HERE") != NULL)
+                if(strstr(output,"[Interface]") != NULL)
                 {
                     FILE *fp = fopen("config.txt","w");
 
@@ -38,13 +39,16 @@ int main(int argc, char* argv[])
                         perror("Failed to open output file");
                         exit(1);
                     }
+                    cfg = strchr(output,'.');
+                    *cfg = '\0';
 
-                    fprintf(fp,"%s\n",output);
+                    fprintf(fp,"%s\n",cfg+2);
                     fclose(fp);
                     printf("Config written to file\n");
                     
                     process_config("config.txt", "<your private key here>", privkey);
                 }
+
                 else
                     printf("%s\n",output);
                     

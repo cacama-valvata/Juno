@@ -111,7 +111,7 @@ int main (int argc, char* argv[])
             cleanup ();
             return 1;
         }
-        printf ("Hello! %s.\n", session_user);
+        printf ("Hello, %s.\n", session_user);
 
         /* 
          * Client would run: ssh host [command] 

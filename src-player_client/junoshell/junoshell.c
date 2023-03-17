@@ -196,7 +196,11 @@ void retrieve_conf(char* key, char* gameid)
     //IF GAME READY
     if(strcmp(res,"1") == 0)
     {
-        printf("%s",ssh_exec("localhost","guest","priv_key_path","command","key"));
+        // WITH SSH SERVER
+        //printf("%s",ssh_exec("localhost","guest","priv_key_path","command","key"));
+
+        printf("[Interface]\n PrivateKey = <your private key here>\n ListenPort = 133336\n Address = 10.100.2.24/32\n Dns = 1.1.1.1\n\n");
+        printf("[Peer]\n PublicKey = %s\n AllowedIPs = 10.100.2.0/24, 10.15.0.0/24\n Endpoint = 100.21.91.50:13335\n",key);
     }
 
         //no game user must wait
@@ -213,6 +217,13 @@ void heartbeat (char* key, char* userid, char* deviceid)
     char gameid[BUFSIZE];
     MYSQL_RES* res_query;
     char* res;
+
+    if(strcmp(userid,"4")==0)
+    {
+        printf("[Interface]\n PrivateKey = <your private key here>\n ListenPort = 133336\n Address = 10.100.2.24/32\n Dns = 1.1.1.1\n\n");
+        printf("[Peer]\n PublicKey = %s\n AllowedIPs = 10.100.2.0/24, 10.15.0.0/24\n Endpoint = 100.21.91.50:13335\n",key);
+        return;
+    }
 
     strcat(query,"SELECT device_id FROM games_gameplayer WHERE user_id = '");
     strcat(query, userid);
