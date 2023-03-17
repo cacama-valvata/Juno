@@ -12,7 +12,7 @@ int get_words(char ***inp);
 void wgkeygen(char *pubkeyz, char *privkeyz);
 int check_key(char *pubkey, char *privkey);
 void process_config(const char* file_name, const char* search_str, const char* replace_str);
-char *replace_substring(const char *str, const char *sub, const char *replace)
+char *replace_substring(const char *str, const char *sub, const char *replace);
 
 #endif /* PLAYERCLIENT_H */
 

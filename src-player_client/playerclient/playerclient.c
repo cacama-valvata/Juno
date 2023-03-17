@@ -82,17 +82,20 @@ void wgkeygen(char *pubkeyz, char *privkeyz){
 
   // Generate a WireGuard public key
   wg_key privkey;
+  wg_key pubkey;
   wg_generate_private_key(privkey);
+  wg_key_b64_string private_key_trans;
+  wg_key_to_base64(private_key_trans, privkey);
 
-  wg_key_b64_string pubkeys;
-  wg_key_to_base64(pubkeys, privkey);
+  wg_generate_public_key(pubkey,privkey);
+  wg_key_b64_string public_key_trans;
+  wg_key_to_base64(public_key_trans, pubkey);
 
-  //generate and maybe send to file
-  printf("here is my public key %s\n", pubkeys);
-  memcpy(pubkeyz, pubkeys, 32);
-  memcpy(privkeyz, privkey, 32);
-
-
+  memcpy(pubkeyz,public_key_trans,32);
+  memcpy(privkeyz,private_key_trans,32);
+  
+  printf("PUBKEY COMP\n 1: %s \n 2: %s\n",pubkeyz,public_key_trans);
+  printf("PRIVKEY COMP\n 1: %s \n 2: %s\n",privkey,private_key_trans);
   return;
 
 }
@@ -120,7 +123,8 @@ int check_key(char *pubkey, char *privkey) {
     return((strlen(pubkey) > 30) && (strlen(privkey) > 30));
 }
 
-char *replace_substring(const char *str, const char *sub, const char *replace) {
+char *replace_substring(const char *str, const char *sub, const char *replace) 
+{
     char *result, *p;
     int len, count = 0;
 
