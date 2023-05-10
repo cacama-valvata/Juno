@@ -1,13 +1,22 @@
 from django.db import models
 from django.contrib.auth.models import User
 
+from django.db.models.signals import post_save
+
 # User Scores
 class UserScore (models.Model):
-    user = models.ForeignKey (User, on_delete=models.CASCADE)
+    user = models.OneToOneField (User, on_delete=models.CASCADE)
     score = models.PositiveBigIntegerField (default=0)
 
     def __str__ (self):
         return str (self.score)
+
+# Allow auto-creation of score data at the same time as user creation
+def autocreate_user_score (sender, instance, created, **kwargs):
+    if created:
+        UserScore.objects.create (user=instance)
+
+post_save.connect (autocreate_user_score, sender=User)
     
 # User 'Devices' - SSH keys on Client VMs
 class UserDevice (models.Model):
