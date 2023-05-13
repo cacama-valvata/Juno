@@ -1,13 +1,13 @@
 from django.shortcuts import render
 from django.http import HttpResponse
-import datetime
+from datetime import datetime, timedelta
 
 from .models import *
 from .forms import *
 
 
 def GamesIndex (request):
-    now = datetime.datetime.now()
+    now = datetime.now()
     current_games = Game.objects.filter (end_time__gte=now)
     open_games = current_games.filter (start_time__gte=now)
     current_games = current_games.filter (start_time__lt=now)
@@ -36,7 +36,31 @@ def GameInfo (request, game_id):
     return render (request, "games/game.html", {"game": game, "players": players, "timelabels": timelabels, "scores_per_service": scores_per_service, "extra_cols": range(n - scores_per_service[0].count())})
 
 def AddGame (request):
-    pass
+    if request.method == 'POST':
+        form = AddGameForm (request.POST)
+        if form.is_valid():
+            start_datetime = form.cleaned_data['start_time']
+            # TODO: drop down for SSH key to use with the game
+
+            datetime_rightnow = datetime.now()
+            if start_datetime > datetime_rightnow:  # TODO: TypeError: can't compare offset-naive and offset-aware datetimes
+                end_datetime = start_datetime + timedelta (hours=2)
+
+                new_game = Game (start_time=start_datetime, end_time=end_datetime)
+                new_game.save()
+
+                return HttpResponseRedirect ('/games/')
+            
+            else:
+                form.errors['start_datetime'] = ["Starting time must be in the future."]
+    else:
+        form = AddGameForm()
+
+    now = datetime.datetime.now()
+    current_games = Game.objects.filter (end_time__gte=now)
+    open_games = current_games.filter (start_time__gte=now)
+    current_games = current_games.filter (start_time__lt=now)
+    return render (request, "games/index.html", {"curr_games": current_games, "open_games": open_games, "add_form": form, "join_form": JoinGameForm ()})
 
 def JoinGame (request):
     pass
