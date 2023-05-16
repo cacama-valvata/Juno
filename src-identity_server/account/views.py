@@ -38,7 +38,7 @@ def AddDevice (request):
                     new_device.save()
                 except IntegrityError:
                     # TODO: better error display than this would require jquery and client-js
-                    form.errors["ssh_key"] = ["Duplicate SSH key. Generate a new one."]
+                    form.errors["ssh_key"] = ["Duplicate SSH key. Please generate a new one."]
                 else:
                     return HttpResponseRedirect ('/profile/devices/')
 

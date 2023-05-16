@@ -74,6 +74,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'timezone_middleware.timezone.TimezoneMiddleware'
 ]
 
 ROOT_URLCONF = 'JunoIAM.urls'

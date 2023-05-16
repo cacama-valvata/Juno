@@ -15,7 +15,7 @@ class TeamRef (models.Model):
 class Game (models.Model):
     start_time = models.DateTimeField (null=False)
     end_time = models.DateTimeField (null=False)
-    ready = models.BooleanField (null=False)
+    ready = models.BooleanField (null=False, default=False)
 
 class GamePlayer (models.Model):
     game = models.ForeignKey (Game, on_delete=models.CASCADE)

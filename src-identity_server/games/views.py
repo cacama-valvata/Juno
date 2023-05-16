@@ -1,13 +1,14 @@
 from django.shortcuts import render
-from django.http import HttpResponse
-from datetime import datetime, timedelta
+from django.http import HttpResponseRedirect
+from django.utils import timezone
+from datetime import timedelta
 
 from .models import *
 from .forms import *
 
 
 def GamesIndex (request):
-    now = datetime.now()
+    now = timezone.now()
     current_games = Game.objects.filter (end_time__gte=now)
     open_games = current_games.filter (start_time__gte=now)
     current_games = current_games.filter (start_time__lt=now)
@@ -42,8 +43,8 @@ def AddGame (request):
             start_datetime = form.cleaned_data['start_time']
             # TODO: drop down for SSH key to use with the game
 
-            datetime_rightnow = datetime.now()
-            if start_datetime > datetime_rightnow:  # TODO: TypeError: can't compare offset-naive and offset-aware datetimes
+            datetime_rightnow = timezone.now()
+            if start_datetime > datetime_rightnow:
                 end_datetime = start_datetime + timedelta (hours=2)
 
                 new_game = Game (start_time=start_datetime, end_time=end_datetime)
@@ -52,11 +53,11 @@ def AddGame (request):
                 return HttpResponseRedirect ('/games/')
             
             else:
-                form.errors['start_datetime'] = ["Starting time must be in the future."]
+                form.errors['start_time'] = ["Starting time must be in the future."]
     else:
         form = AddGameForm()
 
-    now = datetime.datetime.now()
+    now = timezone.datetime.now()
     current_games = Game.objects.filter (end_time__gte=now)
     open_games = current_games.filter (start_time__gte=now)
     current_games = current_games.filter (start_time__lt=now)

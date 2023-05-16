@@ -25,4 +25,5 @@ urlpatterns = [
     path ('games/', include ('games.urls')),
     path ('leaderboard/', include('leaderboard.urls')),
     path ('about/', TemplateView.as_view(template_name='about.html')),
+    path ('timezone/', include ('timezone_middleware.urls')),
 ]

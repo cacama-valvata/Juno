@@ -55,15 +55,14 @@
 
             {% for game in open_games %}
             <div class="my-2 border">
-                <div class="d-flex flex-row align-items-center px-2 py-1">
-                    <div class="col ps-2">
+                <div class="d-flex flex-row align-items-center px-2 py-2">
+                    <div class="col-3">
                         {{ game.id }}
                     </div>
-                    <div class="col">
-                        {{ game.start_time }} - <br> {{ game.end_time }}
+                    <div class="col-6">
+                        {{ game.start_time|date:"N j, Y \a\t g:i A" }} &nbsp — &nbsp {{ game.end_time|date:"N j, Y \a\t g:i A e"  }}
                     </div>
-                    <div class="col"></div>
-                    <div class="col text-center">
+                    <div class="col-3 text-center">
                         {% if user.is_authenticated %} 
                             <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#joingame{{ forloop.counter0 }}" style="min-width:40%;">
                                 Join Game
