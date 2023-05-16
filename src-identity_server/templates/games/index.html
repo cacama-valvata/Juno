@@ -104,15 +104,14 @@
 
             {% for game in curr_games %} 
             <div class="my-2 border">
-                <div class="d-flex flex-row align-items-center px-2 py-1">
-                    <div class="col ps-2">
+                <div class="d-flex flex-row align-items-center px-2 py-2">
+                    <div class="col-3 ps-2">
                         {{ game.id }}
                     </div>
-                    <div class="col">
-                        {{ game.start_time }} - <br> {{ game.end_time }}
+                    <div class="col-6">
+                        {{ game.start_time|date:"N j, Y \a\t g:i A" }} &nbsp — &nbsp {{ game.end_time|date:"N j, Y \a\t g:i A e"  }}
                     </div>
-                    <div class="col">{{ now }}</div>
-                    <div class="col text-center">
+                    <div class="col-3 text-center">
                         <a class="btn btn-secondary" target="_blank" rel="noopener noreferrer" href="/games/{{ game.id }}/" style="min-width:40%;">Info</a>
                     </div>
                 </div>
