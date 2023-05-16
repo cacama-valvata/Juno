@@ -13,5 +13,8 @@ def set_timezone(request):
         request.session['django_timezone'] = request.POST['timezone']
         return redirect('/')
     else:
-        current_zone = request.session['django_timezone']
+        try:
+            current_zone = request.session['django_timezone']
+        except KeyError as e:
+            current_zone = "not set"
         return render(request, 'timezone.html', {'timezones': common_timezones, 'current_zone': current_zone})
