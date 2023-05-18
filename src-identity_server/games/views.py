@@ -13,9 +13,10 @@ def GamesIndex (request):
     open_games = current_games.filter (start_time__gte=now)
     current_games = current_games.filter (start_time__lt=now)
 
-    return render (request, "games/index.html", {"curr_games": current_games, "open_games": open_games, "add_form": AddGameForm (), "join_form": JoinGameForm ()})
+    return render (request, "games/index.html", {"curr_games": current_games, "open_games": open_games, "add_form": AddGameForm (), "join_form": JoinGameForm (request.user)})
 
 def GameInfo (request, game_id):
+    # TODO: no error checking!
     game = Game.objects.filter (id=game_id).first()
     players = GamePlayer.objects.filter (game=game).values ('game', 'user', 'user__username')
 
@@ -57,11 +58,33 @@ def AddGame (request):
     else:
         form = AddGameForm()
 
-    now = timezone.datetime.now()
+    now = timezone.now()
     current_games = Game.objects.filter (end_time__gte=now)
     open_games = current_games.filter (start_time__gte=now)
     current_games = current_games.filter (start_time__lt=now)
-    return render (request, "games/index.html", {"curr_games": current_games, "open_games": open_games, "add_form": form, "join_form": JoinGameForm ()})
+    return render (request, "games/index.html", {"curr_games": current_games, "open_games": open_games, "add_form": form, "join_form": JoinGameForm (request.user)})
 
-def JoinGame (request):
-    pass
+def JoinGame (request, game_id):
+    if request.method == 'POST':
+        form = JoinGameForm (request.user, request.POST)
+        if form.is_valid():
+            # Very cool: Django's form validation also works on ModelChoiceFields
+            key_id = form.cleaned_data['key']
+            game = Game.objects.filter (id=game_id).first()
+
+            joingame = GamePlayer (game=game, user=request.user, team=False, device=key_id)
+            joingame.save()
+
+            return HttpResponseRedirect (f'/games/{game_id}/')
+        else:
+            form.errors['key'] = ["That's not your key"]
+    else:
+        form = JoinGameForm (request.user)
+
+    now = timezone.now()
+    current_games = Game.objects.filter (end_time__gte=now)
+    open_games = current_games.filter (start_time__gte=now)
+    current_games = current_games.filter (start_time__lt=now)
+    return render (request, "games/index.html", {"curr_games": current_games, "open_games": open_games, "add_form": AddGameForm(), "join_form": form})
+
+            

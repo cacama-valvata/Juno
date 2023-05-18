@@ -75,7 +75,7 @@
             </div>
 
             {% if user.is_authenticated %}
-                <!-- add-a-game modal -->
+                <!-- join-a-game modal -->
                 <div class="modal fade" id="joingame{{ forloop.counter0 }}" tabindex="-1" aria-labelledby="joingame{{ forloop.counter0 }}Label" aria-hidden="true">
                     <div class="modal-dialog modal-dialog-centered">
                     <div class="modal-content">
@@ -84,8 +84,7 @@
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
-                        
-                            <form action="/games/join/" method="post" id="join-game">
+                            <form action="{% url 'game-join' game.id %}" method="post" id="join-game">
                                 {% csrf_token %}
                                 {{ join_form.as_p }}
                             </form>
@@ -93,7 +92,7 @@
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                            <button type="button submit" class="btn btn-primary" data-bs-dismiss="modal" form="join-game">Join</button>
+                            <button type="button submit" class="btn btn-primary" form="join-game">Join</button>
                         </div>
                     </div>
                     </div>
