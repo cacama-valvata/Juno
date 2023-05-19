@@ -4,6 +4,15 @@
 
 {% block content %}
 
+{% if user.is_authenticated %}
+    {% if add_form.errors or join_form.errors %}
+        <div class="alert alert-danger alert-dismissible fade show text-center" role="alert">
+            Please correct the errors in the form below.
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    {% endif %}
+{% endif %}
+
 <div class="container-fluid">
 
         <!-- subheader -->
