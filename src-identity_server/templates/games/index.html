@@ -77,7 +77,7 @@
                                 Join Game
                             </button>
                         {% else %} 
-                            <a class="btn btn-secondary" target="_blank" rel="noopener noreferrer" href="{% url 'games-info' game.id %}" style="min-width:40%;">Info</a>
+                            <a class="btn btn-secondary" rel="noopener noreferrer" href="{% url 'games-info' game.id %}" style="min-width:40%;">Info</a>
                         {% endif %}
                     </div>
                 </div>
@@ -120,7 +120,7 @@
                         {{ game.start_time|date:"N j, Y \a\t g:i A" }} &nbsp — &nbsp {{ game.end_time|date:"N j, Y \a\t g:i A e"  }}
                     </div>
                     <div class="col-3 text-center">
-                        <a class="btn btn-secondary" target="_blank" rel="noopener noreferrer" href="{% url 'games-info' game.id %}" style="min-width:40%;">Info</a>
+                        <a class="btn btn-secondary" rel="noopener noreferrer" href="{% url 'games-info' game.id %}" style="min-width:40%;">Info</a>
                     </div>
                 </div>
             </div>

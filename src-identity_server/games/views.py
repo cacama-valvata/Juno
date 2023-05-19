@@ -69,7 +69,7 @@ def AddGame (request):
                 joingame = GamePlayer (game=new_game, user=request.user, team=False, device=key)
                 joingame.save()
 
-                return HttpResponseRedirect (reverse_lazy ('games-index'))
+                return HttpResponseRedirect (reverse_lazy ('games-info', kwargs={'game_id': new_game.pk}))
             
             else:
                 form.errors['start_time'] = ["Starting time must be in the future."]
