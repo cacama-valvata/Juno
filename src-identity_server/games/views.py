@@ -84,8 +84,6 @@ def JoinGame (request, game_id):
             joingame.save()
 
             return HttpResponseRedirect (reverse_lazy ('games-info', kwargs={'game_id': game_id}))
-        else:
-            form.errors['key'] = ["That's not your key"]
     else:
         form = JoinGameForm (request.user)
 
