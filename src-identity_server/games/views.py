@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
+from django.urls import reverse_lazy
 from django.utils import timezone
 from datetime import timedelta
 
@@ -51,7 +52,7 @@ def AddGame (request):
                 new_game = Game (start_time=start_datetime, end_time=end_datetime)
                 new_game.save()
 
-                return HttpResponseRedirect ('/games/')
+                return HttpResponseRedirect (reverse_lazy ('games-index'))
             
             else:
                 form.errors['start_time'] = ["Starting time must be in the future."]
@@ -75,7 +76,7 @@ def JoinGame (request, game_id):
             joingame = GamePlayer (game=game, user=request.user, team=False, device=key_id)
             joingame.save()
 
-            return HttpResponseRedirect (f'/games/{game_id}/')
+            return HttpResponseRedirect (reverse_lazy ('games-info', kwargs={'game_id': game_id}))
         else:
             form.errors['key'] = ["That's not your key"]
     else:

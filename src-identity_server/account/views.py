@@ -40,7 +40,7 @@ def AddDevice (request):
                     # TODO: better error display than this would require jquery and client-js
                     form.errors["ssh_key"] = ["Duplicate SSH key. Please generate a new one."]
                 else:
-                    return HttpResponseRedirect ('/profile/devices/')
+                    return HttpResponseRedirect (reverse_lazy ('account-devices'))
 
             else:
                 form.errors["ssh_key"] = ["SSH keys require at least a key type and public key data."]

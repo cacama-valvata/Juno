@@ -29,7 +29,7 @@
                 </div>
                 <div class="modal-body">
                 
-                    <form action="/games/add/" method="post" id="add-game">
+                    <form action="{% url 'games-add' %}" method="post" id="add-game">
                         {% csrf_token %}
                         {{ add_form.as_p }}
                     </form>
@@ -68,7 +68,7 @@
                                 Join Game
                             </button>
                         {% else %} 
-                            <a class="btn btn-secondary" target="_blank" rel="noopener noreferrer" href="/games/{{ game.id }}/" style="min-width:40%;">Info</a>
+                            <a class="btn btn-secondary" target="_blank" rel="noopener noreferrer" href="{% url 'games-info' games.id %}" style="min-width:40%;">Info</a>
                         {% endif %}
                     </div>
                 </div>
@@ -84,7 +84,7 @@
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
-                            <form action="{% url 'game-join' game.id %}" method="post" id="join-game">
+                            <form action="{% url 'games-join' game.id %}" method="post" id="join-game">
                                 {% csrf_token %}
                                 {{ join_form.as_p }}
                             </form>
@@ -111,7 +111,7 @@
                         {{ game.start_time|date:"N j, Y \a\t g:i A" }} &nbsp — &nbsp {{ game.end_time|date:"N j, Y \a\t g:i A e"  }}
                     </div>
                     <div class="col-3 text-center">
-                        <a class="btn btn-secondary" target="_blank" rel="noopener noreferrer" href="/games/{{ game.id }}/" style="min-width:40%;">Info</a>
+                        <a class="btn btn-secondary" target="_blank" rel="noopener noreferrer" href="{% url 'games-info' games.id %}" style="min-width:40%;">Info</a>
                     </div>
                 </div>
             </div>

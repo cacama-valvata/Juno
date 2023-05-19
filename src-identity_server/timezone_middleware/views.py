@@ -1,4 +1,5 @@
 from django.shortcuts import redirect, render
+from django.urls import reverse_lazy
 
 # Prepare a map of common locations to timezone choices you wish to offer.
 common_timezones = {
@@ -11,7 +12,7 @@ common_timezones = {
 def set_timezone(request):
     if request.method == 'POST':
         request.session['django_timezone'] = request.POST['timezone']
-        return redirect('/')
+        return redirect ('/')
     else:
         try:
             current_zone = request.session['django_timezone']

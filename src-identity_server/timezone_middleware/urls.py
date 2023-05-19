@@ -5,5 +5,5 @@ from django.views.generic.base import TemplateView
 
 
 urlpatterns = [
-    path ('', set_timezone, name='set_timezone'),
+    path ('', set_timezone, name='timezone-set'),
 ]

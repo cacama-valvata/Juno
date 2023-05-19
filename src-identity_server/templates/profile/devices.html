@@ -28,7 +28,7 @@
                 </div>
                 <div class="modal-body">
                 
-                    <form action="/profile/devices/add/" method="post" id="add-device">
+                    <form action="{% url 'account-devices-add' %}" method="post" id="add-device">
                         {% csrf_token %}
                         {{ form.as_p }}
                     </form>

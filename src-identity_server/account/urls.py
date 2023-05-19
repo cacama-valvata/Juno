@@ -6,9 +6,10 @@ from django.contrib.auth.decorators import login_required
 
 
 urlpatterns = [
-    path ('', login_required(ProfilePage), name='home'),
-    path ('settings/', login_required(Settings), name='settings'),
-    path ('signup/', SignUpView.as_view(), name='signup'),
-    path ('devices/', login_required(DevicesView), name='devices'),
-    path ('devices/add/', login_required(AddDevice), name='devices-add'),
+    path ('', login_required(ProfilePage), name='account-home'),
+    # path ('<slug:username>', a function, name='account-other-profile'),
+    path ('settings/', login_required(Settings), name='account-settings'),
+    path ('signup/', SignUpView.as_view(), name='account-signup'),
+    path ('devices/', login_required(DevicesView), name='account-devices'),
+    path ('devices/add/', login_required(AddDevice), name='account-devices-add'),
 ]

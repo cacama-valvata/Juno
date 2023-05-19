@@ -25,7 +25,7 @@
                 <div class="col-4">
                     <p>{{ user.username }}</p>
                     <p>{{ your_score }}</p>
-                    <a href="/profile/devices/">{{ your_devices|length }} {% if your_devices|length != 1%}devices{% else %}device{% endif %}</a>
+                    <a href="{% url 'account-devices' %}">{{ your_devices|length }} {% if your_devices|length != 1%}devices{% else %}device{% endif %}</a>
                 </div>
             </div>
             <!-- TODO: list of previous games -->
