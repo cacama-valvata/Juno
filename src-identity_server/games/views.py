@@ -1,8 +1,9 @@
 from django.shortcuts import render
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponseNotFound
 from django.urls import reverse_lazy
 from django.utils import timezone
 from datetime import timedelta
+from django.db import IntegrityError
 
 from .models import *
 from .forms import *
@@ -20,8 +21,10 @@ def GamesIndex (request):
         return render (request, "games/index.html", {"curr_games": current_games, "open_games": open_games})
 
 def GameInfo (request, game_id):
-    # TODO: no error checking!
     game = Game.objects.filter (id=game_id).first()
+    if not game:
+        return HttpResponseNotFound()
+
     players = GamePlayer.objects.filter (game=game).values ('game', 'user', 'user__username')
 
     n = 5
@@ -35,11 +38,18 @@ def GameInfo (request, game_id):
 
     #servicelabels = services.values ('name')
     timelabels = []
-    for score in scores_per_service[0]:
-        # TODO: hover tooltips with full datetime
-        timelabels.append (score['polled'].time) # the queryset is a dict now???
+    try:
+        for score in scores_per_service[0]:
+            # TODO: hover tooltips with full datetime
+            timelabels.append (score['polled'].time) # the queryset is a dict now???
+        extracols = scores_per_service[0].count
+    # There is not one service
+    except IndexError as e:
+        for i in range(n):
+            timelabels.append ("-")
+        extracols = 0 - n
 
-    return render (request, "games/game.html", {"game": game, "players": players, "timelabels": timelabels, "scores_per_service": scores_per_service, "extra_cols": range(n - scores_per_service[0].count())})
+    return render (request, "games/game.html", {"game": game, "players": players, "timelabels": timelabels, "scores_per_service": scores_per_service, "extra_cols": range(extracols)})
 
 def AddGame (request):
     if request.method == 'POST':
@@ -81,9 +91,12 @@ def JoinGame (request, game_id):
             game = Game.objects.filter (id=game_id).first()
 
             joingame = GamePlayer (game=game, user=request.user, team=False, device=key)
-            joingame.save()
-
-            return HttpResponseRedirect (reverse_lazy ('games-info', kwargs={'game_id': game_id}))
+            try:
+                joingame.save()
+            except IntegrityError as e:
+                form.errors["key"] = ["Game does not exist."]
+            else:
+                return HttpResponseRedirect (reverse_lazy ('games-info', kwargs={'game_id': game_id}))
     else:
         form = JoinGameForm (request.user)
 
