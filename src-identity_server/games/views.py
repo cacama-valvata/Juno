@@ -14,7 +14,10 @@ def GamesIndex (request):
     open_games = current_games.filter (start_time__gte=now)
     current_games = current_games.filter (start_time__lt=now)
 
-    return render (request, "games/index.html", {"curr_games": current_games, "open_games": open_games, "add_form": AddGameForm (), "join_form": JoinGameForm (request.user)})
+    if request.user.is_authenticated:
+        return render (request, "games/index.html", {"curr_games": current_games, "open_games": open_games, "add_form": AddGameForm (request.user), "join_form": JoinGameForm (request.user)})
+    else:
+        return render (request, "games/index.html", {"curr_games": current_games, "open_games": open_games})
 
 def GameInfo (request, game_id):
     # TODO: no error checking!
@@ -40,7 +43,7 @@ def GameInfo (request, game_id):
 
 def AddGame (request):
     if request.method == 'POST':
-        form = AddGameForm (request.POST)
+        form = AddGameForm (request.user, request.POST)
         if form.is_valid():
             start_datetime = form.cleaned_data['start_time']
             # TODO: drop down for SSH key to use with the game
@@ -52,12 +55,16 @@ def AddGame (request):
                 new_game = Game (start_time=start_datetime, end_time=end_datetime)
                 new_game.save()
 
+                key = form.cleaned_data['key']
+                joingame = GamePlayer (game=new_game, user=request.user, team=False, device=key)
+                joingame.save()
+
                 return HttpResponseRedirect (reverse_lazy ('games-index'))
             
             else:
                 form.errors['start_time'] = ["Starting time must be in the future."]
     else:
-        form = AddGameForm()
+        form = AddGameForm(request.user)
 
     now = timezone.now()
     current_games = Game.objects.filter (end_time__gte=now)
@@ -70,10 +77,10 @@ def JoinGame (request, game_id):
         form = JoinGameForm (request.user, request.POST)
         if form.is_valid():
             # Very cool: Django's form validation also works on ModelChoiceFields
-            key_id = form.cleaned_data['key']
+            key = form.cleaned_data['key']
             game = Game.objects.filter (id=game_id).first()
 
-            joingame = GamePlayer (game=game, user=request.user, team=False, device=key_id)
+            joingame = GamePlayer (game=game, user=request.user, team=False, device=key)
             joingame.save()
 
             return HttpResponseRedirect (reverse_lazy ('games-info', kwargs={'game_id': game_id}))
@@ -86,6 +93,6 @@ def JoinGame (request, game_id):
     current_games = Game.objects.filter (end_time__gte=now)
     open_games = current_games.filter (start_time__gte=now)
     current_games = current_games.filter (start_time__lt=now)
-    return render (request, "games/index.html", {"curr_games": current_games, "open_games": open_games, "add_form": AddGameForm(), "join_form": form})
+    return render (request, "games/index.html", {"curr_games": current_games, "open_games": open_games, "add_form": AddGameForm(request.user), "join_form": form})
 
             
