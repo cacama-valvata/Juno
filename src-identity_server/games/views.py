@@ -8,6 +8,13 @@ from django.db import IntegrityError
 from .models import *
 from .forms import *
 
+# Helper function
+def getjoinedgames (request):
+    if request.user.is_authenticated:
+        games = GamePlayer.objects.filter (user=request.user).values_list ('game', flat=True)
+    else:
+        games = []
+    return games
 
 def GamesIndex (request):
     now = timezone.now()
@@ -16,7 +23,7 @@ def GamesIndex (request):
     current_games = current_games.filter (start_time__lt=now)
 
     if request.user.is_authenticated:
-        return render (request, "games/index.html", {"curr_games": current_games, "open_games": open_games, "add_form": AddGameForm (request.user), "join_form": JoinGameForm (request.user)})
+        return render (request, "games/index.html", {"curr_games": current_games, "open_games": open_games, "joined_games": getjoinedgames(request), "add_form": AddGameForm (request.user), "join_form": JoinGameForm (request.user)})
     else:
         return render (request, "games/index.html", {"curr_games": current_games, "open_games": open_games})
 
@@ -80,7 +87,7 @@ def AddGame (request):
     current_games = Game.objects.filter (end_time__gte=now)
     open_games = current_games.filter (start_time__gte=now)
     current_games = current_games.filter (start_time__lt=now)
-    return render (request, "games/index.html", {"curr_games": current_games, "open_games": open_games, "add_form": form, "join_form": JoinGameForm (request.user)})
+    return render (request, "games/index.html", {"curr_games": current_games, "open_games": open_games, "joined_games": getjoinedgames(request.user), "add_form": form, "join_form": JoinGameForm (request.user)})
 
 def JoinGame (request, game_id):
     if request.method == 'POST':
@@ -89,14 +96,19 @@ def JoinGame (request, game_id):
             # Very cool: Django's form validation also works on ModelChoiceFields
             key = form.cleaned_data['key']
             game = Game.objects.filter (id=game_id).first()
-
-            joingame = GamePlayer (game=game, user=request.user, team=False, device=key)
-            try:
-                joingame.save()
-            except IntegrityError as e:
-                form.errors["key"] = ["Game does not exist."]
+            
+            players = GamePlayer.objects.filter (game=game).values_list ('user', flat=True)
+            # prohibit multiple joins to a game
+            if request.user.pk not in players:
+                joingame = GamePlayer (game=game, user=request.user, team=False, device=key)
+                try:
+                    joingame.save()
+                except IntegrityError as e:
+                    form.errors["key"] = ["Game does not exist."]
+                else:
+                    return HttpResponseRedirect (reverse_lazy ('games-index')) #return HttpResponseRedirect (reverse_lazy ('games-info', kwargs={'game_id': game_id}))
             else:
-                return HttpResponseRedirect (reverse_lazy ('games-info', kwargs={'game_id': game_id}))
+                form.errors['key'] = ["You are already joined to the game."]
     else:
         form = JoinGameForm (request.user)
 
@@ -104,6 +116,6 @@ def JoinGame (request, game_id):
     current_games = Game.objects.filter (end_time__gte=now)
     open_games = current_games.filter (start_time__gte=now)
     current_games = current_games.filter (start_time__lt=now)
-    return render (request, "games/index.html", {"curr_games": current_games, "open_games": open_games, "add_form": AddGameForm(request.user), "join_form": form})
+    return render (request, "games/index.html", {"curr_games": current_games, "open_games": open_games, "joined_games": getjoinedgames(request.user), "add_form": AddGameForm(request.user), "join_form": form})
 
             

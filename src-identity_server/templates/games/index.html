@@ -62,20 +62,27 @@
                 <div class="col text-center"></div>
             </div>
 
+            <!-- OPEN GAMES -->
             {% for game in open_games %}
             <div class="my-2 border">
                 <div class="d-flex flex-row align-items-center px-2 py-2">
                     <div class="col-3">
-                        {{ game.id }}
+                        <a class="btn btn-light" rel="noopener noreferrer" href="{% url 'games-info' game.id %}" style="min-width:40%;">{{ game.id }}</a>
                     </div>
                     <div class="col-6">
                         {{ game.start_time|date:"N j, Y \a\t g:i A" }} &nbsp — &nbsp {{ game.end_time|date:"N j, Y \a\t g:i A e"  }}
                     </div>
                     <div class="col-3 text-center">
                         {% if user.is_authenticated %} 
-                            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#joingame{{ forloop.counter0 }}" style="min-width:40%;">
-                                Join Game
+                            {% if game.id in joined_games %}
+                            <button type="button" class="btn btn-success" style="min-width:40%;" disabled>
+                                Joined
                             </button>
+                            {% else %}
+                                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#joingame{{ forloop.counter0 }}" style="min-width:40%;">
+                                    Join Game
+                                </button>
+                            {% endif %}
                         {% else %} 
                             <a class="btn btn-secondary" rel="noopener noreferrer" href="{% url 'games-info' game.id %}" style="min-width:40%;">Info</a>
                         {% endif %}
@@ -83,7 +90,7 @@
                 </div>
             </div>
 
-            {% if user.is_authenticated %}
+            {% if user.is_authenticated and game.id not in joined_games %}
                 <!-- join-a-game modal -->
                 <div class="modal fade" id="joingame{{ forloop.counter0 }}" tabindex="-1" aria-labelledby="joingame{{ forloop.counter0 }}Label" aria-hidden="true">
                     <div class="modal-dialog modal-dialog-centered">
@@ -110,11 +117,12 @@
 
             {% endfor %}
 
+            <!-- CURRENT GAMES -->
             {% for game in curr_games %} 
             <div class="my-2 border">
                 <div class="d-flex flex-row align-items-center px-2 py-2">
-                    <div class="col-3 ps-2">
-                        {{ game.id }}
+                    <div class="col-3">
+                        <a class="btn btn-light" rel="noopener noreferrer" href="{% url 'games-info' game.id %}" style="min-width:40%;">{{ game.id }}</a>
                     </div>
                     <div class="col-6">
                         {{ game.start_time|date:"N j, Y \a\t g:i A" }} &nbsp — &nbsp {{ game.end_time|date:"N j, Y \a\t g:i A e"  }}
