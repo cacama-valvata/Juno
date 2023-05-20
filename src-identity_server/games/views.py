@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.http import HttpResponseRedirect, HttpResponseNotFound
+from django.http import HttpResponseRedirect, HttpResponseNotFound, Http404
 from django.urls import reverse_lazy
 from django.utils import timezone
 from datetime import timedelta
@@ -28,9 +28,10 @@ def GamesIndex (request):
         return render (request, "games/index.html", {"curr_games": current_games, "open_games": open_games})
 
 def GameInfo (request, game_id):
-    game = Game.objects.filter (id=game_id).first()
-    if not game:
-        return HttpResponseNotFound()
+    try:
+        game = Game.objects.get (id=game_id)
+    except Game.DoesNotExist:
+        raise Http404
 
     players = GamePlayer.objects.filter (game=game).values ('game', 'user', 'user__username')
 
@@ -106,7 +107,7 @@ def JoinGame (request, game_id):
                 except IntegrityError as e:
                     form.errors["key"] = ["Game does not exist."]
                 else:
-                    return HttpResponseRedirect (reverse_lazy ('games-index')) #return HttpResponseRedirect (reverse_lazy ('games-info', kwargs={'game_id': game_id}))
+                    return HttpResponseRedirect (reverse_lazy ('games-info', kwargs={'game_id': game_id}))
             else:
                 form.errors['key'] = ["You are already joined to the game."]
     else:
