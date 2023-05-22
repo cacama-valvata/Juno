@@ -20,14 +20,14 @@ class Game (models.Model):
 class GamePlayer (models.Model):
     game = models.ForeignKey (Game, on_delete=models.CASCADE)
     user = models.ForeignKey (User, on_delete=models.DO_NOTHING)
-    team = models.BooleanField (null=False) # where 0 is defending, 1 is attacking
+    redteam = models.BooleanField (null=False) # where 0 is defending, 1 is attacking
     device = models.ForeignKey (UserDevice, on_delete=models.DO_NOTHING)
     wg_pubkey = models.CharField (max_length=255, null=True)
     wg_config = models.CharField (max_length=255, null=True)
 
 class GameScore (models.Model):
     game = models.ForeignKey (Game, on_delete=models.CASCADE)
-    team = models.BooleanField (null=False) # where 0 is defending, 1 is attacking
+    redteam = models.BooleanField (null=False) # where 0 is defending, 1 is attacking
     score = models.PositiveBigIntegerField (default=0)
 
 class GameService (models.Model):

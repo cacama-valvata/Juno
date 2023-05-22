@@ -24,6 +24,12 @@ def get_games ():
 
     return current_games, open_games
 
+def get_gameplayers (game):
+    players = GamePlayer.objects.filter (game=game)
+    blueteam = players.filter (redteam=False).values ('game', 'user', 'user__username')
+    redteam = players.filter (redteam=True).values ('game', 'user', 'user__username')
+    return blueteam,redteam
+
 
 # VIEWS
 
@@ -47,6 +53,7 @@ def AddGame (request):
             # Very cool: Django's form validation also works on ModelChoiceFields
             start_datetime = addgame_form.cleaned_data['start_time']
             key = addgame_form.cleaned_data['key']
+            redteam = joingame_form.cleaned_data['redteam']
 
             if start_datetime > timezone.now():
                 end_datetime = start_datetime + timedelta (hours=2)
@@ -55,8 +62,7 @@ def AddGame (request):
                 new_game = Game (start_time=start_datetime, end_time=end_datetime)
                 new_game.save()
 
-                joingame = GamePlayer (game=new_game, user=request.user, team=False, device=key)
-                # TODO: allow choosing team
+                joingame = GamePlayer (game=new_game, user=request.user, redteam=redteam, device=key)
                 joingame.save()
                 
                 return HttpResponseRedirect (reverse_lazy ('games-info', kwargs={'game_id': new_game.pk}))
@@ -80,21 +86,25 @@ def JoinGame (request, game_id):
         if joingame_form.is_valid():
             # Very cool: Django's form validation also works on ModelChoiceFields
             key = joingame_form.cleaned_data['key']
+            redteam = joingame_form.cleaned_data['redteam']
+
             try:
                 game = Game.objects.get (id=game_id)
             except Game.DoesNotExist:
                 raise Http404
             
-            players = GamePlayer.objects.filter (game=game).values_list ('user', flat=True)
-            # prohibit multiple joins to a game
-            if request.user.pk not in players:
-                joingame = GamePlayer (game=game, user=request.user, team=False, device=key)
-                # TODO: allow choosing team
-                joingame.save()
+            if game.start_time > timezone.now():
+                players = GamePlayer.objects.filter (game=game).values_list ('user', flat=True)
+                # prohibit multiple joins to a game
+                if request.user.pk not in players:
+                    joingame = GamePlayer (game=game, user=request.user, redteam=redteam, device=key)
+                    joingame.save()
 
-                return HttpResponseRedirect (reverse_lazy ('games-info', kwargs={'game_id': game_id}))
+                    return HttpResponseRedirect (reverse_lazy ('games-info', kwargs={'game_id': game_id}))
+                else:
+                    joingame_form.errors['key'] = ["You are already joined to the game."]
             else:
-                joingame_form.errors['key'] = ["You are already joined to the game."]
+                addgame_form.errors['key'] = ["Sorry, you cannot join a game that has already started."]
     else:
         joingame_form = JoinGameForm (request.user)
 
@@ -108,7 +118,7 @@ def GameInfo (request, game_id):
     except Game.DoesNotExist:
         raise Http404
 
-    players = GamePlayer.objects.filter (game=game).values ('game', 'user', 'user__username')
+    blueteam, redteam = get_gameplayers (game)
 
     n = 5
 
@@ -132,5 +142,5 @@ def GameInfo (request, game_id):
             timelabels.append ("-")
         extracols = 0 - n
 
-    return render (request, "games/game.html", {"game": game, "players": players, "timelabels": timelabels, "scores_per_service": scores_per_service, "extra_cols": range(extracols)})
+    return render (request, "games/game.html", {"game": game, "blue_team": blueteam, "red_team": redteam, "timelabels": timelabels, "scores_per_service": scores_per_service, "extra_cols": range(extracols)})
             

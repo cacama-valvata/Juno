@@ -20,7 +20,8 @@
     <div class="row collapse" id="collapse-info">
         <div class="card card-body text-justify border-0 mx-0 mt-0 mb-4 bg-light">
             <p><span class="fw-bold">Time:</span> {{ game.start_time|date:"N j, Y \a\t g:i A" }} &nbsp — &nbsp {{ game.end_time|date:"N j, Y \a\t g:i A e"  }}</p>
-            <p><span class="fw-bold"> Players:</span> {% for player in players %}{{ player.user__username }}{% if not forloop.last %}, {% endif %}{% endfor %}</p>
+            <p><span class="fw-bold"> Blue Team:</span> {% for player in blue_team %}{{ player.user__username }}{% if not forloop.last %}, {% endif %}{% endfor %}</p>
+            <p><span class="fw-bold"> Red Team:</span> {% for player in red_team %}{{ player.user__username }}{% if not forloop.last %}, {% endif %}{% endfor %}</p>
         </div>
     </div>
 
