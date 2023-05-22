@@ -34,11 +34,8 @@ def which_input(command):
 
 # function called by creating new process, create vm with qemu
 def start_linux_vm(img_name, game_val):
-    #os.system('qemu-system-i386 -hda ' + img_name + ' -cdrom FD13LIVE.iso -m 16M -boot order=dc')
-
     # qemu call to create vm, uses img_name as hard disk, and grabs iso file from ssh using game id as path to iso
     os.system('qemu-system-i386 -hda ' + img_name + ' --drive media=cdrom,file=ssh://ubuntu@10.0.0.79/home/ubuntu/game/' + game_val + '/FD13LIVE.iso -m 16M -boot order=dc')
-    #print('qemu-system-i386 -hda ' + img_name + ' -cdrom FD13LIVE.iso -m 16M -boot order=dc')
 
 # creates disks and process for vms
 def linux_vm(game_val, num_vm, img_count):
