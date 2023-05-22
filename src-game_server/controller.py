@@ -23,7 +23,6 @@ def which_input(command):
     match command[0]:
         case 'game':
             # need to verify if command[1] is an int
-            print("We got here")
             # create a vm passing in game id, number of vms, and the image count we are on
             procs = linux_vm(command[1], int(command[2]), img_count)
         case _:
