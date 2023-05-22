@@ -53,7 +53,7 @@ def AddGame (request):
             # Very cool: Django's form validation also works on ModelChoiceFields
             start_datetime = addgame_form.cleaned_data['start_time']
             key = addgame_form.cleaned_data['key']
-            redteam = joingame_form.cleaned_data['redteam']
+            redteam = addgame_form.cleaned_data['redteam']
 
             if start_datetime > timezone.now():
                 end_datetime = start_datetime + timedelta (hours=2)
@@ -73,7 +73,7 @@ def AddGame (request):
         addgame_form = AddGameForm(request.user)
 
     current_games, open_games = get_games()
-    return render (request, "games/index.html", {"curr_games": current_games, "open_games": open_games, "joined_games": getjoinedgames(request.user), "add_form": addgame_form, "join_form": joingame_form})
+    return render (request, "games/index.html", {"curr_games": current_games, "open_games": open_games, "joined_games": getjoinedgames(request), "add_form": addgame_form, "join_form": joingame_form})
 
 
 # login required
