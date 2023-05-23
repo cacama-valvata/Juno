@@ -12,4 +12,5 @@ urlpatterns = [
     path ('signup/', SignUpView.as_view(), name='account-signup'),
     path ('devices/', login_required(DevicesView), name='account-devices'),
     path ('devices/add/', login_required(AddDevice), name='account-devices-add'),
+    path ('devices/set-default/', login_required(SetDefaultKey), name='account-devices-setdefault')
 ]

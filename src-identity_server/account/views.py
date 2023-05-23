@@ -16,7 +16,8 @@ class SignUpView(generic.CreateView):
 
 def DevicesView (request):
     thisuser_devices = UserDevice.objects.filter (user=request.user)
-    return render (request, "profile/devices.html", {"devices": thisuser_devices, "form": AddDeviceForm()})
+    return render (request, "profile/devices.html", {"devices": thisuser_devices, "form": AddDeviceForm(), "setdefaultform": SetDefaultForm (request.user)})
+
 
 def AddDevice (request):
     if request.method == 'POST':
@@ -24,6 +25,7 @@ def AddDevice (request):
         if form.is_valid():
             keyname = form.cleaned_data['keyname']
             ssh_key = form.cleaned_data['ssh_key'].strip().split(' ')
+            default = form.cleaned_data['default']
 
             # ssh-rsa AAAAA..... user@host
             # user@host is actually an optional 'comment' in OpenSSH
@@ -32,7 +34,11 @@ def AddDevice (request):
                 ssh_pubkey = ssh_key[1]
                 ssh_suffix = ssh_key[2] if len(ssh_key) > 2 else "N/A"
 
-                new_device = UserDevice (user=request.user, keyname=keyname, ssh_prefix=ssh_prefix, ssh_pubkey=ssh_pubkey, ssh_suffix=ssh_suffix)
+                all_keys = UserDevice.objects.filter (user=request.user)
+                if all_keys.count() == 0:
+                    default = True
+
+                new_device = UserDevice (user=request.user, keyname=keyname, ssh_prefix=ssh_prefix, ssh_pubkey=ssh_pubkey, ssh_suffix=ssh_suffix, default=default)
                 # Prevent duplicate keys
                 try:
                     new_device.save()
@@ -40,6 +46,13 @@ def AddDevice (request):
                     # TODO: better error display than this would require jquery and client-js
                     form.errors["ssh_key"] = ["Duplicate SSH key. Please generate a new one."]
                 else:
+                    if default:
+                        for k in all_keys:
+                            if k == new_device:
+                                k.default = True
+                            else:
+                                k.default = False
+                            k.save()
                     return HttpResponseRedirect (reverse_lazy ('account-devices'))
 
             else:
@@ -49,6 +62,23 @@ def AddDevice (request):
     
     thisuser_devices = UserDevice.objects.filter (user=request.user)
     return render (request, "profile/devices.html", {"devices": thisuser_devices, "form": form})
+
+
+def SetDefaultKey (request):
+    if request.method == 'POST':
+        form = SetDefaultForm (request.user, request.POST)
+        if form.is_valid():
+            key = form.cleaned_data['keys']
+            all_keys = UserDevice.objects.filter (user=request.user)
+            for k in all_keys:
+                if k == key:
+                    k.default = True
+                else:
+                    k.default = False
+                k.save()
+        # TODO: error display?
+            
+    return HttpResponseRedirect (reverse_lazy ('account-devices'))
 
 
 def ProfilePage (request):

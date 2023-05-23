@@ -2,6 +2,13 @@
 
 {% block title %}User Devices{% endblock %}
 
+{% block css %}
+    {% load static %}
+    <link href="{% static 'fontawesomefree/css/all.min.css' %}" rel="stylesheet" type="text/css">
+
+    <script src="{% static 'account/devices.js' %}" defer></script>
+{% endblock %}
+
 {% block content %}
 
 {% if user.is_authenticated %}
@@ -56,25 +63,36 @@
         <div class="container px-0 my-5">
             <!-- labels for table -->
             <div class="d-flex flex-row px-2 py-0">
-                <div class="col"><h5>Name</h5></div>
-                <div class="col"><h5>Host</h5></div>
-                <div class="col"></div>
-                <div class="col text-center"><h5>Last Seen</h5></div>
+                <div class="col-3"><h5>Name</h5></div>
+                <div class="col-6"><h5>Host</h5></div>
+                <div class="col-2 text-center"><h5>Last Seen</h5></div>
+                <div class="col-1 text-center"><h5>Default</h5></div>
             </div>
+
+            <form id="makedefault-form" action="{% url 'account-devices-setdefault' %}" method="post" hidden>
+                {% csrf_token %}
+                {{ setdefaultform.as_p }}
+            </form>
 
             {% for device in devices %} 
             <div class="my-2 border">
                 <div class="d-flex flex-row align-items-center px-2 py-1">
-                    <div class="col">
+                    <div class="col-3">
                         <a class="btn dropdown-toggle" data-bs-toggle="collapse" data-bs-target="#collapse-{{ forloop.counter0 }}" href="#" role="button" aria-expanded="false" aria-controls="collapseExample"></a>
                         {{ device.keyname }}
                     </div>
-                    <div class="col">
+                    <div class="col-6">
                         {{ device.ssh_suffix }}
                     </div>
-                    <div class="col"></div>
-                    <div class="col text-center">
+                    <div class="col-2 text-center">
                         {{ device.last_seen|default_if_none:"Never" }}
+                    </div>
+                    <div class="col-1 text-center">
+                        {% if device.default %}
+                        <i class="fa-solid fa-circle-dot"></i>
+                        {% else %}
+                        <button class="btn makedefaultbtn" type="button submit" data-key="{{ device.id }}"><i class="fa-regular fa-circle"></i></button>
+                        {% endif %}
                     </div>
                 </div>
                 <!-- drop down with the ssh pubkey -->
