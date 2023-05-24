@@ -108,6 +108,8 @@ def DeleteKey (request):
         form = DeleteDeviceForm (request.user, request.POST)
         if form.is_valid():
             key = form.cleaned_data['keys']
+            # TODO: choose another key to be default if we just deleted a default key?
+
             key.delete()
 
             return HttpResponseRedirect (reverse_lazy ('account-home'))

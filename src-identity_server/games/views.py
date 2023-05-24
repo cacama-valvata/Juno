@@ -112,6 +112,17 @@ def JoinGame (request, game_id):
     return render (request, "games/index.html", {"curr_games": current_games, "open_games": open_games, "joined_games": getjoinedgames(request.user), "add_form": addgame_form, "join_form": joingame_form})
 
 
+# login-required
+def LeaveGame (request, game_id):
+    if request.method == 'POST':
+        game = GamePlayer.objects.filter (game=game_id, user=request.user)
+        if game.count() > 0:
+            game.delete()
+            return HttpResponseRedirect (reverse_lazy ('games-index'))
+        
+    return HttpResponseRedirect (reverse_lazy ('games-info', kwargs={'game_id': game_id}))
+
+
 def GameInfo (request, game_id):
     try:
         game = Game.objects.get (id=game_id)
@@ -119,6 +130,11 @@ def GameInfo (request, game_id):
         raise Http404
 
     blueteam, redteam = get_gameplayers (game)
+
+    in_game = False
+    curr_gameplayer = GamePlayer.objects.filter (game=game, user=request.user)
+    if curr_gameplayer.count() > 0:
+        in_game = True
 
     n = 5
 
@@ -142,5 +158,5 @@ def GameInfo (request, game_id):
             timelabels.append ("-")
         extracols = 0 - n
 
-    return render (request, "games/game.html", {"game": game, "blue_team": blueteam, "red_team": redteam, "timelabels": timelabels, "scores_per_service": scores_per_service, "extra_cols": range(extracols)})
+    return render (request, "games/game.html", {"game": game, "blue_team": blueteam, "red_team": redteam, "timelabels": timelabels, "scores_per_service": scores_per_service, "extra_cols": range(extracols), "in_game": in_game})
             

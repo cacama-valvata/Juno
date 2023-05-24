@@ -19,6 +19,14 @@
 
     <div class="row collapse" id="collapse-info">
         <div class="card card-body text-justify border-0 mx-0 mt-0 mb-4 bg-light">
+            {% if user.is_authenticated and in_game %}
+            <div>
+                <form action="{% url 'games-leave' game.id %}" method="post" id="leavegame_form" hidden>
+                    {% csrf_token %}
+                </form>
+                <button type="button submit" class="btn btn-secondary float-end" data-bs-dismiss="modal" form="leavegame_form">Leave Game</button>
+            </div>
+            {% endif %}
             <p><span class="fw-bold">Time:</span> {{ game.start_time|date:"N j, Y \a\t g:i A" }} &nbsp — &nbsp {{ game.end_time|date:"N j, Y \a\t g:i A e"  }}</p>
             <p><span class="fw-bold"> Blue Team:</span> {% for player in blue_team %}{{ player.user__username }}{% if not forloop.last %}, {% endif %}{% endfor %}</p>
             <p><span class="fw-bold"> Red Team:</span> {% for player in red_team %}{{ player.user__username }}{% if not forloop.last %}, {% endif %}{% endfor %}</p>
