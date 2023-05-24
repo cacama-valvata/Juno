@@ -5,6 +5,8 @@ import sys
 import selectors
 import types
 
+# initialize dictionary to store config values
+config = {}
 sel = selectors.DefaultSelector()
 
 # gets user input
@@ -30,8 +32,15 @@ def which_input(command):
 
 # function called by creating new process, create vm with qemu
 def start_linux_vm(img_name, game_val):
+    # create qemu command line call
+    commandstr = 'qemu-system-i386 -hda ' + img_name
+    commandstr += ' --drive media=cdrom,file=ssh://'
+    commandstr += config['ENVARCHUSER'] + '@' + config['ENVARCH']
+    commandstr += '/home/' + config['ENVARCHUSER'] + '/game/'
+    commandstr += game_val + '/FD13LIVE.iso -m 16M -boot order=dc'
+    # 'qemu-system-i386 -hda ' + img_name + ' --drive media=cdrom,file=ssh://ubuntu@10.0.0.79/home/ubuntu/game/' + game_val + '/FD13LIVE.iso -m 16M -boot order=dc'
     # qemu call to create vm, uses img_name as hard disk, and grabs iso file from ssh using game id as path to iso
-    os.system('qemu-system-i386 -hda ' + img_name + ' --drive media=cdrom,file=ssh://ubuntu@10.0.0.79/home/ubuntu/game/' + game_val + '/FD13LIVE.iso -m 16M -boot order=dc')
+    os.system(commandstr)
 
 # creates disks and process for vms
 def linux_vm(game_val, num_vm, img_count):
@@ -122,24 +131,24 @@ def service_connection(key, mask):
 def get_conf():
     f = open('controller_conf', 'r')
     contents = f.read().split('\n')
-    host = contents[0].split(' ')[1]
-    port = contents[1].split(' ')[1]
-    return host, port
+    for i in contents:
+        arg = i.split(' ')
+        config[arg[0][:-1]] = arg[1]
             
 def main():
     # inits unique image counter
     linux_img_count = 1
     # will be a list of lists of process ids
     procs = []
-    # get ip of server and port to listen on
-    host, port = get_conf()
+    # load config dictionary with config values
+    get_conf()
     # create socket with tcp protocol
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     # bind host addr and port to socket
-    s.bind((host, port))
+    s.bind((config['HOST'], config['PORT']))
     # listen for input from socket
     s.listen()
-    print(f"Listening on {(host, port)}")
+    print(f"Listening on {(config['HOST'], config['PORT'])}")
     s.setblocking(False)
     sel.register(s, selectors.EVENT_READ, data=None)
     try:
