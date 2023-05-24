@@ -46,7 +46,7 @@
                 
                     <form action="{% url 'account-devices-add' %}" method="post" id="add-device">
                         {% csrf_token %}
-                        {{ form.as_p }}
+                        {{ adddevice_form.as_p }}
                     </form>
 
                 </div>
@@ -71,7 +71,7 @@
 
             <form id="makedefault-form" action="{% url 'account-devices-setdefault' %}" method="post" hidden>
                 {% csrf_token %}
-                {{ setdefaultform.as_p }}
+                {{ setdefault_form.as_p }}
             </form>
 
             {% for device in devices %} 

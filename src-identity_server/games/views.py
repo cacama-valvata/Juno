@@ -9,9 +9,9 @@ from .models import *
 from .forms import *
 
 # HELPER FUNCTIONS
-def getjoinedgames (request):
-    if request.user.is_authenticated:
-        games = GamePlayer.objects.filter (user=request.user).values_list ('game', flat=True)
+def getjoinedgames (user):
+    if user.is_authenticated:
+        games = GamePlayer.objects.filter (user=user).values_list ('game', flat=True)
     else:
         games = []
     return games
@@ -37,7 +37,7 @@ def GamesIndex (request):
     current_games, open_games = get_games()
 
     if request.user.is_authenticated:
-        return render (request, "games/index.html", {"curr_games": current_games, "open_games": open_games, "joined_games": getjoinedgames(request), "add_form": AddGameForm (request.user), "join_form": JoinGameForm (request.user)})
+        return render (request, "games/index.html", {"curr_games": current_games, "open_games": open_games, "joined_games": getjoinedgames(request.user), "add_form": AddGameForm (request.user), "join_form": JoinGameForm (request.user)})
     else:
         return render (request, "games/index.html", {"curr_games": current_games, "open_games": open_games})
 
@@ -73,7 +73,7 @@ def AddGame (request):
         addgame_form = AddGameForm(request.user)
 
     current_games, open_games = get_games()
-    return render (request, "games/index.html", {"curr_games": current_games, "open_games": open_games, "joined_games": getjoinedgames(request), "add_form": addgame_form, "join_form": joingame_form})
+    return render (request, "games/index.html", {"curr_games": current_games, "open_games": open_games, "joined_games": getjoinedgames(request.user), "add_form": addgame_form, "join_form": joingame_form})
 
 
 # login required

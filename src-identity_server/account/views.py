@@ -9,14 +9,36 @@ from django.db import IntegrityError
 from .models import *
 from .forms import *
 
+# HELPER FUNCTIONS
+
+def getscores (user):
+    your_score = UserScore.objects.filter (user=user).first()
+    your_place = 1 + UserScore.objects.filter (score__gt=your_score.score).count()
+
+    place_suffix = ""
+    if your_place % 10 == 1:
+        place_suffix = "st"
+    elif your_place % 10 == 2:
+        place_suffix = "nd"
+    elif your_place % 10 == 3:
+        place_suffix = "rd"
+    else:
+        place_suffix = "th"
+
+    return your_score.score, your_place, place_suffix
+
+
+# VIEWS
+
 class SignUpView(generic.CreateView):
     form_class = UserCreationForm
     success_url = reverse_lazy("login")
     template_name = "profile/signup.html"
 
+
 def DevicesView (request):
     thisuser_devices = UserDevice.objects.filter (user=request.user)
-    return render (request, "profile/devices.html", {"devices": thisuser_devices, "form": AddDeviceForm(), "setdefaultform": SetDefaultForm (request.user)})
+    return render (request, "profile/devices.html", {"devices": thisuser_devices, "adddevice_form": AddDeviceForm(), "setdefault_form": SetDefaultForm (request.user)})
 
 
 def AddDevice (request):
@@ -81,22 +103,28 @@ def SetDefaultKey (request):
     return HttpResponseRedirect (reverse_lazy ('account-devices'))
 
 
-def ProfilePage (request):
-    your_score = UserScore.objects.filter (user=request.user).first()
-    your_place = 1 + UserScore.objects.filter (score__gt=your_score.score).count()
-    your_devices = UserDevice.objects.filter (user=request.user)
+def DeleteKey (request):
+    if request.method == 'POST':
+        form = DeleteDeviceForm (request.user, request.POST)
+        if form.is_valid():
+            key = form.cleaned_data['keys']
+            key.delete()
 
-    place_suffix = ""
-    if your_place % 10 == 1:
-        place_suffix = "st"
-    elif your_place % 10 == 2:
-        place_suffix = "nd"
-    elif your_place % 10 == 3:
-        place_suffix = "rd"
+            return HttpResponseRedirect (reverse_lazy ('account-home'))
     else:
-        place_suffix = "th"
+        form = DeleteDeviceForm (request.user)
+    
+    your_devices = UserDevice.objects.filter (user=request.user)
+    your_score, your_place, place_suffix = getscores (request.user)
+    return render (request, "profile/home.html", {"your_score": your_score, "your_place": your_place, "place_suffix": place_suffix, "your_devices": your_devices, "deletedevice_form": form})
 
-    return render (request, "profile/home.html", {"your_score": your_score.score, "your_place": your_place, "place_suffix": place_suffix, "your_devices": your_devices})
+
+def ProfilePage (request):
+    your_devices = UserDevice.objects.filter (user=request.user)
+    your_score, your_place, place_suffix = getscores (request.user)
+
+    return render (request, "profile/home.html", {"your_score": your_score, "your_place": your_place, "place_suffix": place_suffix, "your_devices": your_devices, "deletedevice_form": DeleteDeviceForm (request.user)})
+
 
 def Settings (request):
     return render (request, "profile/settings.html")

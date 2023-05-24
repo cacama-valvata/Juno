@@ -15,3 +15,12 @@ class SetDefaultForm (forms.Form):
         if user.is_authenticated:
             self.fields['keys'].queryset = UserDevice.objects.filter (user=user)
             self.fields['keys'].widget.attrs={'id': 'makedefault-selector'}
+
+class DeleteDeviceForm (forms.Form):
+    keys = forms.ModelChoiceField (queryset=None)
+
+    def __init__ (self, user, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # should be caught by views.py. double protection
+        if user.is_authenticated:
+            self.fields['keys'].queryset = UserDevice.objects.filter (user=user)
