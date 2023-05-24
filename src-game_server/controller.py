@@ -5,10 +5,6 @@ import sys
 import selectors
 import types
 
-# private ip of server
-HOST = "10.0.0.190"
-# whatever port
-PORT = 65432
 sel = selectors.DefaultSelector()
 
 # gets user input
@@ -123,18 +119,27 @@ def service_connection(key, mask):
             sel.unregister(sock)
             sock.close()
 
+def get_conf():
+    f = open('controller_conf', 'r')
+    contents = f.read().split('\n')
+    host = contents[0].split(' ')[1]
+    port = contents[1].split(' ')[1]
+    return host, port
+            
 def main():
     # inits unique image counter
     linux_img_count = 1
     # will be a list of lists of process ids
     procs = []
+    # get ip of server and port to listen on
+    host, port = get_conf()
     # create socket with tcp protocol
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     # bind host addr and port to socket
-    s.bind((HOST, PORT))
+    s.bind((host, port))
     # listen for input from socket
     s.listen()
-    print(f"Listening on {(HOST, PORT)}")
+    print(f"Listening on {(host, port)}")
     s.setblocking(False)
     sel.register(s, selectors.EVENT_READ, data=None)
     try:
