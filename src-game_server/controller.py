@@ -130,9 +130,11 @@ def service_connection(key, mask):
 
 def get_conf():
     f = open('controller_conf', 'r')
-    contents = f.read().split('\n')
+    contents = f.read().split('\n')[:-1]
+    print(contents)
     for i in contents:
         arg = i.split(' ')
+        print(arg)
         config[arg[0][:-1]] = arg[1]
             
 def main():
@@ -145,7 +147,7 @@ def main():
     # create socket with tcp protocol
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     # bind host addr and port to socket
-    s.bind((config['HOST'], config['PORT']))
+    s.bind((config['HOST'], int(config['PORT'])))
     # listen for input from socket
     s.listen()
     print(f"Listening on {(config['HOST'], config['PORT'])}")
