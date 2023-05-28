@@ -1,0 +1,9 @@
+[Interface]
+PrivateKey = <put your private key here>
+ListenPort = 51820
+Address = <peer id here>/32
+
+[Peer]
+PublicKey = <self pubkey here>
+AllowedIPs = 10.0.0.0/24
+Endpoint = <self ip>:<self port>
