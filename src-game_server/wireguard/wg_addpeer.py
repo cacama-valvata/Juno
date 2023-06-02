@@ -1,6 +1,6 @@
 # Settings you may wish to change
 WG_SERV = "wg0"
-CONFIG_PATH = "." # /etc/wireguard
+CONFIG_PATH = "/etc/wireguard"
 
 import configparser
 import ipaddress
@@ -158,7 +158,7 @@ def update_key (line_no):
 
     peer_parser = configparser.ConfigParser ()
     peer_parser.read_string ("\n".join (wg_config[line_no:line_no + 5]))
-    nextpeer_ip = peer_parser["Peer"]["AllowedIPs"]
+    nextpeer_ip = peer_parser["Peer"]["AllowedIPs"].split("/")[0]
 
     return nextpeer_ip
 
