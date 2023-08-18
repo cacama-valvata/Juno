@@ -24,5 +24,6 @@ urlpatterns = [
     path ('profile/', include ("django.contrib.auth.urls")),
     path ('games/', include ('games.urls')),
     path ('leaderboard/', include('leaderboard.urls')),
-    path ('about/', TemplateView.as_view(template_name='about.html')),
+    path ('about/', TemplateView.as_view(template_name='about.html'), name='juno-about'),
+    path ('timezone/', include ('timezone_middleware.urls')),
 ]

@@ -1,8 +1,9 @@
 from django.urls import path
+
+from .views import *
 from django.views.generic.base import TemplateView
 
-from .views import Leaderboard
 
 urlpatterns = [
-    path ('', Leaderboard, name='leaderboard-index')
+    path ('', set_timezone, name='timezone-set'),
 ]

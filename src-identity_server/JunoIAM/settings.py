@@ -20,8 +20,17 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-with open ("JunoIAM/django.secret", mode='r') as dj:
-    SECRET_KEY = dj.read()
+try:
+    with open ("JunoIAM/django.secret", mode='r') as dj:
+        SECRET_KEY = dj.read()
+except FileNotFoundError:
+    from django.core.management.utils import get_random_secret_key
+    with open ("JunoIAM/django.secret", mode='w') as dj:
+        print ("Django secret key file was not found...")
+        print ("Generating secret key file...")
+        dj.write (get_random_secret_key())
+        print ("Generated secret key file. Try again.")
+        exit()
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -35,8 +44,14 @@ PASSWORD_HASHERS = [
     'django.contrib.auth.hashers.ScryptPasswordHasher',
 ]
 
+<<<<<<< HEAD
+LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/'
+LOGIN_URL = '/profile/login/'
+=======
 LOGIN_REDIRECT_URL = 'home'
 LOGOUT_REDIRECT_URL = 'home'
+>>>>>>> main
 
 ALLOWED_HOSTS = []
 
@@ -50,6 +65,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+<<<<<<< HEAD
+    'fontawesomefree',
+=======
+>>>>>>> main
     'account',
     'games',
     'leaderboard',
@@ -63,6 +82,10 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+<<<<<<< HEAD
+    'timezone_middleware.timezone.TimezoneMiddleware'
+=======
+>>>>>>> main
 ]
 
 ROOT_URLCONF = 'JunoIAM.urls'
@@ -89,8 +112,17 @@ WSGI_APPLICATION = 'JunoIAM.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
+<<<<<<< HEAD
+try:
+    with open ("JunoIAM/mysql.creds", mode='r') as msc:
+        mysqlcreds = msc.readlines()
+except FileNotFoundError:
+    print ("You must create a JunoIAM/mysql.creds file.")
+    exit()
+=======
 with open ("JunoIAM/mysql.creds", mode='r') as msc:
     mysqlcreds = msc.readlines()
+>>>>>>> main
 
 DATABASES = {
     'default': {

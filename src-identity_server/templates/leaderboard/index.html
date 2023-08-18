@@ -20,7 +20,7 @@
         </div>
 
         {% for score in top_scores %} 
-            <div class="my-0 {% if forloop.counter0|divisibleby:2 %}{% else %} bg-light {% endif %}">
+            <div class="my-0 {% cycle '' 'bg-light' %}">
                 <div class="d-flex flex-row align-items-center px-2 py-2 text-center">
                     <div class="col">
                         {{ score.user__username }}
