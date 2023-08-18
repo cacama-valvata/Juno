@@ -1,0 +1,9 @@
+{
+  "vuln":
+  [
+    "eternal-blue",
+    "remoteSSH",
+    "random"
+  ],
+  "image": "windows"
+}
