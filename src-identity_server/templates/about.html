@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+
+{% block title %}About{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/solid.min.css">
+
+<style>
+    #grad {
+        background-image: linear-gradient(to bottom , #070700, midnightblue);
+    }
+    .blink {
+        animation: blinker 1.25s step-start infinite
+    }
+    @keyframes blinker {
+        50% {
+            opacity: 0;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid">
+
+    <div class="px-4 py-5 my-5 text-center">
+        <h1 class="display-5 fw-bold">Juno</h1>
+        <div class="col-lg-6 mx-auto">
+            <p class="lead mb-4">Juno is a system for rapidly deploying practice networks for security attack and defense games. It aims to reduce the barrier to entry into cybersecurity games.</p>
+            <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+                <a href="https://github.com/cacama-valvata/Juno"><button type="button" class="btn btn-primary indigo-700 btn-lg px-4 gap-3">View On Github</button></a>
+            </div>
+        </div>
+    </div>
+
+    <div style="min-height: 30vh"></div>
+
+    <div class="container col-xxl-8 px-4 py-5">
+        <div class="row flex-lg-row-reverse align-items-center g-5 py-5">
+        <div class="col-10 col-sm-8 col-lg-6" id="grad">
+            <div class="text-white" style="min-height: 45vh">
+                <div class="py-4">
+                    <h2 class="d-flex flex-row align-items-center"><i class="fa-solid fa-chevron-right me-4"></i><code>who</code></h2>
+                    <h2 class="d-flex flex-row align-items-center"><code><a class="text-decoration-none text-reset" href="https://github.com/cacama-valvata">cacama-valvata</a></code></h2>
+                    <h2 class="d-flex flex-row align-items-center"><code><a class="text-decoration-none text-reset" href="https://github.com/arighorbani">arighorbani</a></code></h2>
+                    <h2 class="d-flex flex-row align-items-center"><code><a class="text-decoration-none text-reset" href="https://github.com/CarterM00">CarterM00</a></code></h2>
+                    <h2 class="d-flex flex-row align-items-center"><code><a class="text-decoration-none text-reset" href="https://github.com/TheLastMarfist">TheLastMarfist</a></code></h2>
+                    <h2 class="d-flex flex-row align-items-center blink"><i class="fa-solid fa-chevron-right me-4"></i></h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <h1 class="display-5 fw-bold lh-1 mb-3" id="the-team">The Team</h1>
+            <p class="lead">Juno is a self-proposed project for Oregon State University's undergraduate "capstone" class. The team consists of Casey Colley, Arian Ghorbani, Carter MacNab, and Alexander Marx. The project is advised by Dr. Yeongjin Jang.</p>
+            <div class="d-grid gap-2 d-md-flex justify-content-md-start">
+            </div>
+        </div>
+        </div>
+    </div>
+
+    <div style="min-height: 15vh"></div>
+
+</div>
+    
+{% endblock %}

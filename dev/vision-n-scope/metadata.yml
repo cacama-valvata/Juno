@@ -8,5 +8,12 @@ linkcolor: Bittersweet
 # dont specify toc
 # generated in 0-titlepage.md
 
-fontsize: 12pt
+header-includes:
+  - \usepackage{pdfpages}
+  - \usepackage{fancyhdr}
+  - \pagestyle{fancy}
+  - \fancyhead[L]{\textsl{VISION \& SCOPE DOCUMENT}}
+  - \fancyhead[R]{\textsl{\leftmark}}
+
+#fontsize: 12pt
 ---

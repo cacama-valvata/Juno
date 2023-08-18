@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+
+{% block title %}Profile{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid">
+
+    {% if user.is_authenticated %}
+
+    <!-- subheader -->
+    <div class="row mb-4 my-3">
+        <h2 class="col">Profile</h2>
+    </div>
+
+    <div class="row"></div>
+    <div class="row">
+        <div class="col">
+            <div class="row">
+                <div class="col-4">
+                    <p class="fw-bolder">Username:</p>
+                    <p class="fw-bolder">Your Score:</p>
+                    <p class="fw-bolder">Devices:</p>
+                </div>
+                <div class="col-4">
+                    <p>{{ user.username }}</p>
+                    <p>{{ your_score }}</p>
+                    <a href="{% url 'account-devices' %}">{{ your_devices|length }} {% if your_devices|length != 1%}devices{% else %}device{% endif %}</a>
+                </div>
+            </div>
+            <div class="row">
+                <h3 class="py-2">Delete Devices</h3>
+            </div>
+            <div class="row py-2">
+                <div class="col-4">
+                    <form action="{% url 'account-delete-device' %}" method="post" id="deletedevice-form">
+                        {% csrf_token %}
+                        {{ deletedevice_form }}
+                    </form>
+                </div>
+                <div class="col-4">
+                    <button type="submit" class="btn btn-secondary" form="deletedevice-form">Delete</button>
+                </div>
+            </div>
+            <!-- TODO: list of previous games -->
+        </div>
+        <div class="col-4">
+            <h1 class="border bg-light py-4 text-center">{{ your_place }}{{ place_suffix }}</h1>
+            <p class="text-muted text-end">Overall ranking</p>
+        </div>
+    </div>
+
+    {% else %}
+
+        <p>You are not logged in</p>
+        <a href="{% url 'login' %}">Log In</a>
+
+    {% endif %}
+
+</div>
+    
+{% endblock %}

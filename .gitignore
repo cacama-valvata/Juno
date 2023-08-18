@@ -2,10 +2,21 @@
 .vscode/
 .vs/
 *.user
+*/venv/
 
 # project specific folders
-dev/pdf/
-dev/html/
+dev/out/
+src-identity_server/JunoIAM/mysql.creds
+src-identity_server/JunoIAM/django.secret
+__pycache__/
+
+src-identity_server/JunoIAM/mysql.creds
+src-identity_server/JunoIAM/django.secret
+__pycache__/
+
+src-player_client/mysql.creds
+src-player_client/build/
+src-player_client/tests/
 
 # docs folder binaries here
 
@@ -64,3 +75,4 @@ modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
+src-player_client/smallsh

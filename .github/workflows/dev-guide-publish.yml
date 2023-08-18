@@ -15,11 +15,11 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Build into PDF
-        run: cd dev && make pdf-docs
+        run: cd dev && make all
 
       - name: Compress into ZIP and TAR.GZ
         run: |
-          cd dev/pdf
+          cd dev/out
           zip -r Juno-Dev-All.zip *.pdf
           tar -czvf Juno-Dev-All.tar.gz *.pdf
 
@@ -30,4 +30,4 @@ jobs:
           title: Latest Development Documents
           prerelease: false
           automatic_release_tag: Juno-Dev-Guide
-          files: dev/pdf/*
+          files: dev/out/*

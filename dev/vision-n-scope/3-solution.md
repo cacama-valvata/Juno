@@ -1,3 +1,5 @@
+\pagebreak
+
 # Vision Statement (Solution)
 
 By the time this project is complete, it will bring value to stakeholders by providing an educational platform for use in both self-teaching and classroom settings. With this environment, students and cybersecurity learners (up to a professional level) will be able to experiment in a sandbox of both building and testing Attack and Defense systems while being assisted along the way with the difficulties of doing so. Whereas beforehand, deployment of cybersecurity Attack and Defense exercises would take significant amounts of time and effort on the part of the exercise designer, this project will make setting up these environments much more viable.
