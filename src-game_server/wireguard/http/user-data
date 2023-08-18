@@ -1,0 +1,30 @@
+#cloud-config
+autoinstall:
+  version: 1
+  early-commands:
+    - systemctl stop ssh
+  locale: en_US.UTF-8
+  keyboard:
+    layout: us
+  apt:
+    preserve_sources_list: false
+    primary:
+        - arches: [i386, amd64]
+          uri: "http://archive.ubuntu.com/ubuntu"
+        - arches: [default]
+          uri: "http://ports.ubuntu.com/ubuntu-ports"
+    geoip: true
+  storage:
+    layout:
+      name: lvm
+  identity:
+    hostname: ubuntu
+    username: ubuntu
+    password: $6$yV./p0CXmpUSsU1c$gXKXP/7hpiIyQKEl0yV5OH9/82vXQ9QdPz2heaf6fPA6OOuh1aERzzCv2573x0tVU/Rx7ZjIk6M022AFRZDf2.
+  ssh:
+    allow-pw: true
+    authorized-keys: []
+    install-server: true
+  late-commands:
+    - "echo 'ubuntu ALL=(ALL) NOPASSWD:ALL' > /target/etc/sudoers.d/ubuntu"
+    - "chmod 440 /target/etc/sudoers.d/ubuntu"
