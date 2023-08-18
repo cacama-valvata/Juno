@@ -22,6 +22,7 @@ OUT = pdf
 
 all: out/formatting.$(OUT) out/workflow.$(OUT) out/design.$(OUT) out/capital-request.$(OUT) out/vision-n-scope.$(OUT) out/fall_retrospective.$(OUT)
 
+
 out/formatting.%: out/ formatting.md
 	$(PANDOC) formatting.md -o out/formatting.$* $(OPTS)
 
@@ -40,6 +41,9 @@ out/vision-n-scope.%: out/ vision-n-scope/*
 
 out/fall_retrospective.%: out/ fall_retrospective.md
 	$(PANDOC) fall_retrospective.md -o out/fall_retrospective.$* $(OPTS)
+
+out/security_design_review.%: out/ security_design_review.md
+	$(PANDOC) security_design_review.md -o out/security_design_review.$* $(OPTS)
 
 out/:
 	mkdir -p out/
