@@ -44,9 +44,14 @@ PASSWORD_HASHERS = [
     'django.contrib.auth.hashers.ScryptPasswordHasher',
 ]
 
+<<<<<<< HEAD
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
 LOGIN_URL = '/profile/login/'
+=======
+LOGIN_REDIRECT_URL = 'home'
+LOGOUT_REDIRECT_URL = 'home'
+>>>>>>> main
 
 ALLOWED_HOSTS = []
 
@@ -60,7 +65,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+<<<<<<< HEAD
     'fontawesomefree',
+=======
+>>>>>>> main
     'account',
     'games',
     'leaderboard',
@@ -74,7 +82,10 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+<<<<<<< HEAD
     'timezone_middleware.timezone.TimezoneMiddleware'
+=======
+>>>>>>> main
 ]
 
 ROOT_URLCONF = 'JunoIAM.urls'
@@ -101,12 +112,17 @@ WSGI_APPLICATION = 'JunoIAM.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
+<<<<<<< HEAD
 try:
     with open ("JunoIAM/mysql.creds", mode='r') as msc:
         mysqlcreds = msc.readlines()
 except FileNotFoundError:
     print ("You must create a JunoIAM/mysql.creds file.")
     exit()
+=======
+with open ("JunoIAM/mysql.creds", mode='r') as msc:
+    mysqlcreds = msc.readlines()
+>>>>>>> main
 
 DATABASES = {
     'default': {

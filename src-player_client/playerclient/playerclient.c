@@ -1,48 +1,78 @@
 #include "playerclient.h"
+
 #define BUF_SIZE 256
+#define INPUTLEN 1000
 
-//init the connection and allow user to mess around in shell
-void connectclient(int argc, char *argv[])
+char *ssh_exec(char *hostname, char *username, char *private_key_path, char *command, char* hkey) 
 {
-    int pipefd[2];
-    pid_t pid;
-    char buf[BUF_SIZE];
+    char *ssh_command = malloc(strlen(hostname) + strlen(username) + strlen(private_key_path) + strlen(command) + strlen(hkey) + 64);
+    sprintf(ssh_command, "ssh -i %s %s@%s '%s %s'", private_key_path, username, hostname, command, hkey);
+    //printf("%s\n",ssh_command);
 
-    if (pipe(pipefd) == -1)
+    char buffer[1024];
+    char *result = NULL;
+    size_t result_size = 0;
+
+    FILE *fp = popen(ssh_command, "r");
+    if (fp == NULL) 
     {
-        perror("pipe");
-        return;
+        perror("Failed to execute command");
+        exit(1);
     }
 
-    pid = fork();
-    if (pid == -1)
+    while (fgets(buffer, 1024, fp) != NULL)
     {
-        perror("fork");
-        return;
-    }
-
-    if (pid == 0) 
-    {  // child process
-        close(pipefd[0]);  // close unused read end
-        dup2(pipefd[1], STDOUT_FILENO);  // redirect stdout to write end of pipe
-        char *args[] = {"ssh", argv[1], "@", argv[2], argv[3], NULL};
-        execvp("ssh", args);
-        return;
-    } 
-
-    else 
-    {  // parent process
-        close(pipefd[1]);  // close unused write end
-        while (read(pipefd[0], buf, BUF_SIZE) > 0)
+        size_t buffer_size = strlen(buffer);
+        result = realloc(result, result_size + buffer_size +1);
+        if(result == NULL)
         {
-            printf("%s", buf); 
-            //do stuff with the read memory
-            memset(buf, 0, BUF_SIZE);
-           
+            perror("Failed to allocate memory");
+            exit(1);
         }
+        strcpy(result + result_size, buffer);
+        result_size += buffer_size;
     }
 
-    return;
+    pclose(fp);
+    free(ssh_command);
+
+    return result;
+}
+
+
+int get_words(char ***inp) 
+{
+    char input[INPUTLEN];
+    int num_words = 0;
+    
+    // Prompt user to enter a sentence
+    printf("Enter a command: ");
+    fgets(input, INPUTLEN, stdin);
+    
+    // Remove newline character if present
+    if (input[strlen(input) - 1] == '\n')
+    {
+        input[strlen(input) - 1] = '\0';
+    }
+    
+    // Split sentence into words
+    char *token = strtok(input, " ");
+    while (token != NULL) 
+    {
+        // Reallocate memory for words array
+        num_words++;
+        *inp = (char **)realloc(*inp, num_words * sizeof(char *));
+        
+        // Allocate memory for new word and copy it 
+        int len = strlen(token) + 1;
+        (*inp)[num_words-1] = (char *)malloc(len * sizeof(char));
+        strcpy((*inp)[num_words-1], token);
+        
+        // Get next token
+        token = strtok(NULL, " ");
+    }
+    
+    return num_words;
 }
 
 void wgkeygen(char *pubkeyz, char *privkeyz){
@@ -52,19 +82,19 @@ void wgkeygen(char *pubkeyz, char *privkeyz){
 
   // Generate a WireGuard public key
   wg_key privkey;
+  wg_key pubkey;
   wg_generate_private_key(privkey);
+  wg_key_b64_string private_key_trans;
+  wg_key_to_base64(private_key_trans, privkey);
 
-  wg_key_b64_string pubkeys;
-  wg_key_to_base64(pubkeys, privkey);
+  wg_generate_public_key(pubkey,privkey);
+  wg_key_b64_string public_key_trans;
+  wg_key_to_base64(public_key_trans, pubkey);
 
-  //generate and maybe send to file
-  printf("here is my public key %s\n", pubkeys);
-  memcpy(pubkeyz, pubkeys, 32);
-  memcpy(privkeyz, privkey, 32);
-
+  memcpy(pubkeyz,public_key_trans,45);
+  memcpy(privkeyz,private_key_trans,45);
 
   return;
-
 }
 
 
@@ -90,6 +120,37 @@ int check_key(char *pubkey, char *privkey) {
     return((strlen(pubkey) > 30) && (strlen(privkey) > 30));
 }
 
+char *replace_substring(const char *str, const char *sub, const char *replace) 
+{
+    char *result, *p;
+    int len, count = 0;
+
+    // Get the length of the substring to be replaced
+    len = strlen(sub);
+
+    // Count the number of occurrences of the substring in the string
+    for (p = strstr(str, sub); p != NULL; p = strstr(p + len, sub)) {
+        count++;
+    }
+
+    // Allocate memory for the result string
+    result = (char *) malloc(strlen(str) + count * (strlen(replace) - len) + 1);
+
+    // Copy the string up to the first occurrence of the substring
+    p = strstr(str, sub);
+    strncpy(result, str, p - str);
+    result[p - str] = '\0';
+
+    // Copy the replacement string for each occurrence of the substring
+    while (p != NULL) {
+        strcat(result, replace);
+        strcat(result, p + len);
+        p = strstr(p + len, sub);
+    }
+
+    return result;
+}
+
 void process_config(const char* file_name, const char* search_str, const char* replace_str) {
     FILE* fp = fopen(file_name, "r+");
     if (fp == NULL) {
@@ -97,14 +158,16 @@ void process_config(const char* file_name, const char* search_str, const char* r
         return;
     }
 
-    // Get the length of the search string
+    // Get the length of the search string and replace string
     int search_len = strlen(search_str);
+    int replace_len = strlen(replace_str);
 
     // Allocate memory for the buffer
     char* buffer = (char*) malloc(search_len);
 
     // Read the file one character at a time
     int c;
+    long pos = 0;
     while ((c = fgetc(fp)) != EOF) {
         // Check if the current character is the same as the first character of the search string
         if (c == search_str[0]) {
@@ -117,14 +180,18 @@ void process_config(const char* file_name, const char* search_str, const char* r
                 fseek(fp, -search_len, SEEK_CUR);
 
                 // Write the replace string
-                fwrite(replace_str, 1, strlen(replace_str), fp);
+                fwrite(replace_str, 1, replace_len, fp);
 
-                // Move the file pointer to the end of the replace string
-                fseek(fp, strlen(replace_str) - search_len, SEEK_CUR);
+                // Adjust the current position in the file
+                pos += replace_len - search_len;
+                fseek(fp, pos, SEEK_CUR);
             } else {
                 // Move the file pointer back to the beginning of the buffer
                 fseek(fp, -search_len, SEEK_CUR);
+                pos++;
             }
+        } else {
+            pos++;
         }
     }
 

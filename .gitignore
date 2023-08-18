@@ -10,6 +10,14 @@ src-identity_server/JunoIAM/mysql.creds
 src-identity_server/JunoIAM/django.secret
 __pycache__/
 
+src-identity_server/JunoIAM/mysql.creds
+src-identity_server/JunoIAM/django.secret
+__pycache__/
+
+src-player_client/mysql.creds
+src-player_client/build/
+src-player_client/tests/
+
 # docs folder binaries here
 
 # FOLLOWING IS TAKEN FROM GITHUB'S TEMPLATES
